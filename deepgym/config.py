@@ -17,7 +17,7 @@ def get_args() -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', type=str, default='', help='configuration path')
+    parser.add_argument('--cfg', type=str, default='config.yaml', help='configuration path')
     args = parser.parse_args()
 
     return args

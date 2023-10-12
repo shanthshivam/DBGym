@@ -1,16 +1,16 @@
 from torch_geometric.data import HeteroData, Data
-from LinkSplit import LinkSplit
+from .LinkSplit import LinkSplit
 from torch_geometric.utils import to_networkx
-from db import DataBase
+from .db import DataBase
 from typing import Dict, List
 import numpy as np
 import torch
 import torch.nn as nn
-from HeteroVisualization import visualize_hetero
+from .HeteroVisualization import visualize_hetero
 import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
-from timesplit import split_csv_by_time
+from .timesplit import split_csv_by_time
 import time
 import re
 
@@ -54,8 +54,8 @@ class DB2PyG:
 
         self.db = db
 
-        self.feat_int: Dict[str, torch.tensor] = {}
-        self.feat_float: Dict[str, torch.tensor] = {}
+        self.feat_int: Dict[str, torch.Tensor] = {}
+        self.feat_float: Dict[str, torch.Tensor] = {}
 
         self.reverse_connect = reverse_connect
 
