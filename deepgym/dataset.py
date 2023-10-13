@@ -5,7 +5,8 @@ This module contains some dataset functions.
 
 import argparse
 from typing import Tuple
-from RDBench.db import DataBase
+from .db import DataBase
+from .db2pyg import DB2PyG
 from yacs.config import CfgNode
 
 
@@ -17,22 +18,31 @@ def from_csv(cfg: CfgNode) -> DataBase:
     - cfg: The configuration
     """
 
-    return 0, 0
+    data_dir = "./deepgym/data"
+    db = DataBase(cfg.dataset.name, data_dir)
+    db.load()
+    db.prepare_encoder()
+    return db 
 
 
-def from_sql(cfg: CfgNode) -> Tuple[argparse.Namespace, CfgNode]:
+# def from_sql(cfg: CfgNode) -> Tuple[argparse.Namespace, CfgNode]:
+#     '''
+#     The config function, get args and cfg
+#     Input: None
+#     Output: args, cfg
+#     '''
+#     return 0, 0
+
+
+def create_dataset(cfg: CfgNode):
     '''
     The config function, get args and cfg
     Input: None
     Output: args, cfg
     '''
-    return 0, 0
-
-
-def create_dataset(cfg: CfgNode) -> Tuple[argparse.Namespace, CfgNode]:
-    '''
-    The config function, get args and cfg
-    Input: None
-    Output: args, cfg
-    '''
-    return cfg
+    db = from_csv(cfg)
+    print(db)
+    if cfg.model.type == "GNN" or cfg.model.type == "HGNN":
+        return DB2PyG(db, target_csv=cfg.dataset.file, target_col=cfg.dataset.column, task=cfg.dataset.task)
+    else:
+        raise ValueError("Model not supported: {}".format(cfg.model))
