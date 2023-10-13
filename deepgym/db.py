@@ -12,7 +12,14 @@ import torch.nn as nn
 import re
 
 
-def reduce_sum_dict(dict1, dict2):
+MISSING = 'missing'
+MISSING_INT = -100
+
+
+def reduce_sum_dict(dict1: dict, dict2: dict) -> dict:
+    """
+    Merge and sum two dictionaries, returning a new dictionary
+    """
     merged_dict = dict1.copy()
     for key, value in dict2.items():
         if key in merged_dict:
@@ -20,60 +27,6 @@ def reduce_sum_dict(dict1, dict2):
         else:
             merged_dict[key] = value
     return merged_dict
-
-
-def map_value(array, map_dict):
-    if torch.is_tensor(array):
-        array = array.numpy()
-    null = max(map_dict.values()) + 1
-    # return np.vectorize(map_dict.__getitem__)(array)
-    return np.vectorize(map_dict.get)(array, null)
-
-
-def insert_dummy_row(df):
-    # Create a dictionary with dummy values based on column types
-    dummy_row = {}
-    for column in df.columns:
-        column_type = df[column].dtype
-        if column_type == int:
-            dummy_row[column] = 999
-        elif column_type == float:
-            dummy_row[column] = 0.0
-        elif column_type == bool:
-            dummy_row[column] = False
-        elif column_type == object:
-            dummy_row[column] = 'dummy'
-        # Add more conditions for other column types if needed
-
-    # Insert the dummy row into the DataFrame
-    df = pd.concat([df, pd.DataFrame([dummy_row], columns=df.columns)],
-                   ignore_index=True)
-
-    return df
-
-
-class bidict(dict):
-    ''' Assuming unique mapping'''
-    def __init__(self, *args, **kwargs):
-        super(bidict, self).__init__(*args, **kwargs)
-        self.inverse = {}
-        for key, value in self.items():
-            self.inverse[value] = key
-
-    def __setitem__(self, key, value):
-        super(bidict, self).__setitem__(key, value)
-        self.inverse[value] = key
-
-    def __delitem__(self, key):
-        if self[key] in self.inverse:
-            del self.inverse[self[key]]
-        super(bidict, self).__delitem__(key)
-
-    def merge_dict(self, other_dict: Dict):
-        for key, value in other_dict.items():
-            if key not in self.keys():
-                self[key] = value
-                self.inverse[value] = key
 
 
 class IndexMap(dict):
@@ -118,6 +71,15 @@ class IndexMap(dict):
     def __repr__(self):
         return f"{self.__class__.__name__}(num = {self.n})"
 
+
+def map_value(array, map_dict: IndexMap) -> np.ndarray:
+    """
+    Map array to index
+    """
+    if torch.is_tensor(array):
+        array = array.numpy()
+    null = max(map_dict.values()) + 1
+    return np.vectorize(map_dict.get)(array, null)
 
 class BaseModule:
     @classmethod
@@ -448,7 +410,11 @@ class Table(BaseModule):
                 enc = IndexMap(val)
                 self.col_to_enc[col] = enc
                 if materialize:
+                    print('start')
+                    print(enc)
+                    print(type(val))
                     val = map_value(val, enc)
+                    print(type(val))
                     self.feat_int[col] = torch.tensor(
                         val, dtype=torch.int64).squeeze(-1)
 

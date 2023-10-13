@@ -1,6 +1,6 @@
 """
 main.py
-This entry of DeepGym reposity.
+The entry of DeepGym reposity.
 """
 
 from deepgym.config import get_config
@@ -17,6 +17,6 @@ if __name__ == '__main__':
     set_logging(cfg)
     dataset = create_dataset(cfg)
     model = create_model(cfg)
-    optimizer = create_optimizer(model.parameters())
-    scheduler = create_scheduler(optimizer)
+    optimizer = create_optimizer(cfg, model.parameters())
+    scheduler = create_scheduler(cfg, optimizer)
     train(dataset, model, optimizer, scheduler)
