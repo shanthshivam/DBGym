@@ -23,11 +23,11 @@ def create_optimizer(cfg: CfgNode, params: Iterator[Tensor]) -> optim.Optimizer:
     optimz = cfg.optim.optimizer
     if optimz == 'adam':
         optimizer = optim.Adam(params,
-                               lr=cfg.optim.base_lr,
+                               lr=cfg.optim.lr,
                                weight_decay=cfg.optim.weight_decay)
     elif optimz == 'sgd':
         optimizer = optim.SGD(params,
-                              lr=cfg.optim.base_lr,
+                              lr=cfg.optim.lr,
                               momentum=cfg.optim.momentum,
                               weight_decay=cfg.optim.weight_decay)
     else:
