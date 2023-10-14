@@ -11,19 +11,21 @@ dataset:
 
 train:
   mode: 'standard'
-  epoch: 200
-  patience: 50
+  epoch: 20
+  patience: 5
 
 model:
   type: 'GNN'
   subtype : 'GCN'
   input_dim : 38
   output_dim : 4
-  hidden_dim : 16
+  hidden_dim : 24
   layer : 2
   head : 2 # Only some models will utilise this argument.
 
 optim:
   optimizer: 'adam'
   lr: 0.01
+  weight_decay: 0.0005
   scheduler: 'cos'
+  max_epoch: 20

@@ -41,6 +41,8 @@ def train(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode) ->
     Input: None
     Output: args, cfg
     '''
+    loader.split(type='Homo')
+    loader.Embedding_homo()
     graph_homo = loader.homo
     homo_embed = loader.embedding_homo
     homo_mask = loader.homo_mask
@@ -48,7 +50,7 @@ def train(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode) ->
 
     start = time.time()
     best = -1e8
-    for epoch in range(args.epoch):
+    for epoch in range(args.train.epoch):
         # if args.emupdate:
         #     homo_embed = loader.Infer()
         model.train()
@@ -56,10 +58,10 @@ def train(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode) ->
         output = model(homo_embed, graph_homo.edge_index)
         train_mask = homo_mask['train']
         target = homo_class[train_mask]
-        if args.task == 'classification':
+        if args.dataset.task == 'classification':
             criterion = torch.nn.CrossEntropyLoss()
             loss = criterion(output[train_mask], target.to(torch.long))
-        elif args.task == 'regression':
+        elif args.dataset.task == 'regression':
             criterion = torch.nn.MSELoss()
             loss = criterion(output[train_mask].squeeze(), target.to(torch.float))
         else:

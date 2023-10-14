@@ -17,8 +17,8 @@ if __name__ == '__main__':
     logger = Logger(cfg.log_dir)
     dataset = create_dataset(cfg)
     model = create_model(cfg)
-    exit(0)
     optimizer = create_optimizer(cfg, model.parameters())
     scheduler = create_scheduler(cfg, optimizer)
+    print("train begins")
     train(dataset, model, optimizer, scheduler, logger, cfg)
     
