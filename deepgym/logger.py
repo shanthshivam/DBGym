@@ -43,4 +43,3 @@ if __name__ == "__main__":
         # Replace with your own metrics and data to log
 
     logger.close()
-

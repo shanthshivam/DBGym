@@ -2,9 +2,9 @@
 Create the model according to configuration.
 '''
 from yacs.config import CfgNode
-from .models.GNN import GNN
-from .models.HGNN import HGCN, HGT
-from .models.MLP import MLP
+from deepgym.models.GNN import GNN
+from deepgym.models.HGNN import HGCN, HGT
+from deepgym.models.MLP import MLP
 
 def create_model(cfg: CfgNode):
     '''

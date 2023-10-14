@@ -22,19 +22,18 @@ class GNN(torch.nn.Module):
         for _ in range(self.layer - 1):
             self.convs.append(self.create_conv(self.hidden_dim, self.hidden_dim))
         self.convs.append(self.create_conv(self.hidden_dim, self.output_dim))
-    
-    def create_conv(self, input_dim, output_dim) -> nn.Module:
-            if self.model == "GCN":
-                return GCNConv(input_dim, output_dim)
-            elif self.model == "GIN":
-                return GINConv(nn = nn.Sequential(nn.Linear(input_dim, output_dim), nn.ReLU(), nn.Linear(output_dim, output_dim)))
-            elif self.model == "GAT":
-                return GATConv(input_dim, output_dim, self.head, concat = False)
-            elif self.model == "Sage":
-                return SAGEConv(input_dim, output_dim)
-            else:
-                raise ValueError("The type of GNN is not supported.")
 
+    def create_conv(self, input_dim, output_dim) -> nn.Module:
+        if self.model == "GCN":
+            return GCNConv(input_dim, output_dim)
+        if self.model == "GIN":
+            return GINConv(nn = nn.Sequential(nn.Linear(input_dim, output_dim),
+                                              nn.ReLU(), nn.Linear(output_dim, output_dim)))
+        if self.model == "GAT":
+            return GATConv(input_dim, output_dim, self.head, concat = False)
+        if self.model == "Sage":
+            return SAGEConv(input_dim, output_dim)
+        raise ValueError("The type of GNN is not supported.")
 
     def forward(self, x, edge_index):
         x = self.linear(x)

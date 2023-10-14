@@ -18,7 +18,7 @@ def from_csv(cfg: CfgNode) -> DataBase:
     - cfg: The configuration
     """
 
-    data_dir = "./deepgym/data"
+    data_dir = "./Datasets"
     db = DataBase(cfg.dataset.name, data_dir)
     db.load()
     db.prepare_encoder()

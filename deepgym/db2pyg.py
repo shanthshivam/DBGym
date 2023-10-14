@@ -120,22 +120,22 @@ class DB2PyG:
         hash = {}
 
         # Count the number of features before the target csv.
-        for node_type in self.db.table_names:
+        for node_type, typ in self.db.names:
             if node_type == missing_csv:
                 break
             self.classbef_num += self.db.tables[node_type].df.shape[0]
 
         # Firstly, we create nodes in the graph.
-        for node_type in self.db.table_names:
+        for node_type, typ in self.db.names:
             table = self.db.tables[node_type]
             if debug:
                 print(node_type,table.df)
-                print(table.feat_float)
+                print(table.feat_cont)
 
             # Handle special case for missing CSV and column.
             if node_type == missing_csv:
                 # Infer the type of the task.
-                if missing_col in table.feat_float:
+                if missing_col in table.feat_cont:
                     self.task = "regression"
                 else:
                     self.task = "classification"
@@ -162,7 +162,7 @@ class DB2PyG:
                                 )
                                 self.hetero_y = torch.tensor(int_array)
                         elif task == "regression":
-                            self.hetero_y = table.feat_float[col].squeeze()
+                            self.hetero_y = table.feat_cont[col].squeeze()
 
                         if self.task == "classification":
                             # Find indices of non-max values,
@@ -192,13 +192,13 @@ class DB2PyG:
             # By this mean, we manage to place feat_float before feat_int.
             nonlabel_col_float = [
                 col
-                for col in table.feat_float
+                for col in table.feat_cont
                 if col != missing_col or node_type != missing_csv
             ]
 
             nonlabel_col_int = [
                 col
-                for col in table.feat_int
+                for col in table.feat_disc
                 if col != missing_col or node_type != missing_csv
             ]
 
@@ -207,18 +207,18 @@ class DB2PyG:
                 # All NaN in feat_float is substituted by non-NaN mean.
                 # However, it seems that NaN is coped in db.py
                 for col in nonlabel_col_float:
-                    # print(table.feat_float[col])
-                    data_np = table.feat_float[col].numpy()
+                    # print(table.feat_cont[col])
+                    data_np = table.feat_cont[col].numpy()
                     mean_non_nan = np.nanmean(data_np)
 
                     # Replace NaN values with the mean
-                    table.feat_float[col][
-                        table.feat_float[col] != table.feat_float[col]
+                    table.feat_cont[col][
+                        table.feat_cont[col] != table.feat_cont[col]
                     ] = torch.tensor(mean_non_nan)
 
                 hetero_feature_float = torch.cat(
                     [
-                        table.feat_float[col].clone().detach().view(-1, 1)
+                        table.feat_cont[col].clone().detach().view(-1, 1)
                         for col in nonlabel_col_float
                     ],
                     dim=1,
@@ -228,7 +228,7 @@ class DB2PyG:
             if len(nonlabel_col_int) > 0:
                 hetero_feature_int = torch.cat(
                     [
-                        table.feat_int[col].clone().detach().view(-1, 1)
+                        table.feat_disc[col].clone().detach().view(-1, 1)
                         for col in nonlabel_col_int
                     ],
                     dim=1,
@@ -262,7 +262,7 @@ class DB2PyG:
                     self.hetero_y[i] = hash[missing_col][self.hetero_y[i].item()]
 
         # Secondly, we create edges.
-        for node_type in self.db.table_names:
+        for node_type, typ in self.db.names:
             keys = self.db.tables[node_type].get_keys()
             if len(keys) == 1:
                 # It has no foreign key.
@@ -355,8 +355,8 @@ class DB2PyG:
 
         self.embedding_hetero = {}
         # print(self.len_featint)
-        # print(self.db.table_names)
-        for node_type in self.db.table_names:
+        # print(self.db.names)
+        for node_type, typ in self.db.names:
             # print(graph[node_type+'_id'].x.shape[1])
             
             if self.task == "classification":
@@ -472,7 +472,7 @@ class DB2PyG:
     def Infer(self):
         index = 0
         embedding_hetero = {}
-        for node_type in self.db.table_names:
+        for node_type, typ in self.db.names:
             len_int = self.len_featint[node_type]
             len_float = self.hetero[node_type + "_id"].x.shape[1] - len_int
             feature_float = self.hetero[node_type + "_id"].x[:, :len_float]
@@ -788,55 +788,9 @@ class DB2PyG:
             Dict : whose keys are in the form of table_name + col_name, values are dataframes containing long texts. 
         '''
         text_dict = {}
-        for node_type in self.db.table_names:
+        for node_type, typ in self.db.names:
             table = self.db.tables[node_type]
             for col, val in table.df.items():
                 if col.endswith("_text"):
                     text_dict[node_type + " " + col] = val
         return text_dict
-
-
-# not yet completed
-class CSV2PyG:
-    def __init__(
-        self,
-        name: str,
-        dir: str,
-        file_type: str = "csv",
-        known_tables: List = None,
-        known_keys: List = None,
-        reverse_connect=False,
-    ):
-        self.reverse_connect = reverse_connect
-        self.name = name
-        self.dir = dir
-        self.hetero = HeteroData()  # Create an empty hetero graph.
-        self.homo = Data()
-
-        db = DataBase(name=self.name, dir=self.dir)
-        db.load()
-        db.prepare_encoder()
-        self.db = db
-
-    def hetero_graph(self):
-        converter = DB2PyG(self.db, reverse_connect=False)
-        graph = converter.hetero_graph()
-        self.hetero = graph
-        return graph
-
-    def homo_graph(self):
-        self.homo = self.hetero.to_homogeneous()
-        return self.homo
-
-
-# DB2PyG test
-# converter = DB2PyG(db,reverse_connect = False)
-# graph = converter.hetero_graph()
-# print(graph)
-
-
-# CSV2PyG test
-# data_dir = 'Dataset'  # path to csv files
-# converter = CSV2PyG(name='financial', dir=data_dir,reverse_connect = False)
-# Graph = converter.hetero_graph()
-# print(Graph)
