@@ -3,6 +3,7 @@ dataset.py
 This module contains some dataset functions.
 """
 
+import os
 import argparse
 from typing import Tuple
 from .db import DataBase
@@ -19,7 +20,7 @@ def from_csv(cfg: CfgNode) -> DataBase:
     """
 
     data_dir = "./Datasets"
-    db = DataBase(cfg.dataset.name, data_dir)
+    db = DataBase(os.path.join(data_dir, cfg.dataset.name))
     db.load()
     db.prepare_encoder()
     return db 
