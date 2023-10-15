@@ -15,8 +15,8 @@ train:
   patience: 5
 
 model:
-  type: 'GNN'
-  subtype : 'GCN'
+  type: 'HGNN'
+  subtype : 'HGT'
   input_dim : 21
   output_dim : 4
   hidden_dim : 24
@@ -28,4 +28,10 @@ optim:
   lr: 0.01
   weight_decay: 0.0005
   scheduler: 'cos'
+
   max_epoch: 20
+  # for step scheduler
+  milestones: [9,16]
+  lr_decay: 0.1
+  # for SGD optimizer
+  momentum: 0.9

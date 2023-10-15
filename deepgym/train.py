@@ -35,7 +35,7 @@ from yacs.config import CfgNode
 
 #     return result, log
 
-def train(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode) -> None:
+def train_GNN(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode) -> None:
     '''
     The config function, get args and cfg
     Input: None
@@ -84,5 +84,57 @@ def train(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode) ->
         #     if patc > args.patience:
         #         break
 
+    return
+
+def train_HGNN(loader, model, optimizer, scheduler, logger: Logger, cfg: CfgNode) -> None:
+    loader.split(type='Homo')
+    loader.Embedding_hetero()
+    graph_hete = loader.hetero
+    hetero_embed = loader.embedding_hetero
+    hetero_mask = loader.hetero_mask
+    hete_class = loader.hetero_y
+
+    start = time.time()
+    best = -1e8
+    for epoch in range(cfg.train.epoch):
+        model.train()
+        optimizer.zero_grad()
+        output = model(hetero_embed, graph_hete.edge_index_dict, cfg)
+        train_mask = hetero_mask['train']
+        target = hete_class[train_mask].squeeze()
+        if cfg.dataset.task == 'classification':
+            criterion = torch.nn.CrossEntropyLoss()
+            loss = criterion(output[train_mask], target.to(torch.long))
+        elif cfg.dataset.task == 'regression':
+            criterion = torch.nn.MSELoss()
+            loss = criterion(output[train_mask].squeeze(), target.to(torch.float))
+        else:
+            raise ValueError("task must be either classification or regression.")
+        loss.backward(retain_graph=True)
+        optimizer.step()
+        scheduler.step()
+
+        logger.log_scalar("Loss", loss.item(), epoch)
+        logger.log_scalar("Time used", time.time() - start, epoch)
+        # result, log = test(model, dataset, args)
+        # if result[0] > best:
+        #     best = result[0]
+        #     logs[0] = 'Best ' + logs[0]
+        #     logg = logs + log
+        #     patc = 0
+        # else:
+        #     patc += 1
+        #     if patc > args.patience:
+        #         break
+    return 
+
+def train(loader, model, optimizer, scheduler, logger: Logger, cfg: CfgNode) -> None:
+    if cfg.model.type == 'GNN':
+        train_GNN(loader, model, optimizer, scheduler, logger, cfg)
+    elif cfg.model.type == 'HGNN':
+        train_HGNN(loader, model, optimizer, scheduler, logger, cfg)
+    else:
+        raise ValueError("Invalid model type. Must be 'GCN'.")
+    
     logger.close()
     return
