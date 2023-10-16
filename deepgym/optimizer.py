@@ -54,7 +54,7 @@ def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_sched
                                               1)
     elif sdlr == 'step':
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-                                                   milestones=cfg.optim.steps,
+                                                   milestones=cfg.optim.milestones,
                                                    gamma=cfg.optim.lr_decay)
     elif sdlr == 'cos':
         scheduler = optim.lr_scheduler.CosineAnnealingLR(

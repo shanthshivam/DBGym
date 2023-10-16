@@ -16,7 +16,7 @@ if __name__ == '__main__':
     seed_everything(cfg.seed)
     logger = Logger(cfg.log_dir)
     dataset = create_dataset(cfg)
-    model = create_model(cfg)
+    model = create_model(cfg, dataset)
     # exit(0)
     optimizer = create_optimizer(cfg, model.parameters())
     scheduler = create_scheduler(cfg, optimizer)
