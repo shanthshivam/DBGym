@@ -18,8 +18,8 @@ def create_model(cfg: CfgNode, loader : DB2PyG|None = None):
     elif cfg.model.type == "HGNN":
         if loader is None:
             raise ValueError("loader is None, which is not allowed when using HGNN.")
-        loader.Embedding_hetero() # Maybe this operation can be done in previous step.
-        return HGCN(cfg, loader.hetero, loader.embedding_hetero) if cfg.model.subtype == "HGCN" else HGT(cfg, loader.hetero, loader.embedding_hetero)
+        # loader.Embedding_hetero() # Maybe this operation can be done in previous step.
+        return HGCN(cfg, loader.hetero, loader.hetero) if cfg.model.subtype == "HGCN" else HGT(cfg, loader.hetero)
     elif cfg.model.type == "MLP":
         return MLP(cfg)
     elif cfg.model.type == "XGBoost":
