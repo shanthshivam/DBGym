@@ -34,14 +34,14 @@ class IndexMap(dict):
     Map any array to index from 0 - N-1
     """
 
-    def __init__(self, input, is_unique: bool = False):
+    def __init__(self, inpt, is_unique: bool = False):
         if not is_unique:
-            input = np.unique(input)
+            inpt = np.unique(inpt)
         else:
-            input = input.squeeze(1)
+            inpt = inpt.squeeze(1)
         # create a map from input to 0 - N-1
-        self.n = input.shape[0]
-        super().__init__(zip(input, range(self.n)))
+        self.n = inpt.shape[0]
+        super().__init__(zip(inpt, range(self.n)))
         self.inverse = {}
         for key, value in self.items():
             self.inverse[value] = key
@@ -55,12 +55,12 @@ class IndexMap(dict):
             del self.inverse[self[key]]
         super().__delitem__(key)
 
-    def update(self, input, is_unique: bool = False):
+    def update(self, inpt, is_unique: bool = False):
         if not is_unique:
-            input = np.unique(input)
+            inpt = np.unique(inpt)
         else:
-            input = input.squeeze(1)
-        for val in input:
+            inpt = inpt.squeeze(1)
+        for val in inpt:
             if val not in self.keys():
                 self[val] = self.n
                 self.n += 1
@@ -260,16 +260,20 @@ class DataBase:
 
         for name, typ in self.names:
             fname = os.path.join(self.dir, f'{name}.{typ}')
-            df = pd.read_csv(fname, low_memory=False)
-            df.dropna(axis=1, how='all')
-            table = Table(df)
-            self.tables[name] = table
-            keys = table.get_keys()
-            self.table_to_key[name] = keys
-            keys = dict(zip(keys, [[name] for _ in range(len(keys))]))
-            self.key_to_table = reduce_sum_dict(self.key_to_table, keys)
+            if typ == 'csv':
+                df = pd.read_csv(fname, low_memory=False)
+                df.dropna(axis=1, how='all')
+                table = Table(df)
+                self.tables[name] = table
+                keys = table.get_keys()
+                self.table_to_key[name] = keys
+                keys = dict(zip(keys, [[name] for _ in range(len(keys))]))
+                self.key_to_table = reduce_sum_dict(self.key_to_table, keys)
+            elif typ == 'sql':
+                # TODO: finish sql support
+                continue
 
-    def load_join(self, main_table='', sep=','):
+    def load_join(self, main_table=''):
         """
         Load single table join
         """
@@ -279,37 +283,29 @@ class DataBase:
                 self.names.append(tuple([file[: -4], 'csv']))
             elif file.endswith('.sql'):
                 self.names.append(tuple([file[: -4], 'sql']))
-        table_list = []
-        for table_name in self.names:
-            fname = os.path.join(self.dir, f'{table_name}.{self.file_type}')
-            df = pd.read_csv(fname, sep=sep, low_memory=False)
-            df = df.dropna(axis=1, how='all')
+
+        dfs = []
+        for name, typ in self.names:
+            fname = os.path.join(self.dir, f'{name}.{typ}')
+            df = pd.read_csv(fname, low_memory=False)
             df.dropna()
-            if table_name == main_table:
+            if name == main_table:
                 main_df = df
             else:
-                table_list.append(df)
+                dfs.append(df)
 
-        main_name = main_table + '_id'
         names = set(main_df.columns.tolist())
-        for table in table_list:
-            common_keys = list(names.intersection(set(table.columns.tolist())))
+        for df in dfs:
+            common_keys = list(names.intersection(set(df.columns.tolist())))
             real_keys = []
             for key in common_keys:
-                if 'id' in key and len(table[key]) == len(table[key].unique()):
+                if 'id' in key and len(df[key]) == len(df[key].unique()):
                     real_keys.append(key)
             if real_keys:
-                main_df = main_df.merge(table, on=real_keys, how='left')
+                main_df = main_df.merge(df, on=real_keys, how='left')
 
-        main_df = main_df.dropna(axis=1, how='all')
         table = Table(main_df)
         self.tables['join_table'] = table
-
-        table = self.tables['join_table']
-        for name in table.ctypes:
-            if name != main_name and table.ctypes[name] == 'key':
-                # table.dtypes[name] = 'int64'
-                table.ctypes[name] = 'feat_int'
         table.prepare_feature()
 
     def prepare_encoder(self):

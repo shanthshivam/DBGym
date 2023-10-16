@@ -1,74 +1,34 @@
-from torch_geometric.data import HeteroData, Data
-from .LinkSplit import LinkSplit
-from torch_geometric.utils import to_networkx
-from .db import DataBase
-from typing import Dict, List
-import numpy as np
-import torch
-import torch.nn as nn
-from .HeteroVisualization import visualize_hetero
-import networkx as nx
-import matplotlib.pyplot as plt
-import pandas as pd
-from .timesplit import split_csv_by_time
-import time
+"""
+db2pyg.py
+Module to transform database into graph.
+"""
+
 import re
-
-debug = False
-
+from typing import Dict, List
+import torch
+import numpy as np
+from deepgym.db import DataBase
+from torch_geometric.data import HeteroData
 
 class DB2PyG:
     """
-    This class is used to convert DataBase in db.py to PyG graphs.
+    This class is used to convert DataBase in db.py to PyG graphs
 
     Args:
-        db: DataBase
-            The DataBase you want to convert.
-        Embed_dimen: int =3
-            Dimensions of embeddings for feat_int.
-        target_csv: str =""
-            The table your target column belongs to.
-        target_col: str =""
-            The column you want to predict.
-        task: str="classification" 
-            The type of the task.
-            Actually an automaticf infer is developed, 
-            but this argument is kept for compatibility reasons.
-
-    Returns:
-        A class instance.
+    - db: The DataBase to convert
+    - table: The name of target table
+    - col: The column you want to predict
     """
 
     # These functions below are for initialisation.
-    def __init__(
-        self,
-        db: DataBase,
-        Embed_dimen: int =3,
-        target_csv: str ="",
-        target_col: str ="",
-        task: str="classification",
-        reverse_connect: bool=False
-    ):
-        
-        self.dependency_check()
+    def __init__(self, db: DataBase, table: str, col: str):
 
         self.db = db
 
-        self.feat_int: Dict[str, torch.Tensor] = {}
-        self.feat_float: Dict[str, torch.Tensor] = {}
-
-        self.reverse_connect = reverse_connect
-
-        self.Embed_dimen = Embed_dimen
         self.len_featint = {}
         self.classbef_num = 0
 
-        # Zou: We might set tasks here and task types (classification/regression) can be inferred
-        #      Since we already know the column is feat_int or feat_float
-        #      But we keep this for the sake of simplicity temporarily.
-        if task != "classification" and task != "regression":
-            raise ValueError("Task shall be either classification or regression.")
-        self.task = task
+        self.task = ''
         self.missing_csv = target_csv
         self.missing_col = target_col
         self.missing_FK = None
@@ -80,23 +40,6 @@ class DB2PyG:
         self.init_hetero()
         self.init_homo()
         print("Done initialisation.")
-    
-    @staticmethod
-    def dependency_check():
-        # Check for dependency version.
-        if np.__version__ < "1.25.2":
-            raise Exception(
-                "Your numpy version is "
-                + np.__version__
-                + " and we recommend a version newer than or equal to 1.25.2."
-            )
-
-        if torch.__version__.startswith("1"):
-            raise Exception(
-                "Your torch version is "
-                + torch.__version__
-                + " and we recommend a version newer than or equal to 2.0.1."
-            )
 
     def init_hetero(self):
         """
@@ -128,9 +71,6 @@ class DB2PyG:
         # Firstly, we create nodes in the graph.
         for node_type, typ in self.db.names:
             table = self.db.tables[node_type]
-            if debug:
-                print(node_type,table.df)
-                print(table.feat_cont)
 
             # Handle special case for missing CSV and column.
             if node_type == missing_csv:
@@ -141,8 +81,7 @@ class DB2PyG:
                     self.task = "classification"
 
                 for col, val in table.df.items():
-                    if debug:
-                        print(col)
+
                     if col == missing_col:
                         if task == "classification":
                             if col.endswith("_id"):
@@ -182,9 +121,6 @@ class DB2PyG:
                             non_max_indices = torch.nonzero(~torch.isnan(self.hetero_y)).flatten()
 
                         self.valid_label_index = non_max_indices
-                        
-                        if debug:
-                            print(self.hetero_y)        
 
             # Set node features.
 
@@ -328,8 +264,6 @@ class DB2PyG:
                     )
                 else:
                     edge_storage.edge_index = edge_index_reverse
-                
-        return
 
     def init_homo(self):
         """
@@ -376,18 +310,6 @@ class DB2PyG:
 
             feature_float = self.hetero[node_type + "_id"].x[:, :len_float]
             feature_int = self.hetero[node_type + "_id"].x[:, len_float : len_float + len_int]
-            # print(feature_int)
-            # print(feature_float)
-            if debug:
-                print(
-                    "for node_type",
-                    node_type,
-                    "int_feature",
-                    feature_int,
-                    "float_feature",
-                    feature_float,
-                )
-                print(len_int, len_float)
 
             if len_int > 0:
                 embed_dict = {}
@@ -395,11 +317,10 @@ class DB2PyG:
                     # print(feature_int[:,col].max())
                     max_int = feature_int[:, col].max().item() + 1
                     inti_dimension = int_dimension if int_dimension else max_int
-                    embed_dict[str(col)] = nn.Embedding(
+                    embed_dict[str(col)] = torch.nn.Embedding(
                         int(inti_dimension), int(len_int)
                     )
                     self.embeds.append(embed_dict[str(col)])
-                    # print(type(str(col)))
                 embed_dict = torch.nn.ModuleDict(embed_dict)
 
                 feature_embed = 0.0
@@ -437,7 +358,7 @@ class DB2PyG:
         if embed_nodetype:
             embed_dict = {}
             max_int = self.homo_graph.node_type.max().item() + 1
-            embed_dict["node_type"] = nn.Embedding(int(max_int), int(dimen_nodetype))
+            embed_dict["node_type"] = torch.nn.Embedding(int(max_int), int(dimen_nodetype))
             self.embeds.append(embed_dict["node_type"])
             embed_dict = torch.nn.ModuleDict(embed_dict)
             embed_node = embed_dict["node_type"](self.homo_graph.node_type.long())
@@ -544,75 +465,6 @@ class DB2PyG:
         std = torch.std(filtered_values).item()
         return ans_tensor * std + mean
 
-    # These functions below are used to split datasets.
-    def edge_split(
-        self,
-        as_column_predict=True,
-        val_ratio=0.1,
-        test_ratio=0.1,
-        disjoint_train_ratio=0,
-        neg_sampling_ratio=1.0,
-        order=False,
-        seed=0
-    ):
-        """
-        Here, as for the problem of missing FK, we treat it as a classification problem too.
-
-        Args:
-            as_column_predict=True (Bool) :
-                Treat this as a node-size classification or binary classification (exist or not).
-                If this is set to true, there won't be negative sampling.
-            val_ratio=0.1 : The ratio of validation.
-            test_ratio=0.1 : The ratio of test.
-            disjoint_train_ratio=0 (int or float) :
-                If settorch_geometric.transforms to a value greater than 0.0, training edges will not be shared for message passing and supervision.
-                Instead, disjoint_train_ratio edges are used as ground-truth labels for supervision during training.
-            neg_sampling_ratio=1.0 (float) :
-                The ratio of sampled negative edges to the number of positive edges.
-                If as_colomn_predict = True, this arg is void.
-        """
-        if self.task != "classification" or self.missing_FK == False:
-            raise ValueError(
-                "Your task is "
-                + self.task
-                + ", or the missing type is feature, not foreign key.\nThis function is exclusively used for missing foreign key."
-            )
-
-        # By this way we can assure reproducibility.
-        if seed:
-            torch.manual_seed(seed)
-
-        rev_type = self.missing_FK[::-1]
-
-        if debug:
-            print(self.missing_FK)
-            print(self.hetero[self.missing_FK])
-            print(rev_type)
-        if as_column_predict:
-            split = LinkSplit(
-                num_val=val_ratio,
-                num_test=test_ratio,
-                is_undirected=False,
-                disjoint_train_ratio=disjoint_train_ratio,
-                add_negative_train_samples=False,
-                neg_sampling_ratio=0,
-                edge_types=self.missing_FK,
-                rev_edge_types=rev_type,
-                order=order
-            )
-        else:
-            split = LinkSplit(
-                num_val=val_ratio,
-                num_test=test_ratio,
-                is_undirected=False,
-                disjoint_train_ratio=disjoint_train_ratio,
-                neg_sampling_ratio=neg_sampling_ratio,
-                edge_types=self.missing_FK,
-                rev_edge_types=rev_type,
-                order=order
-            )
-        return split(self.hetero)
-
     def split(
         self,
         split_ratio: List = [0.8, 0.1, 0.1],
@@ -661,9 +513,6 @@ class DB2PyG:
         else:
             indices = torch.randperm(total_samples)
 
-        if debug:
-            print(indices)
-
         self.hetero_mask = {}
         start_idx = 0
 
@@ -691,106 +540,4 @@ class DB2PyG:
             self.classbef_num : self.classbef_num + len(self.hetero_y)
         ] = self.hetero_y
 
-        if debug == True:
-            print("homo_y is \n", self.homo_y)
-            print(self.hetero_mask)
-            print(self.hetero_y[self.hetero_mask["train"]])
-            print(self.homo_mask)
-            print(self.homo_y[self.homo_mask["train"]])
         return self.homo_mask
-    
-    def time_split(self, path, time_col):
-        split_csv_by_time(path, self.missing_csv, time_col, ratio = [0.6,0.2,0.2])
-
-        names = ["train", "val", "test"]
-
-        converters = list()
-
-        for x in names:
-            db = DataBase(name=x, dir=path)
-            time_start = time.time()
-            db.load()
-            db.prepare_encoder()
-            print(f"{x} Load time: {time.time()-time_start}")
-            converters.append(DB2PyG(db, target_csv=self.missing_csv, target_col=self.missing_col))
-
-        return converters
-
-    # These functions below are for observation.
-    def show_meta(self):
-        """
-        This function is used to show the relation between node_types.
-        """
-
-        # List of nodes
-        nodes = self.hetero.node_types
-
-        # List of edges in the form of (node1, "connects", node2)
-        edges = self.hetero.edge_types
-
-        # Create a directed graph
-        G = nx.DiGraph()
-
-        # Add nodes to the graph
-        G.add_nodes_from(nodes)
-
-        # Add edges to the graph
-        for edge in edges:
-            source, _, target = edge
-            G.add_edge(source, target)
-
-        # Draw the graph
-        pos = nx.circular_layout(G)  # You can choose a different layout if you prefer
-        nx.draw(
-            G,
-            pos,
-            with_labels=True,
-            node_size=1000,
-            node_color="lightblue",
-            font_size=10,
-            font_color="black",
-            arrowsize=15,
-        )
-        plt.title("Meta Graph")
-        plt.show()
-
-    def draw(self, type: str):
-        """
-        Using HeteroVisualization.py and NetworkX to visualise the graph.
-
-        We limit the size of the graph. Otherwise it may be too source-consuming thus causing crash.
-
-        Args:
-            type (str) : Specify which graph you want to draw. Should be either "Homo" or "Hetero".
-
-        Returns:
-            No return value.
-        """
-        if type == "Homo":
-            g = to_networkx(self.homo, to_undirected=True)
-            if g.number_of_nodes() > 100:
-                raise Exception("Graph is too big!")
-            nx.draw(g, with_labels=True)
-            plt.show()
-        elif type == "Hetero":
-            visualize_hetero(self.hetero)
-        else:
-            raise ValueError("type string should be either Homo or Hetero")
-
-    def show_text(self):
-        '''
-        To show long text datas.
-
-        Args:
-            None
-
-        Returns:
-            Dict : whose keys are in the form of table_name + col_name, values are dataframes containing long texts. 
-        '''
-        text_dict = {}
-        for node_type, typ in self.db.names:
-            table = self.db.tables[node_type]
-            for col, val in table.df.items():
-                if col.endswith("_text"):
-                    text_dict[node_type + " " + col] = val
-        return text_dict

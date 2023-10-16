@@ -6,8 +6,8 @@ This module contains some dataset functions.
 import os
 import argparse
 from typing import Tuple
-from .db import DataBase
-from .db2pyg import DB2PyG
+from deepgym.db import DataBase
+from deepgym.db2pyg import DB2PyG
 from yacs.config import CfgNode
 
 
@@ -45,5 +45,4 @@ def create_dataset(cfg: CfgNode):
     print(db)
     if cfg.model.type == "GNN" or cfg.model.type == "HGNN":
         return DB2PyG(db, target_csv=cfg.dataset.file, target_col=cfg.dataset.column, task=cfg.dataset.task)
-    else:
-        raise ValueError("Model not supported: {}".format(cfg.model))
+    raise ValueError(f"Model not supported: {cfg.model}")
