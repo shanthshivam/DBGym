@@ -19,9 +19,9 @@ if __name__ == '__main__':
     db = DataBase(path)
     db.load()
     db.prepare_encoder()
-    converter = DB2PyG(db, target_csv=CSV, target_col=COL)
-    converter.Embedding_hetero()
-    converter.Embedding_homo()
-    graph_homo = converter.homo
+    converter = DB2PyG(db, CSV, COL)
+    # converter.Embedding_hetero()
+    # converter.Embedding_homo()
+    graph_homo = converter.hetero
     print(graph_homo)
     print(f"Load time: {time.time() - start} s")

@@ -99,11 +99,10 @@ class Table:
         self.ctypes: Dict[str, str] = {}
         # data types: int64, float64, category, time
         self.dtypes: Dict[str, str] = {}
+        # key
         self.key: Dict[str, torch.Tensor] = {}
-        # discrete feature
-        self.feat_disc: Dict[str, torch.Tensor] = {}
-        # continuous feature
-        self.feat_cont: Dict[str, torch.Tensor] = {}
+        # feature
+        self.feature: Dict[str, torch.Tensor] = {}
         # feature encoder for each column
         self.feat_encoder: Dict[str, Dict[Any, int]] = {}
 
@@ -132,7 +131,7 @@ class Table:
         """
         Get the feature columns of dataframe
         """
-        return [col for col, val in self.ctypes.items() if val != 'key']
+        return [col for col, val in self.ctypes.items() if val == 'feature']
 
     def infer_dtypes(self, dtypes: Dict[str, str] = None):
         """
@@ -148,7 +147,10 @@ class Table:
             # dtype: int64, float64, category, time
             if dtype == 'datetime64[ns]':
                 dtype = 'time'
+            elif dtype == 'int64':
+                dtype= 'int64'
             elif dtype == 'float64':
+                dtype = 'float64'
                 column = self.df[col].dropna()
                 if column.apply(lambda x: x.is_integer()).all():
                     dtype = 'int64'
@@ -158,7 +160,7 @@ class Table:
                     dtype = 'time'
                 except Exception:
                     dtype = 'category'
-            elif dtype != 'int64':
+            else:
                 raise ValueError(f"Unknown dtype: {dtype}")
 
             self.dtypes[col] = dtype
@@ -184,10 +186,10 @@ class Table:
             else:
                 ctype = 'feature'
                 # patch: determine if int feature should be float feature
-                if self.dtypes[col] == 'int':
+                if self.dtypes[col] == 'int64':
                     uni = self.df[col].nunique()
                     if uni / len(self.df) > int_ratio_max or uni > int_abs_max:
-                        self.dtypes[col] = 'float'
+                        self.dtypes[col] = 'float64'
 
             self.ctypes[col] = ctype
 
@@ -209,28 +211,34 @@ class Table:
                 encoder = IndexMap(column)
                 self.feat_encoder[col] = encoder
                 value = map_value(column, encoder)
-                self.feat_disc[col] = torch.tensor(value, dtype=torch.int)
+                self.feature[col] = torch.tensor(value, dtype=torch.int64)
             elif dtype == 'float64':
                 column = column.fillna(column.mean()).astype(dtype)
                 encoder = MinMaxScaler((0, 2))
                 encoder.fit(column)
                 self.feat_encoder[col] = encoder
                 value = encoder.transform(column)
-                self.feat_cont[col] = torch.tensor(value, dtype=torch.float)
+                self.feature[col] = torch.tensor(value, dtype=torch.float64)
             elif dtype == 'category':
                 column = column.fillna(MISSING).astype(dtype)
                 encoder = IndexMap(column)
                 self.feat_encoder[col] = encoder
                 value = map_value(column, encoder)
-                self.feat_disc[col] = torch.tensor(value, dtype=torch.int)
+                self.feature[col] = torch.tensor(value, dtype=torch.int64)
+
+    def valid_indices(self, col: str):
+        """
+        Return valid indices of target column
+        """
+        valid = torch.tensor(pd.notna(self.df[col]))
+        return torch.nonzero(valid).flatten()
 
     def clean(self):
         """
         Reset keys and features
         """
         self.key: Dict[str, torch.Tensor] = {}
-        self.feat_disc: Dict[str, torch.Tensor] = {}
-        self.feat_cont: Dict[str, torch.Tensor] = {}
+        self.feature: Dict[str, torch.Tensor] = {}
 
 
 class DataBase:
@@ -239,7 +247,6 @@ class DataBase:
     """
 
     def __init__(self, path: str):
-        super().__init__()
         self.dir = path
         self.names = []
         self.tables: Dict[str, Table] = {}

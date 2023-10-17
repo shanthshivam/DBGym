@@ -3,7 +3,7 @@ from torch_geometric.nn import HGTConv, Linear, HeteroConv, SAGEConv
 
 class HGT(torch.nn.Module):
 
-    def __init__(self, cfg, data, embed):
+    def __init__(self, cfg, data):
         super().__init__()
 
         self.hidden_dim = cfg.model.hidden_dim
@@ -13,7 +13,7 @@ class HGT(torch.nn.Module):
 
         self.lin_dict = torch.nn.ModuleDict()
         for node_type in data.node_types:
-            self.lin_dict[node_type] = Linear(embed[node_type].shape[1] , self.hidden_dim)
+            self.lin_dict[node_type] = Linear(data[node_type].x.shape[1] , self.hidden_dim)
 
         self.convs = torch.nn.ModuleList()
         for _ in range(self.layer):
@@ -23,15 +23,16 @@ class HGT(torch.nn.Module):
 
         self.lin = Linear(self.hidden_dim, self.output_dim)
 
-    def forward(self, x_dict, edge_index_dict, cfg):
+    def forward(self, data, cfg):
         y = {}
-        for node_type, x in x_dict.items():
+        for node_type in data.node_types:
+            x = data[node_type].x
             y[node_type] = self.lin_dict[node_type](x).relu_()
 
         for conv in self.convs:
-            y = conv(y, edge_index_dict)
+            y = conv(y, data.edge_index_dict)
 
-        return self.lin(y[cfg.dataset.file + '_id'])
+        return self.lin(y[cfg.dataset.file])
 
 
 class HGCN(torch.nn.Module):

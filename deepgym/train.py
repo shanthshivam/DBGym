@@ -6,35 +6,6 @@ import torch
 from .logger import Logger
 from yacs.config import CfgNode
 
-# def test(model, dataset, args):
-#     model.eval()
-#     graph_homo, homo_embed, homo_mask, homo_class = dataset
-#     result = []
-#     log = []
-
-#     with torch.no_grad():
-#         for split in ['val', 'test']:
-#             mask = homo_mask[split].to(torch.long)
-#             output = model(homo_embed, graph_homo.edge_index)
-#             target = homo_class[mask].to(torch.float)
-#             if args.task == 'classification':
-#                 preds = output[mask].argmax(dim=1)
-#                 correct = (preds == target.to(torch.long)).sum().item()
-#                 total = mask.shape[0]
-#                 accuracy = correct / total
-#                 result.append(accuracy)
-#                 log.append(f'{split} Accuracy: {accuracy:.2%}')
-#                 print(log[-1])
-#             elif args.task == 'regression':
-#                 preds = output[mask].squeeze()
-#                 RMSE = (preds - target).square().mean().sqrt()
-#                 StdE = (target - target.mean()).square().mean().sqrt()
-#                 result.append(-RMSE)
-#                 log.append(f'{split} RMSE (Root Mean Square Error): {RMSE}, where Std Error: {StdE}')
-#                 print(log[-1])
-
-#     return result, log
-
 def train_GNN(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode) -> None:
     '''
     The config function, get args and cfg
@@ -70,7 +41,6 @@ def train_GNN(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode
         optimizer.step()
         scheduler.step()
 
-        
         logger.log_scalar("Loss", loss.item(), epoch)
         logger.log_scalar("Time used", time.time() - start, epoch)
         # result, log = test(model, [graph_homo, homo_embed, homo_mask, homo_class], args)
@@ -87,10 +57,9 @@ def train_GNN(loader, model, optimizer, scheduler, logger: Logger, args: CfgNode
     return
 
 def train_HGNN(loader, model, optimizer, scheduler, logger: Logger, cfg: CfgNode) -> None:
-    loader.split(type='Homo')
-    loader.Embedding_hetero()
+    loader.split(type='Hetero')
+    # loader.Embedding_hetero()
     graph_hete = loader.hetero
-    hetero_embed = loader.embedding_hetero
     hetero_mask = loader.hetero_mask
     hete_class = loader.hetero_y
 
@@ -99,7 +68,7 @@ def train_HGNN(loader, model, optimizer, scheduler, logger: Logger, cfg: CfgNode
     for epoch in range(cfg.train.epoch):
         model.train()
         optimizer.zero_grad()
-        output = model(hetero_embed, graph_hete.edge_index_dict, cfg)
+        output = model(graph_hete, cfg)
         train_mask = hetero_mask['train']
         target = hete_class[train_mask].squeeze()
         if cfg.dataset.task == 'classification':
@@ -113,6 +82,25 @@ def train_HGNN(loader, model, optimizer, scheduler, logger: Logger, cfg: CfgNode
         loss.backward(retain_graph=True)
         optimizer.step()
         scheduler.step()
+
+        with torch.no_grad():
+            for split in ['val', 'test']:
+                mask = hetero_mask[split].to(torch.long)
+                output = model(graph_hete, cfg)
+                target = hete_class[mask].squeeze()
+                if cfg.dataset.task == 'classification':
+                    preds = output[mask].argmax(dim=1)
+                    correct = (preds == target.to(torch.long)).sum().item()
+                    total = mask.shape[0]
+                    accuracy = correct / total
+                    print(f'{split} Accuracy: {accuracy:.2%}')
+                # elif args.task == 'regression':
+                #     preds = output[mask].squeeze()
+                #     RMSE = (preds - target).square().mean().sqrt()
+                #     StdE = (target - target.mean()).square().mean().sqrt()
+                #     result.append(-RMSE)
+                #     log.append(f'{split} RMSE (Root Mean Square Error): {RMSE}, where Std Error: {StdE}')
+                #     print(log[-1])
 
         logger.log_scalar("Loss", loss.item(), epoch)
         logger.log_scalar("Time used", time.time() - start, epoch)
