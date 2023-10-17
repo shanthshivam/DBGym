@@ -1,6 +1,6 @@
 """
-hgnn.py
-This module contains some utility functions.
+heterognn.py
+Heterogeneous graph neural network module.
 """
 
 import torch

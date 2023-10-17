@@ -1,16 +1,18 @@
 '''
+model.py
 Create the model according to configuration.
 '''
+
 from yacs.config import CfgNode
-from deepgym.models.GNN import GNN
-from deepgym.models.HGNN import HeteroGNN
-from deepgym.models.MLP import MLP
-from .db2pyg import DB2PyG
+from deepgym.models.gnn import GNN
+from deepgym.models.heterognn import HeteroGNN
+from deepgym.models.mlp import MLP
+from deepgym.db2pyg import DB2PyG
 
 model_dict = {
-    "GNN" : GNN,
-    "HGNN" : HeteroGNN, 
-    "MLP" : MLP,
+    "GNN": GNN,
+    "HGNN": HeteroGNN, 
+    "MLP": MLP,
 }
 
 def create_model(cfg: CfgNode, loader : DB2PyG|None = None):
