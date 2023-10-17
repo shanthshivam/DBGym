@@ -44,5 +44,5 @@ def create_dataset(cfg: CfgNode):
     db = from_csv(cfg)
     print(db)
     if cfg.model.type == "GNN" or cfg.model.type == "HGNN":
-        return DB2PyG(db, target_csv=cfg.dataset.file, target_col=cfg.dataset.column, task=cfg.dataset.task)
+        return DB2PyG(db, table=cfg.dataset.file, col=cfg.dataset.column)
     raise ValueError(f"Model not supported: {cfg.model}")

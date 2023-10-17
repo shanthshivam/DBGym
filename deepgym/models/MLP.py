@@ -1,8 +1,11 @@
 from torch import nn
 
 class MLP(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, cfg, *args, **kwargs):
         super(MLP, self).__init__()
+        input_size = cfg.model.input_dim
+        hidden_size = cfg.model.hidden_dim
+        output_size = cfg.model.output_dim
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, hidden_size)
