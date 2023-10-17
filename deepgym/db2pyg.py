@@ -4,7 +4,6 @@ Module to transform database into graph.
 """
 
 import re
-from typing import List
 import torch
 import numpy as np
 from deepgym.db import DataBase
