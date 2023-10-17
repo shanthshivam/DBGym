@@ -23,6 +23,9 @@ class Logger:
     def log_scalar(self, tag, value, step):
         self.writer.add_scalar(tag, value, step)
 
+    def log_scalars(self, tag, value, step):
+        self.writer.add_scalars(tag, value, step)
+
     def log_histogram(self, tag, values, step, bins='auto'):
         self.writer.add_histogram(tag, values, step, bins)
 

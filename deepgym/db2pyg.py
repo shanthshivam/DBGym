@@ -31,7 +31,7 @@ class DB2PyG:
 
     def init_hetero(self):
         """
-        Construct a heterogeneous graph using the provided tables and features
+        Construct a heterogeneous graph using the provided tables and features.
         """
 
         hetero = HeteroData()
