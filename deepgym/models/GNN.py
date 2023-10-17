@@ -6,7 +6,7 @@ from torch_geometric.nn import GCNConv, SAGEConv, GINConv, GATConv
 
 class GNN(torch.nn.Module):
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, *args, **kwargs):
         super(GNN, self).__init__()
         # These should be determined by the datasets
         self.input_dim = cfg.model.input_dim

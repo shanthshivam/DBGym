@@ -74,3 +74,17 @@ class HGCN(torch.nn.Module):
             y = conv(y, edge_index_dict)
         
         return self.lin(y[self.file + '_id'])
+
+def HGNN(cfg, loader, *args, **kwargs) -> torch.nn.Module:
+    '''
+    Create the model according to configuration.
+    Input: None
+    Output: args, cfg
+    '''
+    loader.Embedding_hetero() # Maybe this operation can be done in previous step.
+    if cfg.model.subtype == "HGCN":
+        return HGCN(cfg, loader.hetero, loader.embedding_hetero)
+    elif cfg.model.subtype == "HGT":
+        return HGT(cfg, loader.hetero, loader.embedding_hetero)
+    else:
+        raise ValueError("Model not supported: {}".format(cfg.model.subtype))
