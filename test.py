@@ -20,8 +20,7 @@ if __name__ == '__main__':
     db.load()
     db.prepare_encoder()
     converter = DB2PyG(db, CSV, COL)
-    # converter.Embedding_hetero()
-    # converter.Embedding_homo()
-    graph_homo = converter.hetero
-    print(graph_homo)
+    print(converter.hetero)
+    print(converter.homo)
+    converter.split(42)
     print(f"Load time: {time.time() - start} s")
