@@ -50,7 +50,7 @@ def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_sched
     sdlr = cfg.optim.scheduler
     if sdlr == 'none':
         scheduler = optim.lr_scheduler.StepLR(optimizer,
-                                              step_size=cfg.optim.max_epoch +
+                                              step_size=cfg.train.epoch +
                                               1)
     elif sdlr == 'step':
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
@@ -58,7 +58,7 @@ def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_sched
                                                    gamma=cfg.optim.lr_decay)
     elif sdlr == 'cos':
         scheduler = optim.lr_scheduler.CosineAnnealingLR(
-            optimizer, T_max=cfg.optim.max_epoch)
+            optimizer, T_max=cfg.train.epoch)
     else:
         raise ValueError(f'Scheduler {sdlr} not supported')
     return scheduler

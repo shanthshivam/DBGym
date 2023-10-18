@@ -11,7 +11,7 @@ dataset:
 
 train:
   mode: 'standard'
-  epoch: 20
+  epoch: 200
   patience: 5
 
 model:
@@ -19,17 +19,15 @@ model:
   subtype : 'HGT'
   input_dim : 21
   output_dim : 4
-  hidden_dim : 24
+  hidden_dim : 128
   layer : 2
   head : 2 # Only some models will utilise this argument.
 
 optim:
   optimizer: 'adam'
-  lr: 0.01
-  weight_decay: 0.0005
+  lr: 0.001
+  weight_decay: 0
   scheduler: 'cos'
-
-  max_epoch: 20
   # for step scheduler
   milestones: [9,16]
   lr_decay: 0.1

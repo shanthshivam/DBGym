@@ -101,8 +101,10 @@ class Table:
         self.dtypes: Dict[str, str] = {}
         # key
         self.key: Dict[str, torch.Tensor] = {}
-        # feature
-        self.feature: Dict[str, torch.Tensor] = {}
+        # discrete feature
+        self.feature_disc: Dict[str, torch.Tensor] = {}
+        # continuous feature
+        self.feature_cont: Dict[str, torch.Tensor] = {}
         # feature encoder for each column
         self.feat_encoder: Dict[str, Dict[Any, int]] = {}
 
@@ -211,20 +213,20 @@ class Table:
                 encoder = IndexMap(column)
                 self.feat_encoder[col] = encoder
                 value = map_value(column, encoder)
-                self.feature[col] = torch.tensor(value, dtype=torch.int64)
+                self.feature_disc[col] = torch.tensor(value, dtype=torch.int64)
             elif dtype == 'float64':
                 column = column.fillna(column.mean()).astype(dtype)
                 encoder = MinMaxScaler((0, 2))
                 encoder.fit(column)
                 self.feat_encoder[col] = encoder
                 value = encoder.transform(column)
-                self.feature[col] = torch.tensor(value, dtype=torch.float64)
+                self.feature_cont[col] = torch.tensor(value, dtype=torch.float64)
             elif dtype == 'category':
                 column = column.fillna(MISSING).astype(dtype)
                 encoder = IndexMap(column)
                 self.feat_encoder[col] = encoder
                 value = map_value(column, encoder)
-                self.feature[col] = torch.tensor(value, dtype=torch.int64)
+                self.feature_disc[col] = torch.tensor(value, dtype=torch.int64)
 
     def valid_indices(self, col: str):
         """
@@ -238,7 +240,8 @@ class Table:
         Reset keys and features
         """
         self.key: Dict[str, torch.Tensor] = {}
-        self.feature: Dict[str, torch.Tensor] = {}
+        self.feature_disc: Dict[str, torch.Tensor] = {}
+        self.feature_cont: Dict[str, torch.Tensor] = {}
 
 
 class DataBase:

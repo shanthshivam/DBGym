@@ -27,7 +27,7 @@ class DB2PyG:
         self.place = 0
         self.mask = {}
         self.hetero = self.init_hetero()
-        self.homo = self.init_homo()
+        # self.homo = self.init_homo()
         self.split()
         print("Done initialisation.")
 
@@ -42,24 +42,34 @@ class DB2PyG:
 
         # 1 create nodes in the graph
         for name, table in self.db.tables.items():
-            feat_cols = list(table.feature.keys())
+            feat_d = list(table.feature_disc.keys())
+            feat_c = list(table.feature_cont.keys())
             if name == self.table:
-                feat_cols.remove(self.col)
-                hetero[name].y = table.feature[self.col].squeeze()
+                if self.col in feat_d:
+                    feat_d.remove(self.col)
+                    hetero[name].y = table.feature_disc[self.col].squeeze()
+                else:
+                    feat_c.remove(self.col)
+                    hetero[name].y = table.feature_cont[self.col].squeeze()
                 self.place = place
             place += len(table.df)
 
             # concatenate features
-            if feat_cols:
-                feature = torch.cat([table.feature[col].view(-1, 1) for col in feat_cols], dim=1)
+            if feat_d:
+                feature = torch.cat([table.feature_disc[col].view(-1, 1) for col in feat_d], dim=1)
             else:
                 feature = torch.zeros((len(table.df), 1))
-            hetero[name].x = feature.to(torch.float32)
+            hetero[name].x_d = feature.to(torch.int32)
+            if feat_c:
+                feature = torch.cat([table.feature_cont[col].view(-1, 1) for col in feat_c], dim=1)
+            else:
+                feature = torch.zeros((len(table.df), 1))
+            hetero[name].x_c = feature.to(torch.float32)
 
             # set up look up table
-            lut_key = table.df[name + "_id"].to_list()
-            lut_value = list(range(0, len(lut_key)))
-            lookup_table[name] = dict(zip(lut_key, lut_value))
+            keys = table.df[name + "_id"].to_list()
+            values = list(range(0, len(keys)))
+            lookup_table[name] = dict(zip(keys, values))
 
         # 2 create edges in the graph
         for name, table in self.db.tables.items():
@@ -129,7 +139,6 @@ class DB2PyG:
         ratios = [0, 0.8, 0.9, 1]
         valid_indices = self.db.tables[self.table].valid_indices(self.col)
         sizes = [int(ratio * valid_indices.shape[0]) for ratio in ratios]
-        print(sizes)
         indices = torch.randperm(sizes[3])
 
         # split the dataset into training, validation, and test sets
