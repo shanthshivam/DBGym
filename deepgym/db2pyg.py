@@ -24,35 +24,39 @@ class DB2PyG:
         self.table = table
         self.col = col
 
-        self.place = 0
+        self.lookup_table = {}
+        self.hetero = HeteroData()
+        # Construct a heterogeneous graph using the provided tables and features
+        self.init_node()
+        self.init_edge()
+
         self.mask = {}
-        self.hetero = self.init_hetero()
-        # self.homo = self.init_homo()
         self.split()
         print("Done initialisation.")
 
-    def init_hetero(self):
+    def init_node(self):
         """
-        Construct a heterogeneous graph using the provided tables and features.
+        Construct heterogeneous graph nodes
         """
 
-        hetero = HeteroData()
-        lookup_table = {}
-        place = 0
+        hetero = self.hetero
 
-        # 1 create nodes in the graph
-        for name, table in self.db.tables.items():
+        names = list(self.db.tables.keys())
+        names.remove(self.table)
+        names.insert(0, self.table)
+
+        # create nodes in the graph
+        for name in names:
+            table = self.db.tables[name]
             feat_d = list(table.feature_disc.keys())
             feat_c = list(table.feature_cont.keys())
             if name == self.table:
                 if self.col in feat_d:
                     feat_d.remove(self.col)
-                    hetero[name].y = table.feature_disc[self.col].squeeze()
+                    hetero.y = table.feature_disc[self.col].squeeze()
                 else:
                     feat_c.remove(self.col)
-                    hetero[name].y = table.feature_cont[self.col].squeeze()
-                self.place = place
-            place += len(table.df)
+                    hetero.y = table.feature_cont[self.col].squeeze()
 
             # concatenate features
             if feat_d:
@@ -65,13 +69,25 @@ class DB2PyG:
             else:
                 feature = torch.zeros((len(table.df), 1))
             hetero[name].x_c = feature.to(torch.float32)
+            hetero[name].num_nodes = len(table.df)
 
             # set up look up table
             keys = table.df[name + "_id"].to_list()
             values = list(range(0, len(keys)))
-            lookup_table[name] = dict(zip(keys, values))
+            self.lookup_table[name] = dict(zip(keys, values))
 
         # 2 create edges in the graph
+
+        return hetero
+
+    def init_edge(self):
+        """
+        Construct heterogeneous graph edges
+        """
+
+        hetero = self.hetero
+        lookup_table = self.lookup_table
+
         for name, table in self.db.tables.items():
             keys = table.get_keys()
             if len(keys) == 1:
@@ -88,37 +104,6 @@ class DB2PyG:
                 edge_index = torch.from_numpy(edge_index)
                 hetero[name, "to", key].edge_index = edge_index
                 hetero[key, "to", name].edge_index = edge_index[[1, 0]]
-
-        return hetero
-
-    def init_homo(self):
-        """
-        Convert the constructed heterogeneous graph to a homogeneous graph.
-        """
-
-        hetero = self.hetero
-        homo = hetero.to_homogeneous()
-
-        rows = homo.node_type.shape[0]
-        cols = 0
-        for node in hetero.node_types:
-            cols += hetero[node].x.shape[1]
-        x = torch.zeros((rows, cols))
-        sr = 0
-        sc = 0
-        for node in hetero.node_types:
-            shape = hetero[node].x.shape
-            x[sr: sr + shape[0], sc: sc + shape[1]] = hetero[node].x
-            sr += shape[0]
-            sc += shape[1]
-
-        y = torch.zeros(rows)
-        hetero_y = hetero[self.table].y
-        y[self.place: self.place + hetero_y.shape[0]] = hetero_y
-
-        homo.x = x
-        homo.y = y
-        return homo
 
     def split(self, seed=None):
         """
@@ -142,13 +127,5 @@ class DB2PyG:
         indices = torch.randperm(sizes[3])
 
         # split the dataset into training, validation, and test sets
-        hetero_mask = {}
-        homo_mask = {}
         for i, name in enumerate(names):
-            hetero_mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
-            homo_mask[name] = hetero_mask[name] + self.place
-
-        self.mask['hetero'] = hetero_mask
-        self.mask['homo'] = homo_mask
-
-        return self.mask
+            self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]

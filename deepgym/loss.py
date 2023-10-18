@@ -17,7 +17,7 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
 
     Returns:
     - loss: loss
-    - prediction score: accuracy or mse
+    - prediction score: accuracy or mean squared error
     """
 
     pred = pred.squeeze(-1) if pred.ndim > 1 else pred

@@ -10,29 +10,15 @@ from deepgym.logger import Logger
 from deepgym.loss import compute_loss
 
 
-def get_data(dataset, cfg: CfgNode):
-    '''
-    Prepare data with different format
-    '''
-
-    if cfg.model.type == 'GNN':
-        data = dataset.homo
-        y = data.y
-        mask = dataset.mask['homo']
-    elif cfg.model.type == 'HGNN':
-        data = dataset.hetero
-        y = data[cfg.dataset.file].y
-        mask = dataset.mask['hetero']
-    return data, y, mask
-
-
 def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
     '''
     The training function
     '''
 
     start = time.time()
-    data, y, mask = get_data(dataset, cfg)
+    data = dataset.hetero
+    y = data.y
+    mask = dataset.mask
 
     for epoch in range(cfg.train.epoch):
         model.train()
