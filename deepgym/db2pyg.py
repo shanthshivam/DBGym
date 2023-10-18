@@ -9,6 +9,7 @@ import numpy as np
 from deepgym.db import DataBase
 from torch_geometric.data import HeteroData
 
+
 class DB2PyG:
     """
     This class is used to convert DataBase in db.py to PyG graphs

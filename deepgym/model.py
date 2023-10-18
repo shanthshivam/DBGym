@@ -24,7 +24,7 @@ def create_model(cfg: CfgNode, dataset: DB2PyG = None):
     if cfg.model.type == "HGNN":
         return HeteroGNN(cfg, dataset.hetero)
     if cfg.model.type == "MLP":
-        return MLP(cfg)
+        return MLP(cfg, dataset)
     if cfg.model.type == "XGBoost":
         # Lugar is not very familiar with XGBoost, so this part is not implemented.
         pass

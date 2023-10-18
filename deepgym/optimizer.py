@@ -7,6 +7,7 @@ from typing import Iterator
 from torch import optim, Tensor
 from yacs.config import CfgNode
 
+
 def create_optimizer(cfg: CfgNode, params: Iterator[Tensor]) -> optim.Optimizer:
     """
     Creates a config-driven optimizer.
@@ -16,7 +17,7 @@ def create_optimizer(cfg: CfgNode, params: Iterator[Tensor]) -> optim.Optimizer:
     - params: The parameters to optimize
 
     Returns:
-    - optimizer: An optimizer
+    - optimizer: Model optimizer
     """
 
     params = filter(lambda p: p.requires_grad, params)
@@ -35,6 +36,7 @@ def create_optimizer(cfg: CfgNode, params: Iterator[Tensor]) -> optim.Optimizer:
 
     return optimizer
 
+
 def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_scheduler._LRScheduler:
     """
     Creates a config-driven learning rate scheduler.
@@ -44,14 +46,12 @@ def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_sched
     - optimizer: The optimizer to schedule
 
     Returns:
-    - scheduler: A scheduler
+    - scheduler: Learning rate scheduler
     """
 
     sdlr = cfg.optim.scheduler
     if sdlr == 'none':
-        scheduler = optim.lr_scheduler.StepLR(optimizer,
-                                              step_size=cfg.train.epoch +
-                                              1)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=cfg.train.epoch + 1)
     elif sdlr == 'step':
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
                                                    milestones=cfg.optim.milestones,

@@ -15,7 +15,7 @@ train:
   patience: 5
 
 model:
-  type: 'HGNN'
+  type: 'MLP'
   subtype : 'HGT'
   input_dim : 21
   output_dim : 4

@@ -1,6 +1,6 @@
 '''
 logger.py
-The logging function, log everything
+The logging function, log everything.
 '''
 
 # from yacs.config import CfgNode

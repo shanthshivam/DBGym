@@ -9,6 +9,7 @@ from typing import Dict, List, Any
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+from yacs.config import CfgNode
 import torch
 
 MISSING_INT = -114514
@@ -250,7 +251,7 @@ class DataBase:
     """
 
     def __init__(self, path: str):
-        self.dir = path
+        self.path = path
         self.names = []
         self.tables: Dict[str, Table] = {}
         self.key_to_table: Dict[str, List[str]] = {}
@@ -262,14 +263,14 @@ class DataBase:
         Load tables
         """
 
-        for file in os.listdir(self.dir):
+        for file in os.listdir(self.path):
             if file.endswith('.csv'):
-                self.names.append(tuple([file[: -4], 'csv']))
+                self.names.append(tuple([file.split('.')[0], 'csv']))
             elif file.endswith('.sql'):
-                self.names.append(tuple([file[: -4], 'sql']))
+                self.names.append(tuple([file.split('.')[0], 'sql']))
 
         for name, typ in self.names:
-            fname = os.path.join(self.dir, f'{name}.{typ}')
+            fname = os.path.join(self.path, f'{name}.{typ}')
             if typ == 'csv':
                 df = pd.read_csv(fname, low_memory=False)
                 df.dropna(axis=1, how='all')
@@ -283,53 +284,18 @@ class DataBase:
                 # TODO: finish sql support
                 continue
 
-    def load_join(self, main_table=''):
-        """
-        Load single table join
-        """
-
-        for file in os.listdir(self.dir):
-            if file.endswith('.csv'):
-                self.names.append(tuple([file[: -4], 'csv']))
-            elif file.endswith('.sql'):
-                self.names.append(tuple([file[: -4], 'sql']))
-
-        dfs = []
-        for name, typ in self.names:
-            fname = os.path.join(self.dir, f'{name}.{typ}')
-            df = pd.read_csv(fname, low_memory=False)
-            df.dropna()
-            if name == main_table:
-                main_df = df
-            else:
-                dfs.append(df)
-
-        names = set(main_df.columns.tolist())
-        for df in dfs:
-            common_keys = list(names.intersection(set(df.columns.tolist())))
-            real_keys = []
-            for key in common_keys:
-                if 'id' in key and len(df[key]) == len(df[key].unique()):
-                    real_keys.append(key)
-            if real_keys:
-                main_df = main_df.merge(df, on=real_keys, how='left')
-
-        table = Table(main_df)
-        self.tables['join_table'] = table
-        table.prepare_feature()
-
     def prepare_encoder(self):
         """
         Prepare encoder for table columns
         """
-        for _, table in self.tables.items():
+        for table in self.tables.values():
             table.prepare_feature()
 
     def clean(self):
         """
         Reset tables
         """
-        for _, table in self.tables.items():
+        for table in self.tables.values():
             table.clean()
 
     @property
@@ -345,3 +311,65 @@ class DataBase:
         Return ctypes of tables
         """
         return {name: table.ctypes for name, table in self.tables.items()}
+
+
+class Tabular:
+    """
+    Tabular data module for relational database
+    """
+
+    def __init__(self, path: str, file: str, col: str):
+        self.path = path
+        self.file = file
+        self.col = col
+        self.x_d = None
+        self.x_c = None
+        self.y = None
+        self.mask = {}
+
+    def load_csv(self):
+        """
+        load a table from csv
+        """
+
+        fname = os.path.join(self.path, f'{self.file}.csv')
+        df = pd.read_csv(fname, low_memory=False)
+        df.dropna(axis=1, how='all')
+        table = Table(df)
+        table.prepare_feature()
+        if self.col in table.feature_cont:
+            self.y = torch.tensor(table.feature_cont[self.col])
+            del table.feature_cont[self.col]
+        elif self.col in table.feature_disc:
+            self.y = torch.tensor(table.feature_disc[self.col])
+            del table.feature_disc[self.col]
+        else:
+            raise ValueError(f'column {self.col} not found.')
+
+        # concatenate features
+        if table.feature_disc:
+            feature = torch.cat([f.view(-1, 1) for f in table.feature_disc.values()], dim=1)
+        else:
+            feature = torch.zeros((len(table.df), 1))
+        self.x_d = feature.to(torch.int32)
+        if table.feature_cont:
+            feature = torch.cat([f.view(-1, 1) for f in table.feature_cont.values()], dim=1)
+        else:
+            feature = torch.zeros((len(table.df), 1))
+        self.x_c = feature.to(torch.float32)
+
+        # split
+        names = ["train", "valid", "test"]
+        ratios = [0, 0.8, 0.9, 1]
+        valid_indices = table.valid_indices(self.col)
+        sizes = [int(ratio * valid_indices.shape[0]) for ratio in ratios]
+        indices = torch.randperm(sizes[3])
+        for i, name in enumerate(names):
+            self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+
+    def load_join(self):
+        """
+        load join table
+        """
+
+        return 0

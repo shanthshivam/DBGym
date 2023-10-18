@@ -4,7 +4,6 @@ The training procedure.
 '''
 
 import time
-import torch
 from yacs.config import CfgNode
 from deepgym.logger import Logger
 from deepgym.loss import compute_loss
@@ -16,7 +15,10 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
     '''
 
     start = time.time()
-    data = dataset.hetero
+    if cfg.model.type in ('GNN', 'HGNN'):
+        data = dataset.hetero
+    elif cfg.model.type == 'MLP':
+        data = dataset
     y = data.y
     mask = dataset.mask
 
