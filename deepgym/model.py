@@ -5,7 +5,7 @@ Create the model according to configuration.
 
 from yacs.config import CfgNode
 from deepgym.models.gnn import GNN
-from deepgym.models.heterognn import HeteroGNN
+from deepgym.models.heterognn import HeteroGNN, HGNN
 from deepgym.models.mlp import MLP
 from deepgym.db2pyg import DB2PyG
 
@@ -22,11 +22,11 @@ def create_model(cfg: CfgNode, dataset: DB2PyG = None):
     if cfg.model.type == "GNN":
         return GNN(cfg)
     if cfg.model.type == "HGNN":
-        return HeteroGNN(cfg, dataset.hetero)
+        return HGNN(cfg, dataset.hetero)
     if cfg.model.type == "MLP":
         return MLP(cfg)
     if cfg.model.type == "XGBoost":
         # Lugar is not very familiar with XGBoost, so this part is not implemented.
         pass
     else:
-        raise ValueError("Model not supported: {}".format(cfg.model))
+        raise ValueError(f"Model not supported: {cfg.model}")
