@@ -34,7 +34,7 @@ class HeteroGNN(torch.nn.Module):
             elif model == "HGCN":
                 conv = HeteroConv({e: SAGEConv(hidden_dim, hidden_dim) for e in hetero.edge_types})
             else:
-                raise ValueError(f"Model not supported: {model}")
+                raise ValueError(f"HeteroGNN model not supported: {model}")
             self.convs.append(conv)
 
         self.lin = Linear(hidden_dim, output_dim)

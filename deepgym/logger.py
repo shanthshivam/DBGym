@@ -1,6 +1,8 @@
 '''
+logger.py
 The logging function, log everything
 '''
+
 # from yacs.config import CfgNode
 from torch.utils.tensorboard.writer import SummaryWriter
 

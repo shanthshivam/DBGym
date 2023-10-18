@@ -6,6 +6,7 @@ Graph neural network module.
 import torch
 from torch import nn
 import torch.nn.functional as F
+from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv, SAGEConv, GINConv, GATConv
 
 
@@ -49,9 +50,9 @@ class GNN(torch.nn.Module):
             return GATConv(input_dim, output_dim, self.head, concat=False)
         if self.model == "Sage":
             return SAGEConv(input_dim, output_dim)
-        raise ValueError("The type of GNN is not supported.")
+        raise ValueError(f"GNN model not supported: {self.model}")
 
-    def forward(self, x, edge_index):
+    def forward(self, data: Data):
         """
         Forward propagation function
 
@@ -61,9 +62,9 @@ class GNN(torch.nn.Module):
         Returns:
         - output: output tensor
         """
-        x = self.linear(x)
+        x = self.linear(data.x)
         for i in range(self.layer - 1):
-            x = self.convs[i](x, edge_index)
+            x = self.convs[i](x, data.edge_index)
             x = F.relu(x)
-        x = self.convs[-1](x, edge_index)
+        x = self.convs[-1](x, data.edge_index)
         return x

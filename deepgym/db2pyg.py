@@ -28,6 +28,7 @@ class DB2PyG:
         self.mask = {}
         self.hetero = self.init_hetero()
         self.homo = self.init_homo()
+        self.split()
         print("Done initialisation.")
 
     def init_hetero(self):
