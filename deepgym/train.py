@@ -19,6 +19,8 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
         data = dataset.hetero
     elif cfg.model.type == 'MLP':
         data = dataset
+    else:
+        raise NotImplementedError
     y = data.y
     mask = dataset.mask
 
@@ -33,10 +35,13 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
         loss.backward()
         print(loss)
         print(score)
+        result['train'] = score
         _, score = compute_loss(cfg, output[mask['valid']], target[mask['valid']])
         print(score)
+        result['valid'] = score
         _, score = compute_loss(cfg, output[mask['test']], target[mask['test']])
         print(score)
+        result['test'] = score
         optimizer.step()
         scheduler.step()
 

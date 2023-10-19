@@ -22,4 +22,5 @@ if __name__ == '__main__':
     optimizer = create_optimizer(cfg, model.parameters())
     scheduler = create_scheduler(cfg, optimizer)
     train(dataset, model, optimizer, scheduler, logger, cfg)
+    logger.close()
     print(f"Load time: {time.time() - start} s")
