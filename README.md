@@ -24,10 +24,8 @@ DeepGym provides a user-friendly toolkit for the benchmark RDBench, which is pro
 
 
 
-## DeepGym In-depth Usage
+## How to use DeepGym?
 
-### 1 Run a single GNN experiment
-**1.1 Specify a configuration file.**
 In DeepGym, an experiment is fully specified by a `.yaml` file.
 
 Unspecified configurations in the `.yaml` file will be populated by the default values in 
@@ -36,13 +34,6 @@ For example, in [`config.yaml`](config.yaml),
 there are configurations on seed, dataset, training, model, GNN, optim, etc.
 Concrete description for each configuration is described in 
 [`deepgym/config.py`](deepgym/config.py).
-
-
-
-
-# DeepGym
-
-DeepGym for DB learning
 
 # Logging
 ## Visualisation
@@ -72,3 +63,12 @@ graph TB;
 	J --False--> K[custom: test];
 	A --model to save\nnot required in every iteration-->L[Save]
 ```
+
+
+## CI CD test
+We carried out CI CD test on the DeepGym, the content of the test includes data incoming, model training, etc., which can be seen in detail [`deepgym/test_mlp.py`](deepgym/test_mlp.py)
+
+
+
+
+
