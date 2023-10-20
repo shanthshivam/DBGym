@@ -4,7 +4,7 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
-  name: 'financial(small)'
+  name: 'example'
   file: 'loan'
   column: 'status'
   task: 'classification'
