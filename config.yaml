@@ -16,7 +16,7 @@ train:
   patience: 5
 
 model:
-  type: 'XGBoost'
+  type: 'MLP'
   subtype: 'GCN'
   hidden_dim: 128
   layer: 2
