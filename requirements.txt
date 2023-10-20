@@ -8,4 +8,4 @@ torch_geometric>=2.3.1
 xgboost>=1.7.6
 tensorboard>=2.14.1
 pandas>=1.5.3
-yacs>=1.0.8
+yacs>=0.1.8
