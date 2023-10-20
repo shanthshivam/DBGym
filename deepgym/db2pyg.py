@@ -28,6 +28,7 @@ class DB2PyG:
         self.lookup_table = {}
         self.hetero = HeteroData()
         # Construct a heterogeneous graph using the provided tables and features
+        self.output = 0
         self.init_node()
         self.init_edge()
 
@@ -55,9 +56,11 @@ class DB2PyG:
                 if self.col in feat_d:
                     feat_d.remove(self.col)
                     hetero.y = table.feature_disc[self.col].squeeze()
+                    self.output = torch.max(hetero.y[table.valid_indices(self.col)]).item() + 1
                 else:
                     feat_c.remove(self.col)
                     hetero.y = table.feature_cont[self.col].squeeze()
+                    self.output = 1
 
             # concatenate features
             if feat_d:
@@ -77,8 +80,6 @@ class DB2PyG:
             values = list(range(0, len(keys)))
             self.lookup_table[name] = dict(zip(keys, values))
 
-        # 2 create edges in the graph
-
         return hetero
 
     def init_edge(self):
@@ -89,6 +90,7 @@ class DB2PyG:
         hetero = self.hetero
         lookup_table = self.lookup_table
 
+        # create edges in the graph
         for name, table in self.db.tables.items():
             keys = table.get_keys()
             if len(keys) == 1:

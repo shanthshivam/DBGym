@@ -41,7 +41,14 @@ class IndexMap(dict):
         else:
             inpt = inpt.squeeze(1)
         # create a map from input to 0 - N-1
-        self.n = inpt.shape[0]
+        inpt = list(inpt)
+        if MISSING in inpt:
+            inpt.remove(MISSING)
+            inpt.append(MISSING)
+        if MISSING_INT in inpt:
+            inpt.remove(MISSING_INT)
+            inpt.append(MISSING_INT)
+        self.n = len(inpt)
         super().__init__(zip(inpt, range(self.n)))
         self.inverse = {}
         for key, value in self.items():
@@ -326,25 +333,67 @@ class Tabular:
         self.x_c = None
         self.y = None
         self.mask = {}
+        self.output = 0
 
     def load_csv(self):
         """
         load a table from csv
         """
 
-        fname = os.path.join(self.path, f'{self.file}.csv')
-        df = pd.read_csv(fname, low_memory=False)
+        path = os.path.join(self.path, f'{self.file}.csv')
+        df = pd.read_csv(path, low_memory=False)
         df.dropna(axis=1, how='all')
+        self.load_df(df)
+
+    def load_join(self):
+        """
+        load join table
+        """
+
+        names = []
+        for file in os.listdir(self.path):
+            if file.split('.')[1] == 'csv':
+                names.append(tuple([file.split('.')[0], 'csv']))
+
+        dfs = []
+        for name, typ in names:
+            path = os.path.join(self.path, f'{name}.{typ}')
+            df = pd.read_csv(path, low_memory=False)
+            df.dropna()
+            if name == self.file:
+                main_df = df
+            else:
+                dfs.append(df)
+
+        cols = set(main_df.columns.tolist())
+        for df in dfs:
+            common_keys = list(cols.intersection(set(df.columns.tolist())))
+            real_keys = []
+            for key in common_keys:
+                if 'id' in key and len(df[key]) == len(df[key].unique()):
+                    real_keys.append(key)
+            if real_keys:
+                main_df = main_df.merge(df, on=real_keys, how='left')
+
+        self.load_df(main_df)
+
+    def load_df(self, df: pd.DataFrame):
+        """
+        load dataframe
+        """
+
         table = Table(df)
         table.prepare_feature()
         if self.col in table.feature_cont:
-            self.y = torch.tensor(table.feature_cont[self.col])
+            self.y = table.feature_cont[self.col]
+            self.output = 1
             del table.feature_cont[self.col]
         elif self.col in table.feature_disc:
-            self.y = torch.tensor(table.feature_disc[self.col])
+            self.y = table.feature_disc[self.col]
+            self.output = torch.max(self.y[table.valid_indices(self.col)]).item() + 1
             del table.feature_disc[self.col]
         else:
-            raise ValueError(f'column {self.col} not found.')
+            raise ValueError(f'Column {self.col} not found.')
 
         # concatenate features
         if table.feature_disc:
@@ -366,10 +415,3 @@ class Tabular:
         indices = torch.randperm(sizes[3])
         for i, name in enumerate(names):
             self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
-
-    def load_join(self):
-        """
-        load join table
-        """
-
-        return 0

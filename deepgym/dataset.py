@@ -17,18 +17,26 @@ def create_dataset(cfg: CfgNode):
     - cfg: The configuration
 
     Return:
-    - dataset: DB2PyG or others
+    - dataset: Tabular, DB2PyG or others
     '''
 
     data_dir = "Datasets/"
     path = os.path.join(data_dir, cfg.dataset.name)
-    if cfg.model.type in ('GNN', 'HGNN'):
+    if cfg.dataset.type == 'single':
+        tb = Tabular(path, cfg.dataset.file, cfg.dataset.column)
+        tb.load_csv()
+        cfg.model.output_dim = tb.output
+        return tb
+    if cfg.dataset.type == 'join':
+        tb = Tabular(path, cfg.dataset.file, cfg.dataset.column)
+        tb.load_join()
+        cfg.model.output_dim = tb.output
+        return tb
+    if cfg.dataset.type == 'graph':
         db = DataBase(path)
         db.load()
         db.prepare_encoder()
-        return DB2PyG(db, cfg.dataset.file, cfg.dataset.column)
-    if cfg.model.type == 'MLP':
-        tb = Tabular(path, cfg.dataset.file, cfg.dataset.column)
-        tb.load_csv()
-        return tb
+        data = DB2PyG(db, cfg.dataset.file, cfg.dataset.column)
+        cfg.model.output_dim = data.output
+        return data
     raise ValueError(f"Model not supported: {cfg.model}")

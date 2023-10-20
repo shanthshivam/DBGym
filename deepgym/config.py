@@ -53,6 +53,8 @@ def set_cfg() -> CfgNode:
     cfg.dataset.column = 'status'
     # Task type: classification or regression
     cfg.dataset.task = 'classification'
+    # Dataset type: single, join or graph
+    cfg.dataset.type = 'graph'
 
     # ----------------------------------------------------------------------- #
     # Training options
@@ -100,7 +102,6 @@ def get_config() -> Tuple[argparse.Namespace, CfgNode]:
     with open(args.cfg, "r", encoding="utf-8") as f:
         config = CfgNode.load_cfg(f)
 
-    print(config)
     cfg.update(config)
 
     return args, cfg

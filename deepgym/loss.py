@@ -25,11 +25,16 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
 
     if cfg.dataset.task == 'classification':
         criterion = torch.nn.CrossEntropyLoss()
+        if cfg.model.type == 'XGBoost':
+            accuracy = (pred == true).float().mean().item()
+            return accuracy
         loss = criterion(pred, true)
         accuracy = (pred.argmax(dim=1) == true).float().mean().item()
         return loss, accuracy
     if cfg.dataset.task == 'regression':
         criterion = torch.nn.MSELoss()
         loss = criterion(pred, true)
+        if cfg.model.type == 'XGBoost':
+            return loss.detach()
         return loss, loss.detach()
     raise ValueError("task must be either classification or regression.")

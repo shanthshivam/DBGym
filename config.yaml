@@ -8,6 +8,7 @@ dataset:
   file: 'loan'
   column: 'status'
   task: 'classification'
+  type: 'single'
 
 train:
   mode: 'standard'
@@ -15,13 +16,11 @@ train:
   patience: 5
 
 model:
-  type: 'MLP'
-  subtype : 'HGT'
-  input_dim : 21
-  output_dim : 4
-  hidden_dim : 128
-  layer : 2
-  head : 2 # Only some models will utilise this argument.
+  type: 'XGBoost'
+  subtype: 'GCN'
+  hidden_dim: 128
+  layer: 2
+  head: 2
 
 optim:
   optimizer: 'adam'

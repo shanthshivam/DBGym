@@ -3,22 +3,11 @@ logger.py
 The logging function, log everything.
 '''
 
-# from yacs.config import CfgNode
-from torch.utils.tensorboard.writer import SummaryWriter
 import time
 import os
+from torch.utils.tensorboard.writer import SummaryWriter
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
-# def set_logging(cfg: CfgNode) -> None:
-#     '''
-#     The seed function, seed everything
-#     Input: seed
-#     Output: None
-#     '''
-#     log_dir = "logs"  # Change this to your preferred log directory
-#     writer = SummaryWriter(log_dir)
-#     cfg = ''
-#     print(cfg)
 
 def to_txt(path:str):
     log_directory = path
