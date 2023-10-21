@@ -4,9 +4,9 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
-  name: 'rdb2-bank'
-  file: 'loan'
-  column: 'Status'
+  name: 'rdb3-lahman'
+  file: 'managers'
+  column: 'RankTeam'
   type: 'graph'
 
 train:

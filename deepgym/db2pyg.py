@@ -26,6 +26,7 @@ class DB2PyG:
         self.col = col
 
         self.lookup_table = {}
+        self.duplicate = {}
         self.hetero = HeteroData()
         # Construct a heterogeneous graph using the provided tables and features
         self.output = 0
@@ -78,13 +79,19 @@ class DB2PyG:
 
             # set up look up table
             keys = table.df["_" + name].to_list()
-            lookup_dict = {}
-            for i, key in enumerate(keys):
-                if key in lookup_dict:
-                    lookup_dict[key].append(i)
-                else:
-                    lookup_dict[key] = [i]
-            self.lookup_table[name] = lookup_dict
+            if len(keys) != len(set(keys)):
+                lookup_dict = {}
+                for i, key in enumerate(keys):
+                    if key in lookup_dict:
+                        lookup_dict[key].append(i)
+                    else:
+                        lookup_dict[key] = [i]
+                self.lookup_table[name] = lookup_dict
+                self.duplicate[name] = True
+            else:
+                values = list(range(0, len(keys)))
+                self.lookup_table[name] = dict(zip(keys, values))
+                self.duplicate[name] = False
 
         print(f'Node use time: {time.time() - start} s')
 
@@ -95,6 +102,7 @@ class DB2PyG:
 
         hetero = self.hetero
         lookup_table = self.lookup_table
+        duplicate = self.duplicate
 
         start = time.time()
         # create edges in the graph
@@ -104,28 +112,40 @@ class DB2PyG:
                 continue
 
             length = len(self.db.tables[name].df)
+            array = torch.arange(length).view(1, -1)
             for key in keys[1:]:
-                k = key[1:]
-                if '.' in k:
-                    k = k.split('.')[0]
-                edge_index = [[], []]
-                lut = lookup_table[k]
-                for i in range(length):
-                    if table.df[key][i] in lut:
-                        edge_index[0] += len(lut[table.df[key][i]]) * [i]
-                        edge_index[1] += lut[table.df[key][i]]
-                edge_index = torch.tensor(edge_index)
-                if hetero[name, "to", k].num_edges:
-                    index = hetero[name, "to", k].edge_index
-                    hetero[name, "to", k].edge_index = torch.cat([index, edge_index], dim=1)
+                column = table.df[key]
+                key = key[1:]
+                if '.' in key:
+                    key = key.split('.')[0]
+
+                if duplicate[key]:
+                    edge_index = [[], []]
+                    lut = lookup_table[key]
+                    for i in range(length):
+                        if column[i] in lut:
+                            edge_index[0] += len(lut[column[i]]) * [i]
+                            edge_index[1] += lut[column[i]]
+                    edge_index = torch.tensor(edge_index)
                 else:
-                    hetero[name, "to", k].edge_index = edge_index
+                    def lookup(x):
+                        return lookup_table[key].get(x, -1)
+                    point_to = torch.tensor(np.vectorize(lookup)(column))
+                    edge_index = torch.cat([array, point_to.view(1, -1)], dim=0)
+                    edge_index = edge_index[:, point_to != -1]
+
+                if hetero[name, "to", key].num_edges:
+                    index = hetero[name, "to", key].edge_index
+                    hetero[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
+                else:
+                    hetero[name, "to", key].edge_index = edge_index
                 edge_index = edge_index[[1, 0]]
-                if hetero[k, "to", name].num_edges:
-                    index = hetero[k, "to", name].edge_index
-                    hetero[k, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
+                if hetero[key, "to", name].num_edges:
+                    index = hetero[key, "to", name].edge_index
+                    hetero[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
                 else:
-                    hetero[k, "to", name].edge_index = edge_index
+                    hetero[key, "to", name].edge_index = edge_index
+
         print(f'Edge use time: {time.time() - start} s')
 
     def split(self, seed=None):
