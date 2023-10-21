@@ -6,8 +6,8 @@ The training procedure.
 import time
 import torch
 from yacs.config import CfgNode
-from deepgym.logger import Logger
-from deepgym.loss import compute_loss
+from dbgym.logger import Logger
+from dbgym.loss import compute_loss
 
 
 def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):

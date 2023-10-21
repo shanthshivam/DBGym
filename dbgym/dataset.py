@@ -4,8 +4,8 @@ This module contains dataset function.
 """
 
 import os
-from deepgym.db import DataBase, Tabular
-from deepgym.db2pyg import DB2PyG
+from dbgym.db import DataBase, Tabular
+from dbgym.db2pyg import DB2PyG
 from yacs.config import CfgNode
 
 

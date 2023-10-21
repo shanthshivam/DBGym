@@ -5,8 +5,8 @@ Testing Datasets.
 
 import os
 import time
-from deepgym.db import DataBase
-from deepgym.db2pyg import DB2PyG
+from dbgym.db import DataBase
+from dbgym.db2pyg import DB2PyG
 
 if __name__ == '__main__':
     DATA_DIR = 'Datasets/'

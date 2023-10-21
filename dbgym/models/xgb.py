@@ -4,7 +4,7 @@ XGBoost module.
 """
 
 import xgboost
-from deepgym.db import Tabular
+from dbgym.db import Tabular
 from yacs.config import CfgNode
 
 

@@ -4,10 +4,10 @@ Create the model according to configuration.
 '''
 
 from yacs.config import CfgNode
-from deepgym.models.gnn import GNN
-from deepgym.models.heterognn import HeteroGNN
-from deepgym.models.mlp import MLP
-from deepgym.models.xgb import xgb
+from dbgym.models.gnn import GNN
+from dbgym.models.heterognn import HeteroGNN
+from dbgym.models.mlp import MLP
+from dbgym.models.xgb import xgb
 
 
 def create_model(cfg: CfgNode, dataset):

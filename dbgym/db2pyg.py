@@ -6,7 +6,7 @@ Module to transform database into graph.
 import time
 import torch
 import numpy as np
-from deepgym.db import DataBase
+from dbgym.db import DataBase
 from torch_geometric.data import HeteroData
 
 

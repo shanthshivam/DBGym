@@ -8,15 +8,15 @@ from yacs.config import CfgNode
 import sys 
 sys.path.append("") 
 
-from deepgym.loss import compute_loss
-from deepgym.config import get_config
-from deepgym.utils import seed_everything
-from deepgym.logger import Logger
-from deepgym.dataset import create_dataset
-from deepgym.model import create_model
-from deepgym.models.mlp import MLP
-from deepgym.optimizer import create_optimizer, create_scheduler
-from deepgym.db import Tabular
+from dbgym.loss import compute_loss
+from dbgym.config import get_config
+from dbgym.utils import seed_everything
+from dbgym.logger import Logger
+from dbgym.dataset import create_dataset
+from dbgym.model import create_model
+from dbgym.models.mlp import MLP
+from dbgym.optimizer import create_optimizer, create_scheduler
+from dbgym.db import Tabular
 
 def perform(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
     '''

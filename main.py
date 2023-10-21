@@ -1,16 +1,16 @@
 """
 main.py
-The entry of DeepGym reposity.
+The entry of DBGym reposity.
 """
 
 import time
-from deepgym.config import get_config
-from deepgym.utils import seed_everything
-from deepgym.logger import Logger
-from deepgym.dataset import create_dataset
-from deepgym.model import create_model
-from deepgym.optimizer import create_optimizer, create_scheduler
-from deepgym.train import train, train_xgboost
+from dbgym.config import get_config
+from dbgym.utils import seed_everything
+from dbgym.logger import Logger
+from dbgym.dataset import create_dataset
+from dbgym.model import create_model
+from dbgym.optimizer import create_optimizer, create_scheduler
+from dbgym.train import train, train_xgboost
 
 
 if __name__ == '__main__':

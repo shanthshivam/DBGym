@@ -20,7 +20,7 @@ graphgym_dict['loss'] = loss_dict
 
 def register(key: str, name: str, module: Any):
     """
-    Base function for registering a module in DeepGym.
+    Base function for registering a module in DBGym.
 
     Args:
     - key (string): The type of the module
