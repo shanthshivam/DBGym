@@ -4,14 +4,19 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
-  name: 'rdb3-toxic'
+  # name: 'rdb3-toxic'
   # file: 'bond_count'
   # column: 'Count'
   # task: 'classification'
-  file: 'atom'
-  column: 'Arg4'
-  task: 'regression'
+  # file: 'atom'
+  # column: 'Arg4'
+  # task: 'regression'
   type: 'graph'
+  name: 'example'
+  file: 'loan'
+  column: 'Status'
+  task: 'classification'
+  type: 'single'
 
 train:
   mode: 'standard'
@@ -19,7 +24,7 @@ train:
   patience: 5
 
 model:
-  type: 'GNN'
+  type: 'MLP'
   subtype: 'GCN'
   hidden_dim: 128
   layer: 4

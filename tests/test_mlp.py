@@ -4,6 +4,10 @@ from unittest import TestCase
 import time
 from torch import optim
 from yacs.config import CfgNode
+
+import sys 
+sys.path.append("") 
+
 from deepgym.loss import compute_loss
 from deepgym.config import get_config
 from deepgym.utils import seed_everything
@@ -100,7 +104,3 @@ class TestDataset(unittest.TestCase):
 
         end = time.time()
         print(f"Load time: {time.time() - start} s")
-
-
-if __name__ == '__main__':
-    unittest.main()
