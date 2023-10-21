@@ -8,14 +8,15 @@ from yacs.config import CfgNode
 import sys 
 sys.path.append("") 
 
-from dbgym.loss import compute_loss
 from dbgym.config import get_config
 from dbgym.utils.seed import seed_everything
 from dbgym.logger import Logger
+from dbgym.loss import compute_loss
 from dbgym.dataset import create_dataset
 from dbgym.model import create_model
-from dbgym.models.mlp import MLP
 from dbgym.optimizer import create_optimizer, create_scheduler
+from dbgym.train import train, train_xgboost
+from dbgym.models.mlp import MLP
 from dbgym.db import Tabular
 
 def perform(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
@@ -33,30 +34,57 @@ def perform(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
     y = data.y
     mask = dataset.mask
 
+    results = [0, -1e8, 0]
     for epoch in range(cfg.train.epoch):
+        logger.log(f"Epoch {epoch}:")
         model.train()
         optimizer.zero_grad()
         output = model(data)
-        train_mask = mask['train']
         target = y.squeeze()
         result = {}
-        loss, score = compute_loss(cfg, output[train_mask], target[train_mask])
+        losses = {}
+        loss, score = compute_loss(cfg, output[mask['train']], target[mask['train']])
         loss.backward()
-        print(loss)
-        print(score)
-        result['train'] = score
-        _, score = compute_loss(cfg, output[mask['valid']], target[mask['valid']])
-        print(score)
-        result['valid'] = score
-        _, score = compute_loss(cfg, output[mask['test']], target[mask['test']])
-        print(score)
-        result['test'] = score
+        vl, vs = compute_loss(cfg, output[mask['valid']], target[mask['valid']])
+        tl, ts = compute_loss(cfg, output[mask['test']], target[mask['test']])
         optimizer.step()
         scheduler.step()
 
-        logger.log_scalars("Accuracy", result, epoch)
-        logger.log_scalar("Loss", loss.item(), epoch)
+        if cfg.model.output_dim > 1:
+            if vs > results[1]:
+                results = [score, vs, ts]
+            logger.log(f"Train Accuracy: {score:.2%}")
+            logger.log(f"Train Loss: {loss.item():.4f}")
+            logger.log(f"Valid Accuracy: {vs:.2%}")
+            logger.log(f"Test Accuracy: {ts:.2%}")
+            logger.log_scalars("Accuracy", result, epoch)
+        elif cfg.model.output_dim == 1:
+            if -vs > results[1]:
+                results = [-score, -vs, -ts]
+            logger.log(f"Train Mean Squared Error: {score:.3f}")
+            logger.log(f"Train Loss: {loss.item():.4f}")
+            logger.log(f"Valid Mean Squared Error: {vs:.3f}")
+            logger.log(f"Test Mean Squared Error: {ts:.3f}")
+            logger.log_scalars("Mean Squared Error", result, epoch)
+
+        result['Train'] = score
+        losses['Train'] = loss.item()
+        result['Valid'] = vs
+        losses['Valid'] = vl.item()
+        result['Test'] = ts
+        losses['Test'] = tl.item()
+        logger.log_scalars("Loss", losses, epoch)
         logger.log_scalar("Time used", time.time() - start, epoch)
+        logger.flush()
+
+    if cfg.model.output_dim > 1:
+        logger.log(f"Final Train Accuracy: {results[0]:.2%}")
+        logger.log(f"Final Valid Accuracy: {results[1]:.2%}")
+        logger.log(f"Final Test Accuracy: {results[2]:.2%}")
+    elif cfg.model.output_dim == 1:
+        logger.log(f"Final Train Mean Squared Error: {results[0]:.3f}")
+        logger.log(f"Final Valid Mean Squared Error: {results[1]:.3f}")
+        logger.log(f"Final Test Mean Squared Error: {results[2]:.3f}")
 
     return result
 
@@ -67,12 +95,13 @@ class TestDataset(unittest.TestCase):
         pass
 
     def test_mlp(self):
-        start = time.time()
-
+        st = time.time()
         self.args, self.cfg = get_config()
         seed_everything(self.cfg.seed)
-        self.logger = Logger(self.cfg.log_dir)
-
+        self.logger = Logger(self.cfg)
+        start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
+        self.logger.log(f"Start time: {start}")
+        
         #1. Test the dataset
         self.dataset = create_dataset(self.cfg)
         self.assertIsInstance(self.dataset,Tabular)
@@ -85,6 +114,7 @@ class TestDataset(unittest.TestCase):
 
         #3. Test the model, optimizer and scheduler
         self.model = create_model(self.cfg, self.dataset)
+
         self.optimizer = create_optimizer(self.cfg, self.model.parameters())
         self.scheduler = create_scheduler(self.cfg, self.optimizer)
         self.assertIsInstance(self.model, MLP)
@@ -101,6 +131,7 @@ class TestDataset(unittest.TestCase):
         self.assertTrue(result['test'] > 0.65)
 
         self.logger.close()
-
-        end = time.time()
-        print(f"Load time: {time.time() - start} s")
+        end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
+        self.logger.log(f"End time: {end}")
+        self.logger.log(f"Use time: {time.time() - st:.4f} s")
+        self.logger.close()
