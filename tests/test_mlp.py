@@ -132,6 +132,6 @@ class TestDataset(unittest.TestCase):
 
         self.logger.close()
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
-        logger.log(f"End time: {end}")
-        logger.log(f"Use time: {time.time() - st:.4f} s")
-        logger.close()
+        self.logger.log(f"End time: {end}")
+        self.logger.log(f"Use time: {time.time() - st:.4f} s")
+        self.logger.close()
