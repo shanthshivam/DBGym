@@ -76,7 +76,7 @@ class DB2PyG:
             hetero[name].num_nodes = len(table.df)
 
             # set up look up table
-            keys = table.df[name + "_id"].to_list()
+            keys = table.df["_" + name].to_list()
             values = list(range(0, len(keys)))
             self.lookup_table[name] = dict(zip(keys, values))
 
@@ -98,15 +98,26 @@ class DB2PyG:
             edge_matrix = self.db.tables[name].df[keys].values.T
 
             for i, key in enumerate(keys):
-                key = re.sub(r'\d+$', '', key)[:-3]
+                key = key[1:]
+                if '.' in key:
+                    key = key.split('.')[0]
                 edge_matrix[i] = np.vectorize(lookup_table[key].get)(edge_matrix[i])
                 if i == 0:
                     continue
                 edge_index = edge_matrix[[0, i]]
                 edge_index = edge_index[:, np.all(edge_index != None, axis=0)]
-                edge_index = torch.from_numpy(edge_index)
-                hetero[name, "to", key].edge_index = edge_index
-                hetero[key, "to", name].edge_index = edge_index[[1, 0]]
+                edge_index = torch.from_numpy(edge_index.astype(int))
+                if hetero[name, "to", key].num_edges:
+                    index = hetero[name, "to", key].edge_index
+                    hetero[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
+                else:
+                    hetero[name, "to", key].edge_index = edge_index
+                edge_index = edge_index[[1, 0]]
+                if hetero[key, "to", name].num_edges:
+                    index = hetero[key, "to", name].edge_index
+                    hetero[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
+                else:
+                    hetero[key, "to", name].edge_index = edge_index
 
     def split(self, seed=None):
         """

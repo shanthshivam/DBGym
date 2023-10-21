@@ -4,11 +4,14 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
-  name: 'financial(small)'
-  file: 'loan'
-  column: 'status'
-  task: 'classification'
-  type: 'single'
+  name: 'rdb3-toxic'
+  # file: 'bond_count'
+  # column: 'Count'
+  # task: 'classification'
+  file: 'atom'
+  column: 'Arg4'
+  task: 'regression'
+  type: 'graph'
 
 train:
   mode: 'standard'
@@ -16,11 +19,11 @@ train:
   patience: 5
 
 model:
-  type: 'XGBoost'
+  type: 'GNN'
   subtype: 'GCN'
   hidden_dim: 128
-  layer: 2
-  head: 2
+  layer: 4
+  head: 4
 
 optim:
   optimizer: 'adam'

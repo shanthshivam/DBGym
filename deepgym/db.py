@@ -191,7 +191,7 @@ class Table:
             # ctype: key, feature
             if col in self.ctypes:
                 continue
-            if re.sub(r'^\d+|\d+$', '', col)[-3:] == '_id':
+            if '_' in col:
                 ctype = 'key'
             else:
                 ctype = 'feature'

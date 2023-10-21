@@ -1,4 +1,4 @@
-account_id,district_id,frequency,date
+_account,_district,Frequency,Date
 1,18,POPLATEK MESICNE,1995-03-24
 2,1,POPLATEK MESICNE,1993-02-26
 3,5,POPLATEK MESICNE,1997-07-07

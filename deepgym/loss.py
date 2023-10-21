@@ -25,6 +25,8 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
 
     if cfg.dataset.task == 'classification':
         criterion = torch.nn.CrossEntropyLoss()
+        pred = pred.float()
+        true = true.long()
         if cfg.model.type == 'XGBoost':
             accuracy = (pred == true).float().mean().item()
             return accuracy
@@ -33,6 +35,8 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
         return loss, accuracy
     if cfg.dataset.task == 'regression':
         criterion = torch.nn.MSELoss()
+        pred = pred.float()
+        true = true.float()
         loss = criterion(pred, true)
         if cfg.model.type == 'XGBoost':
             return loss.detach()
