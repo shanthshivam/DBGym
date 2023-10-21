@@ -16,24 +16,47 @@ DeepGym provides a user-friendly toolkit for the benchmark RDBench, which is pro
 - Extensive experiments with 10 baselines are carried out on these datasets.
 
 **3. Easy-to-use Interfaces with Robust Results** 
+- Highly modularized pipeline
+- Reproducible experiment configuratio
+- Scalable experiment management
+- Flexible user customization
 - Results reported are averaged over the same dataset and same task type (classification or regression)
-- 
+  
 
 ### Example use cases
 - *[RDBench: ML Benchmark for Relational Databases](tbf)*, Zizhao Zhang, Yi Yang, Lutong Zou, He Wen, Tao Feng, Jiaxuan You.
 
 
 
+## What is DeepGym?
+
+**1. Proposed Datasets**
+<div align="center">
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/DB2.pdf" width="400px" />
+  <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
+</div>
+
+<div align="center">
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/DB2.pdf" width="400px" />
+  <b><br>Figure 2: The procedure transforming relational databases to graphs.</b>
+</div>
+
+
 ## How to use DeepGym?
 
-In DeepGym, an experiment is fully specified by a `.yaml` file.
+**1. How to set the configuration?**
+- In DeepGym, an experiment is fully specified by a `.yaml` file. For example, in [`config.yaml`](config.yaml), there are configurations on seed, dataset, training, model, GNN, optim, etc.
+- Unspecified configurations in the `.yaml` file will be populated by the default values in 
+[`deepgym/config.py`](deepgym/config.py).
+- Concrete description for each configuration is also described in [`deepgym/config.py`](deepgym/config.py).
 
-Unspecified configurations in the `.yaml` file will be populated by the default values in 
-[`deepgym/config.py`](deepgym/config.py).
-For example, in [`config.yaml`](config.yaml), 
-there are configurations on seed, dataset, training, model, GNN, optim, etc.
-Concrete description for each configuration is described in 
-[`deepgym/config.py`](deepgym/config.py).
+
+
+## CI CD test
+We carried out CI CD test on the DeepGym, the content of the test includes data incoming, model training, etc., which can be seen in detail [`deepgym/test_mlp.py`](deepgym/test_mlp.py)
+
+
+
 
 # Logging
 ## Visualisation
@@ -64,9 +87,6 @@ graph TB;
 	A --model to save\nnot required in every iteration-->L[Save]
 ```
 
-
-## CI CD test
-We carried out CI CD test on the DeepGym, the content of the test includes data incoming, model training, etc., which can be seen in detail [`deepgym/test_mlp.py`](deepgym/test_mlp.py)
 
 
 

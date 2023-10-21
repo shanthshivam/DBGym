@@ -79,7 +79,7 @@ class TestDataset(unittest.TestCase):
 
         #2. Test the transformation to the Tabular class
         # Not testing the connected tables yet.
-        self.Correct_dict = {'file': 'loan', 'col': 'status'}
+        self.Correct_dict = {'file': 'loan', 'col': 'Status'}
         self.assertEqual(self.dataset.file, self.Correct_dict['file'])
         self.assertEqual(self.dataset.col, self.Correct_dict['col'])
 
