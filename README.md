@@ -1,7 +1,7 @@
 # DeepGym
 DeepGym is a platform designed to facilitate hierarchical, robust, and reproducible ML research on
 relational databases.
-DeepGym provides a user-friendly toolkit for the benchmark RDBench, which is proposed in *[RDBench: ML Benchmark for Relational Databases](tbf)*, Zizhao Zhang, Yi Yang, Lutong Zou, He Wen, Tao Feng, Jiaxuan You.
+DeepGym provides a user-friendly toolkit for the benchmark RDBench, which is proposed in *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
 
 
 ### Highlights
