@@ -62,8 +62,6 @@ def set_cfg() -> CfgNode:
     cfg.train.mode = 'standard'
     # Training epochs
     cfg.train.epoch = 200
-    # Training patience, so many epochs without update will be terminated
-    cfg.train.patience = 50
 
     # ----------------------------------------------------------------------- #
     # Model options

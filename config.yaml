@@ -4,19 +4,18 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
-  name: 'rdb3-lahman'
-  file: 'managers'
-  column: 'RankTeam'
-  type: 'graph'
+  name: 'example'
+  file: 'loan'
+  column: 'Status'
+  type: 'single'
 
 train:
   mode: 'standard'
   epoch: 200
-  patience: 5
 
 model:
-  type: 'GNN'
-  subtype: 'GCN'
+  type: 'MLP'
+  subtype: ''
   hidden_dim: 16
   layer: 2
   head: 4

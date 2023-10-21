@@ -14,19 +14,21 @@ from dbgym.train import train, train_xgboost
 
 
 if __name__ == '__main__':
-    start = time.time()
+    st = time.time()
     args, cfg = get_config()
     seed_everything(cfg.seed)
-    logger = Logger(cfg.log_dir)
-    t = time.time()
+    logger = Logger(cfg)
+    start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
+    logger.log(f"Start time: {start}")
     dataset = create_dataset(cfg)
-    print(f"Dataset Use time: {time.time() - t} s")
     model = create_model(cfg, dataset)
     if cfg.model.type == 'XGBoost':
-        train_xgboost(dataset, model, cfg)
+        train_xgboost(dataset, model, logger, cfg)
     else:
         optimizer = create_optimizer(cfg, model.parameters())
         scheduler = create_scheduler(cfg, optimizer)
         train(dataset, model, optimizer, scheduler, logger, cfg)
-        logger.close()
-    print(f"Use time: {time.time() - start} s")
+    end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
+    logger.log(f"End time: {end}")
+    logger.log(f"Use time: {time.time() - st:.4f} s")
+    logger.close()

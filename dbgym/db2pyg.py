@@ -35,7 +35,6 @@ class DB2PyG:
 
         self.mask = {}
         self.split()
-        print("Done initialisation.")
 
     def init_node(self):
         """
@@ -44,7 +43,6 @@ class DB2PyG:
 
         hetero = self.hetero
 
-        start = time.time()
         names = list(self.db.tables.keys())
         names.remove(self.table)
         names.insert(0, self.table)
@@ -93,8 +91,6 @@ class DB2PyG:
                 self.lookup_table[name] = dict(zip(keys, values))
                 self.duplicate[name] = False
 
-        print(f'Node use time: {time.time() - start} s')
-
     def init_edge(self):
         """
         Construct heterogeneous graph edges
@@ -104,7 +100,6 @@ class DB2PyG:
         lookup_table = self.lookup_table
         duplicate = self.duplicate
 
-        start = time.time()
         # create edges in the graph
         for name, table in self.db.tables.items():
             keys = table.get_keys()
@@ -145,8 +140,6 @@ class DB2PyG:
                     hetero[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
                 else:
                     hetero[key, "to", name].edge_index = edge_index
-
-        print(f'Edge use time: {time.time() - start} s')
 
     def split(self, seed=None):
         """

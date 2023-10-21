@@ -1,26 +1,33 @@
 '''
 logger.py
-The logging function, log everything.
+The logger module, log everything.
 '''
 
 import time
 import os
+from yacs.config import CfgNode
 from torch.utils.tensorboard.writer import SummaryWriter
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
 
-def to_txt(path:str):
-    log_directory = path
+def to_text(path: str):
+    """
+    To text function, from logger to text
+    """
 
-    subdirectories = [f.path for f in os.scandir(log_directory) if f.is_dir()]
+    log_dir = path
 
-    subdirectories.append(log_directory)
+    directories = [f.path for f in os.scandir(log_dir) if f.is_dir()]
+    directories.append(log_dir)
     info_dict = {}
 
-    for path in subdirectories:
+    for directory in directories:
         # Create an EventAccumulator for the log directory
-        prefix = "" if path == log_directory else path.rstrip("/").split("/")[-1] + "_"
-        event_accumulator = EventAccumulator(path)
+        if directory == log_dir:
+            prefix = None
+        else:
+            prefix = directory.rstrip("/").split("/")[-1].split("_")[1]
+        event_accumulator = EventAccumulator(directory)
 
         # Initialize the event accumulator
         event_accumulator.Reload()
@@ -30,25 +37,46 @@ def to_txt(path:str):
 
         # Access and process data for a specific tag
         for tag in tags:
+            if prefix:
+                name = f"{prefix} {tag}"
+            else:
+                name = tag
             data = event_accumulator.Scalars(tag)
-            print(f"Reading: {prefix + tag}")
             for scalar in data:
-                step = scalar.step
+                epoch = scalar.step
                 value = scalar.value
-                info_dict[step].append([prefix+tag, value]) if step in info_dict else info_dict.update({step: [[prefix+tag, value]]})
-    with open(f"{log_directory}/log.txt", "w") as f:
-        for step in info_dict:
-            f.write(f"Step: {step}\n")
-            for tag, value in info_dict[step]:
-                f.write(f"Tag: {tag}, Value: {value}\n")
+                if epoch in info_dict:
+                    info_dict[epoch].append([name, value])
+                else:
+                    info_dict.update({epoch: [[name, value]]})
+
+    with open(f"{log_dir}/log.txt", "w", encoding='utf-8') as f:
+        for epoch, dic in info_dict.items():
+            f.write(f"epoch: {epoch}\n")
+            for tag, value in dic:
+                f.write(f"{tag}: {value}\n")
             f.write("\n")
         f.flush()
 
+
 class Logger:
-    def __init__(self, log_dir='logs'):
-        self.log_dir = log_dir
-        current_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
-        self.writer = SummaryWriter(log_dir=f'{log_dir}-{current_time}')
+    """
+    The logger module, log everything.
+    """
+
+    def __init__(self, cfg: CfgNode):
+        log_dir = cfg.log_dir
+        dataset = cfg.dataset.name
+        t = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+        if cfg.model.subtype == '':
+            model = cfg.model.type
+        else:
+            model = cfg.model.subtype
+        task = cfg.dataset.file + '_' + cfg.dataset.column + '_' + model + '_' + t
+        self.path = os.path.join(log_dir, dataset, task)
+        self.file = self.path + '.txt'
+        self.writer = SummaryWriter(self.path)
+        self.logs = []
 
     def log_scalar(self, tag, value, step):
         self.writer.add_scalar(tag, value, step)
@@ -62,9 +90,17 @@ class Logger:
     def log_image(self, tag, image, step, dataformats='CHW'):
         self.writer.add_image(tag, image, step, dataformats)
 
+    def log(self, log):
+        self.logs.append(log)
+
+    def flush(self):
+        with open(self.file, '+a', encoding='utf-8') as f:
+            for log in self.logs:
+                f.write(f'{log}\n')
+        self.logs = []
+
     def close(self):
         self.writer.flush()
         self.writer.close()
-
-if __name__ == "__main__":
-    to_txt(".")
+        self.flush()
+        to_text(self.path)
