@@ -5,7 +5,8 @@ The entry of DBGym reposity.
 
 import time
 from dbgym.config import get_config
-from dbgym.utils import seed_everything
+from dbgym.utils.device import auto_select_device
+from dbgym.utils.seed import seed_everything
 from dbgym.logger import Logger
 from dbgym.dataset import create_dataset
 from dbgym.model import create_model
@@ -17,6 +18,8 @@ if __name__ == '__main__':
     st = time.time()
     args, cfg = get_config()
     seed_everything(cfg.seed)
+    auto_select_device(cfg)
+    # cfg.device = 'cpu'
     logger = Logger(cfg)
     start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
     logger.log(f"Start time: {start}")

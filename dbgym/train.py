@@ -17,9 +17,9 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
 
     start = time.time()
     if cfg.model.type in ('GNN', 'HGNN'):
-        data = dataset.hetero
+        data = dataset.hetero.to(torch.device(cfg.device))
     elif cfg.model.type == 'MLP':
-        data = dataset
+        data = dataset.to(torch.device(cfg.device))
     else:
         raise NotImplementedError
     y = data.y
@@ -27,7 +27,7 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
 
     results = [0, -1e8, 0]
     for epoch in range(cfg.train.epoch):
-        logger.log(f"Epoch {epoch}:")
+        t = time.time()
         model.train()
         optimizer.zero_grad()
         output = model(data)
@@ -41,6 +41,7 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
         optimizer.step()
         scheduler.step()
 
+        logger.log(f"Epoch {epoch} / {cfg.train.epoch}: Use time {time.time() - t:.4f} s")
         if cfg.model.output_dim > 1:
             if vs > results[1]:
                 results = [score, vs, ts]

@@ -3,7 +3,6 @@ db2pyg.py
 Module to transform database into graph.
 """
 
-import time
 import torch
 import numpy as np
 from dbgym.db import DataBase

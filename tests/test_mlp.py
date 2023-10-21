@@ -10,7 +10,7 @@ sys.path.append("")
 
 from dbgym.loss import compute_loss
 from dbgym.config import get_config
-from dbgym.utils import seed_everything
+from dbgym.utils.seed import seed_everything
 from dbgym.logger import Logger
 from dbgym.dataset import create_dataset
 from dbgym.model import create_model

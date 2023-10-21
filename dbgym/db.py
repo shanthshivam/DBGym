@@ -413,3 +413,12 @@ class Tabular:
         indices = torch.randperm(sizes[3])
         for i, name in enumerate(names):
             self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+
+    def to(self, device):
+        """
+        to device
+        """
+        self.x_c = self.x_c.to(device)
+        self.x_d = self.x_d.to(device)
+        self.y = self.y.to(device)
+        return self

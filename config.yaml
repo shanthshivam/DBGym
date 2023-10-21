@@ -4,20 +4,20 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
-  name: 'example'
-  file: 'loan'
-  column: 'Status'
-  type: 'single'
+  name: 'rdb1-seznam'
+  file: 'charge'
+  column: 'ChargeService'
+  type: 'graph'
 
 train:
   mode: 'standard'
   epoch: 200
 
 model:
-  type: 'MLP'
-  subtype: ''
-  hidden_dim: 16
-  layer: 2
+  type: 'GNN'
+  subtype: 'GCN'
+  hidden_dim: 128
+  layer: 4
   head: 4
 
 optim:

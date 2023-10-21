@@ -1,6 +1,6 @@
 """
-utils.py
-This module contains some utility functions.
+seed.py
+This module contains some seed functions.
 """
 
 import os
