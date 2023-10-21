@@ -4,12 +4,10 @@ DataBase module.
 """
 
 import os
-import re
 from typing import Dict, List, Any
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
-from yacs.config import CfgNode
 import torch
 
 MISSING_INT = -114514
@@ -166,7 +164,7 @@ class Table:
                     dtype = 'int64'
             elif dtype == 'object':
                 try:
-                    pd.to_datetime(self.df[col][self.df[col].first_valid_index()])
+                    pd.to_datetime(self.df[col][self.df[col].first_valid_index()], dayfirst=True)
                     dtype = 'time'
                 except Exception:
                     dtype = 'category'

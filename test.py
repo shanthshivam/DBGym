@@ -10,9 +10,9 @@ from deepgym.db2pyg import DB2PyG
 
 if __name__ == '__main__':
     DATA_DIR = 'Datasets/'
-    NAME = 'financial'
+    NAME = 'example'
     CSV = 'loan'
-    COL = 'status'
+    COL = 'Status'
     print(f'Loading dataset {NAME}, please wait patiently.')
     start = time.time()
     path = os.path.join(DATA_DIR, NAME)
@@ -21,6 +21,4 @@ if __name__ == '__main__':
     db.prepare_encoder()
     converter = DB2PyG(db, CSV, COL)
     print(converter.hetero)
-    print(converter.homo)
-    converter.split(42)
     print(f"Load time: {time.time() - start} s")

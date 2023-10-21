@@ -3,7 +3,7 @@ db2pyg.py
 Module to transform database into graph.
 """
 
-import re
+import time
 import torch
 import numpy as np
 from deepgym.db import DataBase
@@ -43,6 +43,7 @@ class DB2PyG:
 
         hetero = self.hetero
 
+        start = time.time()
         names = list(self.db.tables.keys())
         names.remove(self.table)
         names.insert(0, self.table)
@@ -77,10 +78,15 @@ class DB2PyG:
 
             # set up look up table
             keys = table.df["_" + name].to_list()
-            values = list(range(0, len(keys)))
-            self.lookup_table[name] = dict(zip(keys, values))
+            lookup_dict = {}
+            for i, key in enumerate(keys):
+                if key in lookup_dict:
+                    lookup_dict[key].append(i)
+                else:
+                    lookup_dict[key] = [i]
+            self.lookup_table[name] = lookup_dict
 
-        return hetero
+        print(f'Node use time: {time.time() - start} s')
 
     def init_edge(self):
         """
@@ -90,34 +96,37 @@ class DB2PyG:
         hetero = self.hetero
         lookup_table = self.lookup_table
 
+        start = time.time()
         # create edges in the graph
         for name, table in self.db.tables.items():
             keys = table.get_keys()
             if len(keys) == 1:
                 continue
-            edge_matrix = self.db.tables[name].df[keys].values.T
 
-            for i, key in enumerate(keys):
-                key = key[1:]
-                if '.' in key:
-                    key = key.split('.')[0]
-                edge_matrix[i] = np.vectorize(lookup_table[key].get)(edge_matrix[i])
-                if i == 0:
-                    continue
-                edge_index = edge_matrix[[0, i]]
-                edge_index = edge_index[:, np.all(edge_index != None, axis=0)]
-                edge_index = torch.from_numpy(edge_index.astype(int))
-                if hetero[name, "to", key].num_edges:
-                    index = hetero[name, "to", key].edge_index
-                    hetero[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
+            length = len(self.db.tables[name].df)
+            for key in keys[1:]:
+                k = key[1:]
+                if '.' in k:
+                    k = k.split('.')[0]
+                edge_index = [[], []]
+                lut = lookup_table[k]
+                for i in range(length):
+                    if table.df[key][i] in lut:
+                        edge_index[0] += len(lut[table.df[key][i]]) * [i]
+                        edge_index[1] += lut[table.df[key][i]]
+                edge_index = torch.tensor(edge_index)
+                if hetero[name, "to", k].num_edges:
+                    index = hetero[name, "to", k].edge_index
+                    hetero[name, "to", k].edge_index = torch.cat([index, edge_index], dim=1)
                 else:
-                    hetero[name, "to", key].edge_index = edge_index
+                    hetero[name, "to", k].edge_index = edge_index
                 edge_index = edge_index[[1, 0]]
-                if hetero[key, "to", name].num_edges:
-                    index = hetero[key, "to", name].edge_index
-                    hetero[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
+                if hetero[k, "to", name].num_edges:
+                    index = hetero[k, "to", name].edge_index
+                    hetero[k, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
                 else:
-                    hetero[key, "to", name].edge_index = edge_index
+                    hetero[k, "to", name].edge_index = edge_index
+        print(f'Edge use time: {time.time() - start} s')
 
     def split(self, seed=None):
         """

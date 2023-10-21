@@ -51,8 +51,6 @@ def set_cfg() -> CfgNode:
     cfg.dataset.file = 'loan'
     # Target column
     cfg.dataset.column = 'status'
-    # Task type: classification or regression
-    cfg.dataset.task = 'classification'
     # Dataset type: single, join or graph
     cfg.dataset.type = 'graph'
 

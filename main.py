@@ -18,7 +18,9 @@ if __name__ == '__main__':
     args, cfg = get_config()
     seed_everything(cfg.seed)
     logger = Logger(cfg.log_dir)
+    t = time.time()
     dataset = create_dataset(cfg)
+    print(f"Dataset Use time: {time.time() - t} s")
     model = create_model(cfg, dataset)
     if cfg.model.type == 'XGBoost':
         train_xgboost(dataset, model, cfg)

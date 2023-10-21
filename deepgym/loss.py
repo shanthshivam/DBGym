@@ -23,7 +23,7 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
     pred = pred.squeeze(-1) if pred.ndim > 1 else pred
     true = true.squeeze(-1) if true.ndim > 1 else true
 
-    if cfg.dataset.task == 'classification':
+    if cfg.model.output_dim > 1:
         criterion = torch.nn.CrossEntropyLoss()
         pred = pred.float()
         true = true.long()
@@ -33,7 +33,7 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
         loss = criterion(pred, true)
         accuracy = (pred.argmax(dim=1) == true).float().mean().item()
         return loss, accuracy
-    if cfg.dataset.task == 'regression':
+    if cfg.model.output_dim == 1:
         criterion = torch.nn.MSELoss()
         pred = pred.float()
         true = true.float()
@@ -41,4 +41,3 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
         if cfg.model.type == 'XGBoost':
             return loss.detach()
         return loss, loss.detach()
-    raise ValueError("task must be either classification or regression.")
