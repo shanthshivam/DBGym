@@ -32,7 +32,7 @@ DeepGym provides a user-friendly toolkit for the benchmark RDBench, which is pro
 
 **1. Proposed Datasets**
 <div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/DB2.pdf" width="400px" />
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/DB2.pdf" width="400px" />
   <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
 </div>
 
