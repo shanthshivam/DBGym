@@ -1,23 +1,23 @@
-# Example Configuration File for Your Experiment
+# Test Configuration File for CI CD
 
 seed: 42
 log_dir: 'logs'
 
 dataset:
-  data_dir: "Datasets/"
-  name: 'rdb1-seznam'
-  file: 'charge'
-  column: 'ChargeService'
-  type: 'graph'
+  data_dir: 'tests/Datasets/'
+  name: 'example'
+  file: 'loan'
+  column: 'Status'
+  type: 'single'
   url: 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
 
 train:
   mode: 'standard'
-  epoch: 200
+  epoch: 50
 
 model:
-  type: 'ResNet'
-  subtype: ''
+  type: 'MLP'
+  subtype: 'GCN'
   hidden_dim: 128
   layer: 4
   head: 4

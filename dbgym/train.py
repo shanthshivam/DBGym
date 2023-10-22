@@ -78,6 +78,7 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
         logger.log(f"Final Train Mean Squared Error: {results[0]:.3f}")
         logger.log(f"Final Valid Mean Squared Error: {results[1]:.3f}")
         logger.log(f"Final Test Mean Squared Error: {results[2]:.3f}")
+    return results
 
 
 def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode):

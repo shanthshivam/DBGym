@@ -4,17 +4,19 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
+  data_dir: 'tests/Datasets/'
   name: 'example'
   file: 'loan'
   column: 'Status'
-  type: 'single'
+  type: 'join'
+  url: 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
 
 train:
   mode: 'standard'
-  epoch: 200
+  # epoch: 50
 
 model:
-  type: 'MLP'
+  type: 'XGBoost'
   subtype: 'GCN'
   hidden_dim: 128
   layer: 4
