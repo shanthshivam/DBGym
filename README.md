@@ -3,6 +3,10 @@ DBGym is a platform designed to facilitate hierarchical, robust, and reproducibl
 relational databases.
 DBGym provides a user-friendly toolkit for the benchmark RDBench, which is proposed in *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
 
+<div align="center">
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/Overview.png" width="1000px" />
+  <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
+</div>
 
 ### Highlights
 
@@ -31,13 +35,11 @@ DBGym provides a user-friendly toolkit for the benchmark RDBench, which is propo
 ## What is DBGym?
 
 **1. Proposed Datasets**
-<div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/Overview.png" width="1000px" />
-  <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
-</div>
+
+
 
 <div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/DB2.png" width="1000px" />
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/DB2.png" width="900px" />
   <b><br>Figure 2: The procedure transforming relational databases to graphs.</b>
 </div>
 
