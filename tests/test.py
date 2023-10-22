@@ -35,6 +35,7 @@ class TestDataset(unittest.TestCase):
         GNN test function.
         """
 
+        t = time.time()
         cfg = get_config(config_path="tests/test_config_gnn.yaml")[1]
         seed_everything(cfg.seed)
         auto_select_device(cfg)
@@ -65,7 +66,7 @@ class TestDataset(unittest.TestCase):
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
-        logger.log(f"Use time: {time.time() - start:.4f} s")
+        logger.log(f"Use time: {time.time() - t:.4f} s")
         logger.close()
 
     def test_mlp(self):
@@ -73,6 +74,7 @@ class TestDataset(unittest.TestCase):
         MLP test function.
         """
 
+        t = time.time()
         cfg = get_config(config_path="tests/test_config_mlp.yaml")[1]
         seed_everything(cfg.seed)
         auto_select_device(cfg)
@@ -103,7 +105,7 @@ class TestDataset(unittest.TestCase):
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
-        logger.log(f"Use time: {time.time() - start:.4f} s")
+        logger.log(f"Use time: {time.time() - t:.4f} s")
         logger.close()
 
     def test_xgboost(self):
@@ -111,6 +113,7 @@ class TestDataset(unittest.TestCase):
         XGBoost test function.
         """
 
+        t = time.time()
         cfg = get_config(config_path="tests/test_config_xgboost.yaml")[1]
         seed_everything(cfg.seed)
         auto_select_device(cfg)
@@ -136,5 +139,5 @@ class TestDataset(unittest.TestCase):
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
-        logger.log(f"Use time: {time.time() - start:.4f} s")
+        logger.log(f"Use time: {time.time() - t:.4f} s")
         logger.close()

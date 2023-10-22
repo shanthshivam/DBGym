@@ -4,9 +4,9 @@ This module contains dataset function.
 """
 
 import os
-import requests
 import zipfile
 import shutil
+import requests
 from dbgym.db import DataBase, Tabular
 from dbgym.db2pyg import DB2PyG
 from yacs.config import CfgNode
@@ -76,8 +76,10 @@ def create_dataset(cfg: CfgNode):
     path = os.path.join(data_dir, cfg.dataset.name)
 
     if cfg.dataset.name != 'example' and not os.path.exists(path):
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
         # Download dataset if it doesn't exist
-        link = cfg.dataset.url 
+        link = 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
         print(f"Downloading dataset from {link}...")
         download_dataset(link, data_dir)
         print("Dataset downloaded successfully.")
