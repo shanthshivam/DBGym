@@ -73,7 +73,7 @@ def create_dataset(cfg: CfgNode):
     '''
 
     data_dir = cfg.dataset.data_dir
-    path = os.path.join(data_dir)
+    path = os.path.join(data_dir, cfg.dataset.name)
 
     # Download dataset if it doesn't exist
     if not os.path.exists(path):
