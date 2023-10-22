@@ -4,6 +4,7 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
+  dir: 'Datasets'
   name: 'rdb1-seznam'
   file: 'charge'
   column: 'ChargeService'

@@ -46,6 +46,8 @@ def set_cfg() -> CfgNode:
     # Dataset options
     # ----------------------------------------------------------------------- #
     cfg.dataset = CfgNode()
+    # Directory of the dataset
+    cfg.dataset.dir = 'Datasets/'
     # Name of the dataset
     cfg.dataset.name = 'financial'
     # Target file

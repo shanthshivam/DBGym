@@ -10,7 +10,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name="dbgym",
-    version="0.1.0",
+    version="0.1.1",
     author="Jiaxuan You",
     author_email="jiaxuan@cs.stanford.edu",
     description="DBGym: platform for relational database benchmark RDBench",

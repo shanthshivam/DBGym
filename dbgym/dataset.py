@@ -20,7 +20,7 @@ def create_dataset(cfg: CfgNode):
     - dataset: Tabular, DB2PyG or others
     '''
 
-    data_dir = "Datasets/"
+    data_dir = cfg.dataset.dir
     path = os.path.join(data_dir, cfg.dataset.name)
     if cfg.dataset.type == 'single':
         tb = Tabular(path, cfg.dataset.file, cfg.dataset.column)
