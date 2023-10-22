@@ -9,7 +9,6 @@ dataset:
   file: 'loan'
   column: 'Status'
   type: 'single'
-  url: 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
 
 train:
   mode: 'standard'
