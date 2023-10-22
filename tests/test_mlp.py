@@ -96,7 +96,7 @@ class TestDataset(unittest.TestCase):
 
     def test_mlp(self):
         st = time.time()
-        self.args, self.cfg = get_config()
+        self.args, self.cfg = get_config(config_path="tests/test_config.yaml")
         seed_everything(self.cfg.seed)
         self.logger = Logger(self.cfg)
         start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
@@ -125,7 +125,6 @@ class TestDataset(unittest.TestCase):
         #  If the model's results on the training set, validation set, and test set are all greater than 0.65 
         #  (random guessing is 0.5), it indicates that the model has learned knowledge.
 
-        train(dataset, model, optimizer, scheduler, logger, cfg)
         result = perform(self.dataset, self.model, self.optimizer, self.scheduler, self.logger, self.cfg)
         self.assertTrue(result[0] > 0.65)
         self.assertTrue(result[1] > 0.65)
