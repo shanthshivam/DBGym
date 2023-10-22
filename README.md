@@ -39,7 +39,7 @@ DBGym provides a user-friendly toolkit for the benchmark RDBench, which is propo
 
 
 <div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/DB2.png" width="900px" />
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/DB2Graph.png" width="900px" />
   <b><br>Figure 2: The procedure transforming relational databases to graphs.</b>
 </div>
 

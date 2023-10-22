@@ -80,6 +80,7 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
         logger.log(f"Final Train Mean Squared Error: {results[0]:.3f}")
         logger.log(f"Final Valid Mean Squared Error: {results[1]:.3f}")
         logger.log(f"Final Test Mean Squared Error: {results[2]:.3f}")
+
     return results
 
 
@@ -92,6 +93,7 @@ def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode):
     y = dataset.y
     mask = dataset.mask
     model.fit(x[mask['train']], y[mask['train']])
+    results = []
     for split in ['train', 'valid', 'test']:
         y_pred = torch.tensor(model.predict(x[mask[split]]))
         y_true = y[mask[split]]
@@ -100,4 +102,6 @@ def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode):
             logger.log(f"{split.capitalize()} Accuracy: {score:.2%}")
         elif cfg.model.output_dim == 1:
             logger.log(f"{split.capitalize()} Mean Squared Error: {score:.3f}")
-    logger.flush()
+        results.append(score)
+
+    return results
