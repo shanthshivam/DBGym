@@ -56,12 +56,12 @@ class TestDataset(unittest.TestCase):
         self.assertIsInstance(scheduler,optim.lr_scheduler.CosineAnnealingLR)
 
         # 3 Test the training, validation, and test process.
-        # If the model's results on the train, valid, and test set are all greater than 0.65
-        # (random guessing is 0.5), the performance of model is normal.
+        # If the model's results on the train, valid, and test set are all greater than 0.5
+        # (random guessing is 0.25), the performance of model is normal.
         results = train(dataset, model, optimizer, scheduler, logger, cfg)
-        self.assertTrue(results[0] > 0.65)
-        self.assertTrue(results[1] > 0.65)
-        self.assertTrue(results[2] > 0.65)
+        self.assertTrue(results[0] > 0.5)
+        self.assertTrue(results[1] > 0.5)
+        self.assertTrue(results[2] > 0.5)
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
@@ -94,12 +94,12 @@ class TestDataset(unittest.TestCase):
         self.assertIsInstance(scheduler,optim.lr_scheduler.CosineAnnealingLR)
 
         # 3 Test the training, validation, and test process.
-        # If the model's results on the train, valid, and test set are all greater than 0.65
-        # (random guessing is 0.5), the performance of model is normal.
+        # If the model's results on the train, valid, and test set are all greater than 0.5
+        # (random guessing is 0.25), the performance of model is normal.
         results = train(dataset, model, optimizer, scheduler, logger, cfg)
-        self.assertTrue(results[0] > 0.65)
-        self.assertTrue(results[1] > 0.65)
-        self.assertTrue(results[2] > 0.65)
+        self.assertTrue(results[0] > 0.5)
+        self.assertTrue(results[1] > 0.5)
+        self.assertTrue(results[2] > 0.5)
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
@@ -127,12 +127,12 @@ class TestDataset(unittest.TestCase):
         model = create_model(cfg, dataset)
 
         # 3 Test the training, validation, and test process.
-        # If the model's results on the train, valid, and test set are all greater than 0.65
-        # (random guessing is 0.5), the performance of model is normal.
+        # If the model's results on the train, valid, and test set are all greater than 0.5
+        # (random guessing is 0.25), the performance of model is normal.
         results = train_xgboost(dataset, model, logger, cfg)
-        self.assertTrue(results[0] > 0.65)
-        self.assertTrue(results[1] > 0.65)
-        self.assertTrue(results[2] > 0.65)
+        self.assertTrue(results[0] > 0.5)
+        self.assertTrue(results[1] > 0.5)
+        self.assertTrue(results[2] > 0.5)
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
