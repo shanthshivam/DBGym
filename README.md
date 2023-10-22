@@ -32,12 +32,12 @@ DBGym provides a user-friendly toolkit for the benchmark RDBench, which is propo
 
 **1. Proposed Datasets**
 <div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/DB2.png" width="400px" />
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/Overview.png" width="1000px" />
   <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
 </div>
 
 <div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/DB2.png" width="400px" />
+  <img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/DB2.png" width="1000px" />
   <b><br>Figure 2: The procedure transforming relational databases to graphs.</b>
 </div>
 
