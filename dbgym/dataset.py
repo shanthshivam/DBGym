@@ -7,6 +7,7 @@ import os
 import zipfile
 import shutil
 import requests
+from tqdm import tqdm
 from dbgym.db import DataBase, Tabular
 from dbgym.db2pyg import DB2PyG
 from yacs.config import CfgNode
@@ -18,21 +19,27 @@ def download_dataset(url, folder):
     and moves the subfolders within the extracted folder to the parent folder.
 
     Args:
-        url (str): The URL of the ZIP file to download.
-        folder (str): The path to the folder where the ZIP file will be saved and extracted.
-
-    Returns:
-        None
+    - url (str): The URL of the ZIP file to download.
+    - folder (str): The path to the folder where the ZIP file will be saved and extracted.
     """
+
     # Download the ZIP file
-    response = requests.get(url)
+    response = requests.get(url, stream=True, timeout=15)
     if response.status_code == 200:
         # Construct the path to save the ZIP file
         zip_path = os.path.join(folder, 'dataset.zip')
 
+        fmat = "{l_bar}{bar}| {n_fmt}/{total_fmt}, {elapsed}<{remaining}, {rate_fmt}{postfix}"
+        progress_bar = tqdm(total=95025233, unit="B", unit_scale=True, bar_format=fmat)
+        downloaded_size = 0
+
         # Save the ZIP content to a local file
-        with open(zip_path, 'wb') as file:
-            file.write(response.content)
+        with open(zip_path, "wb") as file:
+            for data in response.iter_content(chunk_size=1024):
+                downloaded_size += len(data)
+                progress_bar.update(len(data))
+                file.write(data)
+        progress_bar.close()
 
         # Extract the ZIP file
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
@@ -43,12 +50,12 @@ def download_dataset(url, folder):
 
         print('ZIP file downloaded and extracted to the specified folder.')
 
-        # Get the parent folder of folder_A
+        # Get the parent folder of folder_a
         parent_folder = folder
-        folder_A = os.path.join(folder, "RDBench-Dataset-master")
+        folder_a = os.path.join(folder, "RDBench-Dataset-master")
 
-        # Get all subfolders within folder_A
-        subfolders = [f.path for f in os.scandir(folder_A) if f.is_dir()]
+        # Get all subfolders within folder_a
+        subfolders = [f.path for f in os.scandir(folder_a) if f.is_dir()]
 
         # Move the subfolders to the parent folder
         for subfolder in subfolders:
@@ -56,9 +63,11 @@ def download_dataset(url, folder):
             new_location = os.path.join(parent_folder, subfolder_name)  # New path of the subfolder
             shutil.move(subfolder, new_location)
 
+        old_name = os.path.join(folder, "RDBench-Dataset-master")
+        new_name = os.path.join(folder, "info")
+        os.rename(old_name, new_name)
     else:
         print('Failed to download the ZIP file. Please check the URL.')
-
 
 
 def create_dataset(cfg: CfgNode):
