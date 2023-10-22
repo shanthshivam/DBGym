@@ -72,15 +72,16 @@ def create_dataset(cfg: CfgNode):
     - dataset: Tabular, DB2PyG or others
     '''
 
-    data_dir = cfg.dataset.data_dir
-    path = os.path.join(data_dir, cfg.dataset.name)
+    if cfg.dataset.name != 'example':
+        data_dir = cfg.dataset.data_dir
+        path = os.path.join(data_dir, cfg.dataset.name)
 
-    # Download dataset if it doesn't exist
-    if not os.path.exists(path):
-        link = cfg.dataset.url 
-        print(f"Downloading dataset from {link}...")
-        download_dataset(link, path)
-        print("Dataset downloaded successfully.")
+        # Download dataset if it doesn't exist
+        if not os.path.exists(path):
+            link = cfg.dataset.url 
+            print(f"Downloading dataset from {link}...")
+            download_dataset(link, path)
+            print("Dataset downloaded successfully.")
 
     if cfg.dataset.type == 'single':
         tb = Tabular(path, cfg.dataset.file, cfg.dataset.column)
