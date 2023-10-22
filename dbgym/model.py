@@ -9,6 +9,7 @@ from dbgym.models.gnn import GNN
 from dbgym.models.heterognn import HeteroGNN
 from dbgym.models.mlp import MLP
 from dbgym.models.xgb import xgb
+from dbgym.register import dbgym_dict
 
 
 def create_model(cfg: CfgNode, dataset):
@@ -23,6 +24,12 @@ def create_model(cfg: CfgNode, dataset):
     - model: The model
     '''
 
+    graph_models = dbgym_dict['graph_model']
+    if cfg.model.type in graph_models:
+        return graph_models[cfg.model.type](cfg, dataset.hetero).to(torch.device(cfg.device))
+    tabular_models = dbgym_dict['tabular_model']
+    if cfg.model.type in tabular_models:
+        return tabular_models[cfg.model.type](cfg, dataset).to(torch.device(cfg.device))
     if cfg.model.type == "GNN":
         return GNN(cfg, dataset.hetero).to(torch.device(cfg.device))
     if cfg.model.type == "HGNN":

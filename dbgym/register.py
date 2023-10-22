@@ -5,17 +5,19 @@ This module contains some register functions.
 
 from typing import Any, Dict
 
-graphgym_dict: Dict[str, Dict] = {}
+dbgym_dict: Dict[str, Dict] = {}
 act_dict: Dict[str, Any] = {}
-graphgym_dict['act'] = act_dict
-model_dict: Dict[str, Any] = {}
-graphgym_dict['model'] = model_dict
+dbgym_dict['act'] = act_dict
+graph_model_dict: Dict[str, Any] = {}
+dbgym_dict['graph_model'] = graph_model_dict
+tabular_model_dict: Dict[str, Any] = {}
+dbgym_dict['tabular_model'] = tabular_model_dict
 optimizer_dict: Dict[str, Any] = {}
-graphgym_dict['optimizer'] = optimizer_dict
+dbgym_dict['optimizer'] = optimizer_dict
 scheduler_dict: Dict[str, Any] = {}
-graphgym_dict['scheduler'] = scheduler_dict
+dbgym_dict['scheduler'] = scheduler_dict
 loss_dict: Dict[str, Any] = {}
-graphgym_dict['loss'] = loss_dict
+dbgym_dict['loss'] = loss_dict
 
 
 def register(key: str, name: str, module: Any):
@@ -28,4 +30,4 @@ def register(key: str, name: str, module: Any):
     - module (Any): The module
     """
 
-    graphgym_dict[key][name] = module
+    dbgym_dict[key][name] = module
