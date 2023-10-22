@@ -25,6 +25,7 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
     y = data.y
     mask = dataset.mask
 
+    logger.log(f"Device: {cfg.device}")
     results = [0, -1e8, 0]
     for epoch in range(cfg.train.epoch):
         t = time.time()

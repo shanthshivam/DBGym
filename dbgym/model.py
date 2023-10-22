@@ -38,4 +38,4 @@ def create_model(cfg: CfgNode, dataset):
         return MLP(cfg, dataset).to(torch.device(cfg.device))
     if cfg.model.type == "XGBoost":
         return xgb(cfg, dataset)
-    raise ValueError(f"Model not supported: {cfg.model}")
+    raise ValueError(f"Model not supported: {cfg.model.type}")

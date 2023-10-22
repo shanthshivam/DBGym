@@ -6,5 +6,5 @@ torch>=2.0
 torch_geometric>=2.3
 xgboost>=1.7
 tensorboard>=2.14
-yacs>=0.1
+yacs>=0.1.8
 requests>=2.28

@@ -8,15 +8,15 @@ dataset:
   name: 'rdb1-seznam'
   file: 'charge'
   column: 'ChargeService'
-  type: 'graph'
+  type: 'single'
 
 train:
   mode: 'standard'
   epoch: 200
 
 model:
-  type: 'GNN'
-  subtype: 'GCN'
+  type: 'ResNet'
+  subtype: ''
   hidden_dim: 128
   layer: 4
   head: 4
