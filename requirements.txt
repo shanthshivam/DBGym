@@ -9,3 +9,4 @@ xgboost>=1.7.6
 tensorboard>=2.14.1
 pandas>=1.5.3
 yacs>=0.1.8
+requests>=2.31.0

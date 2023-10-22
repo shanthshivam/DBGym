@@ -46,6 +46,7 @@ def set_cfg() -> CfgNode:
     # Dataset options
     # ----------------------------------------------------------------------- #
     cfg.dataset = CfgNode()
+    cfg.dataset.data_dir = "Datasets/"
     # Name of the dataset
     cfg.dataset.name = 'financial'
     # Target file
@@ -54,6 +55,7 @@ def set_cfg() -> CfgNode:
     cfg.dataset.column = 'status'
     # Dataset type: single, join or graph
     cfg.dataset.type = 'graph'
+    cfg.dataset.url = 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
 
     # ----------------------------------------------------------------------- #
     # Training options
@@ -103,7 +105,5 @@ def get_config(config_path: str = None) -> Tuple[argparse.Namespace, CfgNode]:
 
     with open(config_path, "r", encoding="utf-8") as f:
         config = CfgNode.load_cfg(f)
-
     cfg.update(config)
-
     return args, cfg
