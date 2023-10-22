@@ -2,6 +2,7 @@ import unittest
 from unittest import TestCase
 
 import time
+import torch
 from torch import optim
 from yacs.config import CfgNode
 
@@ -26,9 +27,9 @@ def perform(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
 
     start = time.time()
     if cfg.model.type in ('GNN', 'HGNN'):
-        data = dataset.hetero
+        data = dataset.hetero.to(torch.device(cfg.device))
     elif cfg.model.type == 'MLP':
-        data = dataset
+        data = dataset.to(torch.device(cfg.device))
     else:
         raise NotImplementedError
     y = data.y
@@ -36,7 +37,7 @@ def perform(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
 
     results = [0, -1e8, 0]
     for epoch in range(cfg.train.epoch):
-        logger.log(f"Epoch {epoch}:")
+        t = time.time()
         model.train()
         optimizer.zero_grad()
         output = model(data)
@@ -50,6 +51,7 @@ def perform(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
         optimizer.step()
         scheduler.step()
 
+        logger.log(f"Epoch {epoch} / {cfg.train.epoch}: Use time {time.time() - t:.4f} s")
         if cfg.model.output_dim > 1:
             if vs > results[1]:
                 results = [score, vs, ts]
@@ -85,8 +87,7 @@ def perform(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
         logger.log(f"Final Train Mean Squared Error: {results[0]:.3f}")
         logger.log(f"Final Valid Mean Squared Error: {results[1]:.3f}")
         logger.log(f"Final Test Mean Squared Error: {results[2]:.3f}")
-
-    return result
+    return results
 
 class TestDataset(unittest.TestCase):
     
@@ -96,7 +97,7 @@ class TestDataset(unittest.TestCase):
 
     def test_mlp(self):
         st = time.time()
-        self.args, self.cfg = get_config()
+        self.args, self.cfg = get_config(config_path="tests/test_config.yaml")
         seed_everything(self.cfg.seed)
         self.logger = Logger(self.cfg)
         start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
@@ -124,13 +125,13 @@ class TestDataset(unittest.TestCase):
         #4.Test the training, validation, and testing process.
         #  If the model's results on the training set, validation set, and test set are all greater than 0.65 
         #  (random guessing is 0.5), it indicates that the model has learned knowledge.
-        
-        result = perform(self.dataset, self.model, self.optimizer, self.scheduler, self.logger, self.cfg)
-        self.assertTrue(result['train'] > 0.65)
-        self.assertTrue(result['valid'] > 0.65)
-        self.assertTrue(result['test'] > 0.65)
 
-        self.logger.close()
+        result = perform(self.dataset, self.model, self.optimizer, self.scheduler, self.logger, self.cfg)
+        self.assertTrue(result[0] > 0.65)
+        self.assertTrue(result[1] > 0.65)
+        self.assertTrue(result[2] > 0.65)
+
+
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         self.logger.log(f"End time: {end}")
         self.logger.log(f"Use time: {time.time() - st:.4f} s")

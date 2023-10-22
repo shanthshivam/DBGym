@@ -82,21 +82,26 @@ def set_cfg() -> CfgNode:
     cfg.optim.scheduler = 'cos'
 
     return cfg
+    
 
-
-def get_config() -> Tuple[argparse.Namespace, CfgNode]:
+def get_config(config_path: str = None) -> Tuple[argparse.Namespace, CfgNode]:
     """
-    This function gets the configurations use by the experiment.
+    This function gets the configurations used by the experiment.
+
+    Args:
+    - config_path: The path to the configuration file (default: None)
 
     Returns:
-    - args: The arguments use by the experiment.
-    - cfg: The configuration use by the experiment.
+    - args: The arguments used by the experiment.
+    - cfg: The configuration used by the experiment.
     """
 
     args = get_args()
     cfg = set_cfg()
 
-    with open(args.cfg, "r", encoding="utf-8") as f:
+    config_path = config_path if config_path else args.cfg
+
+    with open(config_path, "r", encoding="utf-8") as f:
         config = CfgNode.load_cfg(f)
 
     cfg.update(config)
