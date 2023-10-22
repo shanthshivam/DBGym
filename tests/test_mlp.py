@@ -2,6 +2,7 @@ import unittest
 from unittest import TestCase
 
 import time
+import torch
 from torch import optim
 from yacs.config import CfgNode
 
