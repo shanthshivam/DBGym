@@ -8,6 +8,8 @@ import torch
 from yacs.config import CfgNode
 from dbgym.logger import Logger
 from dbgym.loss import compute_loss
+from dbgym.db import Tabular
+from dbgym.db2pyg import DB2PyG
 
 
 def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
@@ -16,9 +18,9 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
     '''
 
     start = time.time()
-    if cfg.model.type in ('GNN', 'HGNN'):
+    if isinstance(dataset, DB2PyG):
         data = dataset.hetero.to(torch.device(cfg.device))
-    elif cfg.model.type == 'MLP':
+    elif isinstance(dataset, Tabular):
         data = dataset.to(torch.device(cfg.device))
     else:
         raise NotImplementedError
