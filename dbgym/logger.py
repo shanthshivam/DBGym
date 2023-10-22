@@ -77,6 +77,7 @@ class Logger:
         self.file = self.path + '.txt'
         self.writer = SummaryWriter(self.path)
         self.logs = []
+        self.log('Configuration:\n')
 
     def log_scalar(self, tag, value, step):
         self.writer.add_scalar(tag, value, step)

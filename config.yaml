@@ -5,18 +5,18 @@ log_dir: 'logs'
 
 dataset:
   data_dir: "Datasets/"
-  name: 'rdb1-seznam'
-  file: 'charge'
-  column: 'ChargeService'
-  type: 'single'
+  name: 'rdb2-bank'
+  file: 'loan'
+  column: 'Status'
+  type: 'graph'
 
 train:
   mode: 'standard'
   epoch: 200
 
 model:
-  type: 'ResNet'
-  subtype: ''
+  type: 'GNN'
+  subtype: 'GCN'
   hidden_dim: 128
   layer: 4
   head: 4

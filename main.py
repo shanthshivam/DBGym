@@ -15,13 +15,13 @@ from dbgym.train import train, train_xgboost
 
 
 if __name__ == '__main__':
-    st = time.time()
+    t = time.time()
     args, cfg = get_config()
     seed_everything(cfg.seed)
     auto_select_device(cfg)
-    # cfg.device = 'cpu'
     logger = Logger(cfg)
     start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
+    logger.log(cfg.dump())
     logger.log(f"Start time: {start}")
     dataset = create_dataset(cfg)
     model = create_model(cfg, dataset)
@@ -33,5 +33,5 @@ if __name__ == '__main__':
         train(dataset, model, optimizer, scheduler, logger, cfg)
     end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
     logger.log(f"End time: {end}")
-    logger.log(f"Use time: {time.time() - st:.4f} s")
+    logger.log(f"Use time: {time.time() - t:.4f} s")
     logger.close()
