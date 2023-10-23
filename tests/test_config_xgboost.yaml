@@ -1,33 +1,33 @@
-# Test Configuration File for CI CD
+# Test Configuration File for XGBoost CI CD
 
 seed: 42
 log_dir: 'logs'
+device: 'auto'
 
 dataset:
-  data_dir: 'tests/Datasets/'
+  dir: 'tests/Datasets/'
   name: 'example'
   file: 'loan'
   column: 'Status'
-  type: 'join'
+  type: 'tabular'
+  format: 'join'
 
 train:
-  mode: 'standard'
-  # epoch: 50
+  epoch: 200
 
 model:
   type: 'XGBoost'
-  subtype: 'GCN'
+  name: 'XGBoost'
   hidden_dim: 128
+  output_dim: 0
   layer: 4
   head: 4
 
 optim:
   optimizer: 'adam'
   lr: 0.001
-  weight_decay: 0
-  scheduler: 'cos'
-  # for step scheduler
-  milestones: [9,16]
-  lr_decay: 0.1
-  # for SGD optimizer
+  weight_decay: 0.001
   momentum: 0.9
+  scheduler: 'cos'
+  milestones: [30, 60, 90]
+  lr_decay: 0.5

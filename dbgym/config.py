@@ -137,7 +137,8 @@ def set_from_path(path: str) -> CfgNode:
     """
 
     cfg = get_config()
+    print(cfg)
     with open(path, "r", encoding="utf-8") as f:
         config = CfgNode.load_cfg(f)
-    cfg.update(config)
+    cfg.merge_from_other_cfg(config)
     return cfg
