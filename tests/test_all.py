@@ -60,10 +60,10 @@ class TestDataset(unittest.TestCase):
         # 3 Test the training, validation, and test process.
         # If the model's results on the train, valid, and test set are all greater than 0.5
         # (random guessing is 0.25), the performance of model is normal.
-        results = train(dataset, model, optimizer, scheduler, logger, cfg)
-        self.assertTrue(results[0] > 0.5)
-        self.assertTrue(results[1] > 0.5)
-        self.assertTrue(results[2] > 0.5)
+        stats = train(dataset, model, optimizer, scheduler, logger, cfg)
+        self.assertTrue(stats['train'] > 0.5)
+        self.assertTrue(stats['valid'] > 0.5)
+        self.assertTrue(stats['test'] > 0.5)
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
@@ -99,10 +99,10 @@ class TestDataset(unittest.TestCase):
         # 3 Test the training, validation, and test process.
         # If the model's results on the train, valid, and test set are all greater than 0.5
         # (random guessing is 0.25), the performance of model is normal.
-        results = train(dataset, model, optimizer, scheduler, logger, cfg)
-        self.assertTrue(results[0] > 0.5)
-        self.assertTrue(results[1] > 0.5)
-        self.assertTrue(results[2] > 0.5)
+        stats = train(dataset, model, optimizer, scheduler, logger, cfg)
+        self.assertTrue(stats['train'] > 0.5)
+        self.assertTrue(stats['valid'] > 0.5)
+        self.assertTrue(stats['test'] > 0.5)
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
@@ -133,10 +133,10 @@ class TestDataset(unittest.TestCase):
         # 3 Test the training, validation, and test process.
         # If the model's results on the train, valid, and test set are all greater than 0.5
         # (random guessing is 0.25), the performance of model is normal.
-        results = train_xgboost(dataset, model, logger, cfg)
-        self.assertTrue(results[0] > 0.5)
-        self.assertTrue(results[1] > 0.5)
-        self.assertTrue(results[2] > 0.5)
+        stats = train_xgboost(dataset, model, logger, cfg)
+        self.assertTrue(stats['train'] > 0.5)
+        self.assertTrue(stats['valid'] > 0.5)
+        self.assertTrue(stats['test'] > 0.5)
 
         end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
         logger.log(f"End time: {end}")
