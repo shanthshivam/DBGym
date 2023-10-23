@@ -9,7 +9,7 @@ import sys
 import time
 from torch import optim
 
-from dbgym.config import get_config
+from dbgym.config import set_from_path
 from dbgym.utils.device import auto_select_device
 from dbgym.utils.seed import seed_everything
 from dbgym.logger import Logger
@@ -36,7 +36,7 @@ class TestDataset(unittest.TestCase):
         """
 
         t = time.time()
-        cfg = get_config(config_path="tests/test_config_gnn.yaml")[1]
+        cfg = set_from_path("tests/test_config_gnn.yaml")
         seed_everything(cfg.seed)
         auto_select_device(cfg)
 
@@ -75,7 +75,7 @@ class TestDataset(unittest.TestCase):
         """
 
         t = time.time()
-        cfg = get_config(config_path="tests/test_config_mlp.yaml")[1]
+        cfg = set_from_path("tests/test_config_mlp.yaml")
         seed_everything(cfg.seed)
         auto_select_device(cfg)
 
@@ -114,7 +114,7 @@ class TestDataset(unittest.TestCase):
         """
 
         t = time.time()
-        cfg = get_config(config_path="tests/test_config_xgboost.yaml")[1]
+        cfg = set_from_path("tests/test_config_xgboost.yaml")
         seed_everything(cfg.seed)
         auto_select_device(cfg)
 

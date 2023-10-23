@@ -26,7 +26,7 @@ class DB2PyG:
 
         self.lookup_table = {}
         self.duplicate = {}
-        self.hetero = HeteroData()
+        self.graph = HeteroData()
         # Construct a heterogeneous graph using the provided tables and features
         self.output = 0
         self.init_node()
@@ -40,7 +40,7 @@ class DB2PyG:
         Construct heterogeneous graph nodes
         """
 
-        hetero = self.hetero
+        graph = self.graph
 
         names = list(self.db.tables.keys())
         names.remove(self.table)
@@ -54,11 +54,11 @@ class DB2PyG:
             if name == self.table:
                 if self.col in feat_d:
                     feat_d.remove(self.col)
-                    hetero.y = table.feature_disc[self.col].squeeze()
-                    self.output = torch.max(hetero.y[table.valid_indices(self.col)]).item() + 1
+                    graph.y = table.feature_disc[self.col].squeeze()
+                    self.output = torch.max(graph.y[table.valid_indices(self.col)]).item() + 1
                 else:
                     feat_c.remove(self.col)
-                    hetero.y = table.feature_cont[self.col].squeeze()
+                    graph.y = table.feature_cont[self.col].squeeze()
                     self.output = 1
 
             # concatenate features
@@ -66,13 +66,13 @@ class DB2PyG:
                 feature = torch.cat([table.feature_disc[col].view(-1, 1) for col in feat_d], dim=1)
             else:
                 feature = torch.zeros((len(table.df), 1))
-            hetero[name].x_d = feature.to(torch.int32)
+            graph[name].x_d = feature.to(torch.int32)
             if feat_c:
                 feature = torch.cat([table.feature_cont[col].view(-1, 1) for col in feat_c], dim=1)
             else:
                 feature = torch.zeros((len(table.df), 1))
-            hetero[name].x_c = feature.to(torch.float32)
-            hetero[name].num_nodes = len(table.df)
+            graph[name].x_c = feature.to(torch.float32)
+            graph[name].num_nodes = len(table.df)
 
             # set up look up table
             keys = table.df["_" + name].to_list()
@@ -95,7 +95,7 @@ class DB2PyG:
         Construct heterogeneous graph edges
         """
 
-        hetero = self.hetero
+        graph = self.graph
         lookup_table = self.lookup_table
         duplicate = self.duplicate
 
@@ -128,17 +128,17 @@ class DB2PyG:
                     edge_index = torch.cat([array, point_to.view(1, -1)], dim=0)
                     edge_index = edge_index[:, point_to != -1]
 
-                if hetero[name, "to", key].num_edges:
-                    index = hetero[name, "to", key].edge_index
-                    hetero[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
+                if graph[name, "to", key].num_edges:
+                    index = graph[name, "to", key].edge_index
+                    graph[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
                 else:
-                    hetero[name, "to", key].edge_index = edge_index
+                    graph[name, "to", key].edge_index = edge_index
                 edge_index = edge_index[[1, 0]]
-                if hetero[key, "to", name].num_edges:
-                    index = hetero[key, "to", name].edge_index
-                    hetero[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
+                if graph[key, "to", name].num_edges:
+                    index = graph[key, "to", name].edge_index
+                    graph[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
                 else:
-                    hetero[key, "to", name].edge_index = edge_index
+                    graph[key, "to", name].edge_index = edge_index
 
     def split(self, seed=None):
         """
@@ -148,7 +148,7 @@ class DB2PyG:
         - seed: The seed to set
 
         Returns:
-        - masks: A dictionary containing masks for hetero graph and homo graph
+        - masks: A dictionary containing masks for graph
         """
 
         # ensuring reproducibility
@@ -164,3 +164,9 @@ class DB2PyG:
         # split the dataset into training, validation, and test sets
         for i, name in enumerate(names):
             self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+
+    def to(self, device):
+        """
+        to device
+        """
+        return self.graph.to(device)

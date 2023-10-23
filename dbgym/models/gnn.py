@@ -64,7 +64,7 @@ class GNN(nn.Module):
         hidden_dim = cfg.model.hidden_dim
         self.layer = cfg.model.layer
         self.head = cfg.model.head
-        self.model = cfg.model.subtype
+        self.model = cfg.model.name
 
         self.encoder = GNNEncoder(graph, hidden_dim)
         self.convs = nn.ModuleList()

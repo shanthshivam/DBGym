@@ -26,14 +26,15 @@ def create_model(cfg: CfgNode, dataset):
 
     graph_models = dbgym_dict['graph_model']
     if cfg.model.type in graph_models:
-        return graph_models[cfg.model.type](cfg, dataset.hetero).to(torch.device(cfg.device))
+        return graph_models[cfg.model.type](cfg, dataset.graph).to(torch.device(cfg.device))
     tabular_models = dbgym_dict['tabular_model']
     if cfg.model.type in tabular_models:
         return tabular_models[cfg.model.type](cfg, dataset).to(torch.device(cfg.device))
+
     if cfg.model.type == "GNN":
-        return GNN(cfg, dataset.hetero).to(torch.device(cfg.device))
+        return GNN(cfg, dataset.graph).to(torch.device(cfg.device))
     if cfg.model.type == "HGNN":
-        return HeteroGNN(cfg, dataset.hetero).to(torch.device(cfg.device))
+        return HeteroGNN(cfg, dataset.graph).to(torch.device(cfg.device))
     if cfg.model.type == "MLP":
         return MLP(cfg, dataset).to(torch.device(cfg.device))
     if cfg.model.type == "XGBoost":

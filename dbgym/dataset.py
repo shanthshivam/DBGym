@@ -59,8 +59,10 @@ def download_dataset(url, folder):
 
         # Move the subfolders to the parent folder
         for subfolder in subfolders:
-            subfolder_name = os.path.basename(subfolder)  # Name of the subfolder
-            new_location = os.path.join(parent_folder, subfolder_name)  # New path of the subfolder
+            # Name of the subfolder
+            subfolder_name = os.path.basename(subfolder)
+            # New path of the subfolder
+            new_location = os.path.join(parent_folder, subfolder_name)
             shutil.move(subfolder, new_location)
 
         old_name = os.path.join(folder, "RDBench-Dataset-master")
@@ -81,33 +83,33 @@ def create_dataset(cfg: CfgNode):
     - dataset: Tabular, DB2PyG or others
     '''
 
-    data_dir = cfg.dataset.data_dir
+    data_dir = cfg.dataset.dir
     path = os.path.join(data_dir, cfg.dataset.name)
 
+    # Download dataset if it doesn't exist
     if cfg.dataset.name != 'example' and not os.path.exists(path):
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
-        # Download dataset if it doesn't exist
         link = 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
         print(f"Downloading dataset from {link}...")
         download_dataset(link, data_dir)
         print("Dataset downloaded successfully.")
 
-    if cfg.dataset.type == 'single':
-        tb = Tabular(path, cfg.dataset.file, cfg.dataset.column)
-        tb.load_csv()
-        cfg.model.output_dim = tb.output
-        return tb
-    if cfg.dataset.type == 'join':
-        tb = Tabular(path, cfg.dataset.file, cfg.dataset.column)
-        tb.load_join()
-        cfg.model.output_dim = tb.output
-        return tb
+    if cfg.dataset.type == 'tabular':
+        tabular = Tabular(path, cfg.dataset.file, cfg.dataset.column)
+        if cfg.dataset.format == 'single':
+            tabular.load_csv()
+        if cfg.dataset.format == 'join':
+            tabular.load_join()
+        cfg.model.output_dim = tabular.output
+        return tabular
+
     if cfg.dataset.type == 'graph':
-        db = DataBase(path)
-        db.load()
-        db.prepare_encoder()
-        data = DB2PyG(db, cfg.dataset.file, cfg.dataset.column)
-        cfg.model.output_dim = data.output
-        return data
-    raise ValueError(f"Model not supported: {cfg.model}")
+        database = DataBase(path)
+        database.load()
+        database.prepare_encoder()
+        graph = DB2PyG(database, cfg.dataset.file, cfg.dataset.column)
+        cfg.model.output_dim = graph.output
+        return graph
+
+    raise ValueError(f"Dataset type not supported: {cfg.dataset.type}")

@@ -68,16 +68,15 @@ class Logger:
         log_dir = cfg.log_dir
         dataset = cfg.dataset.name
         t = time.strftime("%Y%m%d_%H%M%S", time.localtime())
-        if cfg.model.subtype == '':
+        if cfg.model.name == '':
             model = cfg.model.type
         else:
-            model = cfg.model.subtype
+            model = cfg.model.name
         task = cfg.dataset.file + '_' + cfg.dataset.column + '_' + model + '_' + t
         self.path = os.path.join(log_dir, dataset, task)
         self.file = self.path + '.txt'
         self.writer = SummaryWriter(self.path)
         self.logs = []
-        self.log('Configuration:\n')
 
     def log_scalar(self, tag, value, step):
         self.writer.add_scalar(tag, value, step)

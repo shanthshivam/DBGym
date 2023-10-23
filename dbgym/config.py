@@ -4,7 +4,6 @@ This module contains some configuration functions.
 """
 
 import argparse
-from typing import Tuple
 from yacs.config import CfgNode
 
 
@@ -23,7 +22,7 @@ def get_args() -> argparse.Namespace:
     return args
 
 
-def set_cfg() -> CfgNode:
+def get_config() -> CfgNode:
     """
     This function sets the default config value.
     1) Note that for an experiment, only part of the arguments will be used
@@ -36,33 +35,38 @@ def set_cfg() -> CfgNode:
     """
 
     cfg = CfgNode()
+
     # ----------------------------------------------------------------------- #
     # Basic options
     # ----------------------------------------------------------------------- #
+    # Experiment seed
     cfg.seed = 42
+    # Log directory
+    cfg.log_dir = 'logs'
+    # Experiment device
     cfg.device = 'auto'
 
     # ----------------------------------------------------------------------- #
     # Dataset options
     # ----------------------------------------------------------------------- #
     cfg.dataset = CfgNode()
-    cfg.dataset.data_dir = "Datasets/"
     # Name of the dataset
-    cfg.dataset.name = 'financial'
+    cfg.dataset.dir = "Datasets/"
+    # Name of the dataset
+    cfg.dataset.name = 'rdb2-bank'
     # Target file
     cfg.dataset.file = 'loan'
     # Target column
-    cfg.dataset.column = 'status'
-    # Dataset type: single, join or graph
+    cfg.dataset.column = 'Status'
+    # Dataset type: tabular or graph
     cfg.dataset.type = 'graph'
-    cfg.dataset.url = 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
+    # Dataset format: single or join for tabular data
+    cfg.dataset.format = 'homo'
 
     # ----------------------------------------------------------------------- #
     # Training options
     # ----------------------------------------------------------------------- #
     cfg.train = CfgNode()
-    # Training (and validation) pipeline mode
-    cfg.train.mode = 'standard'
     # Training epochs
     cfg.train.epoch = 200
 
@@ -70,40 +74,70 @@ def set_cfg() -> CfgNode:
     # Model options
     # ----------------------------------------------------------------------- #
     cfg.model = CfgNode()
-    cfg.model.type = 'gnn'
+    # Model type: GNN, HGNN, MLP, XGBoost
+    cfg.model.type = 'GNN'
+    # Model name: GCN, GIN, GAT, Sage for GNN, HGCN, HGT for HGNN
+    cfg.model.name = 'GCN'
+    # Hidden dimension
+    cfg.model.hidden_dim = 128
+    # Output dimension
+    cfg.model.output_dim = 0
+    # Number of layers
+    cfg.model.layer = 4
+    # Number of heads
+    cfg.model.head = 4
 
     # ----------------------------------------------------------------------- #
     # Optimizer options
     # ----------------------------------------------------------------------- #
     cfg.optim = CfgNode()
-    # optimizer: sgd, adam
+    # Optimizer: adam, sgd
     cfg.optim.optimizer = 'adam'
     # Base learning rate
-    cfg.optim.lr = 0.01
-    # scheduler: none, steps, cos
+    cfg.optim.lr = 0.001
+    # Weight decay
+    cfg.optim.weight_decay = 0.001
+    # Momentum in SGD
+    cfg.optim.momentum = 0.9
+    # Scheduler: none, step, cos
     cfg.optim.scheduler = 'cos'
+    # Milestones in step scheduler
+    cfg.optim.milestones = [30, 60, 90]
+    # Learning rate decay
+    cfg.optim.lr_decay: 0.5
 
     return cfg
-    
 
-def get_config(config_path: str = None) -> Tuple[argparse.Namespace, CfgNode]:
+
+def set_config(config: CfgNode) -> CfgNode:
     """
     This function gets the configurations used by the experiment.
 
     Args:
-    - config_path: The path to the configuration file (default: None)
+    - cfg (CfgNode): The configuration used by the experiment.
 
     Returns:
-    - args: The arguments used by the experiment.
-    - cfg: The configuration used by the experiment.
+    - cfg (CfgNode): The configuration used by the experiment.
     """
 
-    args = get_args()
-    cfg = set_cfg()
+    cfg = get_config()
+    cfg.update(config)
+    return cfg
 
-    config_path = config_path if config_path else args.cfg
 
-    with open(config_path, "r", encoding="utf-8") as f:
+def set_from_path(path: str) -> CfgNode:
+    """
+    This function gets the configurations used by the experiment.
+
+    Args:
+    - cfg (CfgNode): The configuration used by the experiment.
+
+    Returns:
+    - cfg (CfgNode): The configuration used by the experiment.
+    """
+
+    cfg = get_config()
+    with open(path, "r", encoding="utf-8") as f:
         config = CfgNode.load_cfg(f)
     cfg.update(config)
-    return args, cfg
+    return cfg

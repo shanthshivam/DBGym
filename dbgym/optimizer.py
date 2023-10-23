@@ -64,8 +64,7 @@ def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_sched
                                                    milestones=cfg.optim.milestones,
                                                    gamma=cfg.optim.lr_decay)
     elif sdlr == 'cos':
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(
-            optimizer, T_max=cfg.train.epoch)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.train.epoch)
     else:
         raise ValueError(f'Scheduler {sdlr} not supported')
     return scheduler
