@@ -9,7 +9,7 @@ import sys
 import time
 from torch import optim
 
-from dbgym.config import set_from_path
+from dbgym.config import get_config, set_from_path
 from dbgym.utils.device import auto_select_device
 from dbgym.utils.seed import seed_everything
 from dbgym.logger import Logger
@@ -21,6 +21,7 @@ from dbgym.models.mlp import MLP
 from dbgym.models.gnn import GNN
 from dbgym.db import Tabular
 from dbgym.db2pyg import DB2PyG
+from dbgym.run import run
 
 sys.path.append("")
 
@@ -141,3 +142,20 @@ class TestDataset(unittest.TestCase):
         logger.log(f"End time: {end}")
         logger.log(f"Use time: {time.time() - t:.4f} s")
         logger.close()
+
+    def test_run(self):
+        """
+        run test function.
+        """
+        config = get_config()
+        config.merge_from_list(['dataset.type', 'graph', 'dataset.format', 'homo'])
+        config.merge_from_list(['model.type', 'GNN', 'model.name', 'GCN'])
+        run(config)
+        config = get_config()
+        config.merge_from_list(['dataset.type', 'tabular', 'dataset.format', 'single'])
+        config.merge_from_list(['model.type', 'MLP', 'model.name', 'MLP'])
+        run(config)
+        config = get_config()
+        config.merge_from_list(['dataset.type', 'tabular', 'dataset.format', 'join'])
+        config.merge_from_list(['model.type', 'XGBoost', 'model.name', 'XGBoost'])
+        run(config)

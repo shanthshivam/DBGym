@@ -39,5 +39,5 @@ def compute_loss(cfg: CfgNode, pred: torch.Tensor, true: torch.Tensor):
         true = true.float()
         loss = criterion(pred, true)
         if cfg.model.type == 'XGBoost':
-            return loss.detach()
-        return loss, loss.detach()
+            return loss.detach().item()
+        return loss, loss.detach().item()

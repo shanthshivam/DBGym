@@ -68,9 +68,9 @@ class Logger:
         log_dir = cfg.log_dir
         dataset = cfg.dataset.name
         t = time.strftime("%Y%m%d_%H%M%S", time.localtime())
-        model = cfg.model.name
-        task = cfg.dataset.file + '_' + cfg.dataset.column + '_' + model + '_' + t
-        self.path = os.path.join(log_dir, dataset, task)
+        task = cfg.dataset.file + '_' + cfg.dataset.column
+        config = cfg.model.name + '_' + str(cfg.seed) + '_' + t
+        self.path = os.path.join(log_dir, dataset, task + '_' + config)
         self.file = self.path + '.txt'
         self.writer = SummaryWriter(self.path)
         self.logs = []

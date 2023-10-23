@@ -189,7 +189,7 @@ class Table:
             # ctype: key, feature
             if col in self.ctypes:
                 continue
-            if '_' in col:
+            if col[0] == '_':
                 ctype = 'key'
             else:
                 ctype = 'feature'
@@ -324,6 +324,7 @@ class Tabular:
     """
 
     def __init__(self, path: str, file: str, col: str):
+        self.table = None
         self.path = path
         self.file = file
         self.col = col
@@ -413,6 +414,7 @@ class Tabular:
         indices = torch.randperm(sizes[3])
         for i, name in enumerate(names):
             self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+        self.mask['all'] = torch.arange(len(df))
 
     def to(self, device):
         """
@@ -422,3 +424,35 @@ class Tabular:
         self.x_d = self.x_d.to(device)
         self.y = self.y.to(device)
         return self
+
+    def fill_na(self, pred: torch.Tensor, path: str):
+        """
+        Fill the not available values according to prediction results
+        """
+
+        data_dir = os.path.join(self.path, f'{self.file}.csv')
+        df = pd.read_csv(data_dir, low_memory=False)
+        df.dropna(axis=1, how='all')
+        table = Table(df)
+        table.prepare_feature()
+
+        for col in df.columns.tolist():
+            column = df[col].dropna()
+            if df[col].dtype == 'float64' and column.apply(lambda x: x.is_integer()).all():
+                df[col] = df[col].astype(pd.Int64Dtype())
+
+        na_indices = torch.nonzero(torch.tensor(pd.isna(df[self.col]))).flatten().numpy()
+        valid_indices = torch.nonzero(torch.tensor(pd.notna(df[self.col]))).flatten().numpy()
+        pred = pred.cpu()
+        encoder = table.feat_encoder[self.col]
+        if self.col in table.feature_disc:
+            pred = np.vectorize(encoder.inverse.get)(pred)
+            if na_indices.shape[0]:
+                df[self.col][na_indices] = pred[na_indices]
+        elif self.col in table.feature_cont:
+            pred = encoder.inverse_transform(pred).squeeze()
+            if df[self.col][valid_indices].dtype == 'Int64':
+                pred = pd.Series(pred.round(), dtype='int64')
+            if na_indices.shape[0]:
+                df[self.col][na_indices] = pred[na_indices]
+        df.to_csv(f"{path}/{self.file}.csv", index=False)

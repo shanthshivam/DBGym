@@ -28,16 +28,23 @@ def run(cfg: CfgNode):
     logger = Logger(cfg)
     start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
     logger.log(f"Start time: {start}")
+    dt = time.time()
     dataset = create_dataset(cfg)
+    dt = time.time() - dt
     model = create_model(cfg, dataset)
     logger.log(cfg.dump())
+    tt = time.time()
     if cfg.model.type == 'XGBoost':
-        train_xgboost(dataset, model, logger, cfg)
+        stats = train_xgboost(dataset, model, logger, cfg)
     else:
         optimizer = create_optimizer(cfg, model.parameters())
         scheduler = create_scheduler(cfg, optimizer)
-        train(dataset, model, optimizer, scheduler, logger, cfg)
+        stats = train(dataset, model, optimizer, scheduler, logger, cfg)
     end = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
-    logger.log(f"End time: {end}")
+    logger.log(f"End time: {end}\n")
+    logger.log(f"Dataset Use time: {dt:.4f} s")
+    logger.log(f"Training Use time: {time.time() - tt:.4f} s")
     logger.log(f"Use time: {time.time() - t:.4f} s")
     logger.close()
+    dataset.fill_na(stats['pred'], logger.path)
+    return stats

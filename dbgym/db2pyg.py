@@ -5,6 +5,7 @@ Module to transform database into graph.
 
 import torch
 import numpy as np
+import pandas as pd
 from dbgym.db import DataBase
 from torch_geometric.data import HeteroData
 
@@ -144,7 +145,6 @@ class DB2PyG:
         else:
             graph[key, "to", name].edge_index = edge_index
 
-
     def split(self, seed=None):
         """
         Split the dataset into training, validation, and test sets.
@@ -169,9 +169,37 @@ class DB2PyG:
         # split the dataset into training, validation, and test sets
         for i, name in enumerate(names):
             self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+        self.mask['all'] = torch.arange(len(self.db.tables[self.table].df))
 
     def to(self, device):
         """
         to device
         """
         return self.graph.to(device)
+
+    def fill_na(self, pred: torch.Tensor, path: str):
+        """
+        Fill the not available values according to prediction results
+        """
+        table = self.db.tables[self.table]
+        df = table.df
+        for col in df.columns.tolist():
+            column = df[col].dropna()
+            if df[col].dtype == 'float64' and column.apply(lambda x: x.is_integer()).all():
+                df[col] = df[col].astype(pd.Int64Dtype())
+
+        na_indices = torch.nonzero(torch.tensor(pd.isna(df[self.col]))).flatten().numpy()
+        valid_indices = torch.nonzero(torch.tensor(pd.notna(df[self.col]))).flatten().numpy()
+        pred = pred.cpu()
+        encoder = table.feat_encoder[self.col]
+        if self.col in table.feature_disc:
+            pred = np.vectorize(encoder.inverse.get)(pred)
+            if na_indices.shape[0]:
+                df[self.col][na_indices] = pred[na_indices]
+        elif self.col in table.feature_cont:
+            pred = encoder.inverse_transform(pred).squeeze()
+            if df[self.col][valid_indices].dtype == 'Int64':
+                pred = pd.Series(pred.round(), dtype='int64')
+            if na_indices.shape[0]:
+                df[self.col][na_indices] = pred[na_indices]
+        df.to_csv(f"{path}/{self.table}.csv", index=False)
