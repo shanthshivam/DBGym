@@ -147,15 +147,9 @@ class TestDataset(unittest.TestCase):
         """
         run test function.
         """
-        config = get_config()
-        config.merge_from_list(['dataset.type', 'graph', 'dataset.format', 'homo'])
-        config.merge_from_list(['model.type', 'GNN', 'model.name', 'GCN'])
+        config = set_from_path("tests/test_config_gnn.yaml")
         run(config)
-        config = get_config()
-        config.merge_from_list(['dataset.type', 'tabular', 'dataset.format', 'single'])
-        config.merge_from_list(['model.type', 'MLP', 'model.name', 'MLP'])
+        config = set_from_path("tests/test_config_mlp.yaml")
         run(config)
-        config = get_config()
-        config.merge_from_list(['dataset.type', 'tabular', 'dataset.format', 'join'])
-        config.merge_from_list(['model.type', 'XGBoost', 'model.name', 'XGBoost'])
+        config = set_from_path("tests/test_config_xgboost.yaml")
         run(config)
