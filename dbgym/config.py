@@ -104,7 +104,7 @@ def get_config() -> CfgNode:
     # Milestones in step scheduler
     cfg.optim.milestones = [30, 60, 90]
     # Learning rate decay
-    cfg.optim.lr_decay: 0.5
+    cfg.optim.lr_decay = 0.5
 
     return cfg
 
@@ -137,8 +137,7 @@ def set_from_path(path: str) -> CfgNode:
     """
 
     cfg = get_config()
-    print(cfg)
     with open(path, "r", encoding="utf-8") as f:
         config = CfgNode.load_cfg(f)
-    cfg.merge_from_other_cfg(config)
+    cfg.update(config)
     return cfg
