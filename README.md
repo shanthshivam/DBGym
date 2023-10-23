@@ -1,4 +1,11 @@
+[testing-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml/badge.svg
+[testing-url]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml
+[linting-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml/badge.svg
+[linting-url]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml
+
 # DBGym
+[![Testing Status][testing-image]][testing-url]
+[![Linting Status][linting-image]][linting-url]
 DBGym is a platform designed to facilitate hierarchical, robust, and reproducible ML research on
 relational databases.
 DBGym provides a user-friendly toolkit for the benchmark RDBench, which is proposed in *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
