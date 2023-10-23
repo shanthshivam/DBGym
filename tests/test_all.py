@@ -53,8 +53,8 @@ class TestDataset(unittest.TestCase):
         optimizer = create_optimizer(cfg, model.parameters())
         scheduler = create_scheduler(cfg, optimizer)
         self.assertIsInstance(model, GNN)
-        self.assertIsInstance(optimizer,optim.Adam)
-        self.assertIsInstance(scheduler,optim.lr_scheduler.CosineAnnealingLR)
+        self.assertIsInstance(optimizer, optim.Adam)
+        self.assertIsInstance(scheduler, optim.lr_scheduler.CosineAnnealingLR)
 
         # 3 Test the training, validation, and test process.
         # If the model's results on the train, valid, and test set are all greater than 0.5
@@ -85,15 +85,15 @@ class TestDataset(unittest.TestCase):
 
         # 1 Test the dataset
         dataset = create_dataset(cfg)
-        self.assertIsInstance(dataset,Tabular)
+        self.assertIsInstance(dataset, Tabular)
 
         # 2 Test the model, optimizer and scheduler
         model = create_model(cfg, dataset)
         optimizer = create_optimizer(cfg, model.parameters())
         scheduler = create_scheduler(cfg, optimizer)
         self.assertIsInstance(model, MLP)
-        self.assertIsInstance(optimizer,optim.Adam)
-        self.assertIsInstance(scheduler,optim.lr_scheduler.CosineAnnealingLR)
+        self.assertIsInstance(optimizer, optim.Adam)
+        self.assertIsInstance(scheduler, optim.lr_scheduler.CosineAnnealingLR)
 
         # 3 Test the training, validation, and test process.
         # If the model's results on the train, valid, and test set are all greater than 0.5

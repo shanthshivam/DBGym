@@ -63,4 +63,5 @@ class ResNet(nn.Module):
         x = self.layers[-1](x)
         return x
 
+
 register('tabular_model', 'ResNet', ResNet)

@@ -86,8 +86,8 @@ class GNN(nn.Module):
         if self.model == "GCN":
             return GCNConv(input_dim, output_dim)
         if self.model == "GIN":
-            return GINConv(nn = nn.Sequential(nn.Linear(input_dim, output_dim),
-                                              nn.ReLU(), nn.Linear(output_dim, output_dim)))
+            return GINConv(nn=nn.Sequential(nn.Linear(input_dim, output_dim),
+                                            nn.ReLU(), nn.Linear(output_dim, output_dim)))
         if self.model == "GAT":
             return GATConv(input_dim, output_dim, self.head, concat=False)
         if self.model == "Sage":

@@ -156,7 +156,7 @@ class Table:
             if dtype == 'datetime64[ns]':
                 dtype = 'time'
             elif dtype == 'int64':
-                dtype= 'int64'
+                dtype = 'int64'
             elif dtype == 'float64':
                 dtype = 'float64'
                 column = self.df[col].dropna()

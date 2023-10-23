@@ -110,8 +110,6 @@ class DB2PyG:
             for key in keys[1:]:
                 column = table.df[key]
                 key = key[1:]
-                if '.' in key:
-                    key = key.split('.')[0]
 
                 if duplicate[key]:
                     edge_index = [[], []]
@@ -128,17 +126,24 @@ class DB2PyG:
                     edge_index = torch.cat([array, point_to.view(1, -1)], dim=0)
                     edge_index = edge_index[:, point_to != -1]
 
-                if graph[name, "to", key].num_edges:
-                    index = graph[name, "to", key].edge_index
-                    graph[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
-                else:
-                    graph[name, "to", key].edge_index = edge_index
-                edge_index = edge_index[[1, 0]]
-                if graph[key, "to", name].num_edges:
-                    index = graph[key, "to", name].edge_index
-                    graph[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
-                else:
-                    graph[key, "to", name].edge_index = edge_index
+                self.create_edge(graph, edge_index, name, key)
+
+    def create_edge(self, graph: HeteroData, edge_index: torch.Tensor, name: str, key: str):
+        """
+        Construct heterogeneous graph edges
+        """
+        if graph[name, "to", key].num_edges:
+            index = graph[name, "to", key].edge_index
+            graph[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
+        else:
+            graph[name, "to", key].edge_index = edge_index
+        edge_index = edge_index[[1, 0]]
+        if graph[key, "to", name].num_edges:
+            index = graph[key, "to", name].edge_index
+            graph[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
+        else:
+            graph[key, "to", name].edge_index = edge_index
+
 
     def split(self, seed=None):
         """
