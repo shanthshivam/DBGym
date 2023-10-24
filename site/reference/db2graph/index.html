@@ -20,7 +20,7 @@
     
     
       
-        <title>dbgym.db2pyg - DBGym Docs</title>
+        <title>dbgym.db2graph - DBGym Docs</title>
       
     
     
@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dbgym.db2pyg" class="md-skip">
+        <a href="#dbgym.db2graph" class="md-skip">
           Skip to content
         </a>
       
@@ -103,7 +103,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              dbgym.db2pyg
+              dbgym.db2graph
             
           </span>
         </div>
@@ -449,7 +449,7 @@
           
   
   <span class="md-ellipsis">
-    dbgym.db2pyg
+    dbgym.db2graph
   </span>
   
 
@@ -460,7 +460,7 @@
         
   
   <span class="md-ellipsis">
-    dbgym.db2pyg
+    dbgym.db2graph
   </span>
   
 
@@ -480,36 +480,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#dbgym.db2pyg" class="md-nav__link">
-    db2pyg
+  <a href="#dbgym.db2graph" class="md-nav__link">
+    db2graph
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#dbgym.db2pyg.DB2PyG" class="md-nav__link">
-    DB2PyG
+  <a href="#dbgym.db2graph.db2graph" class="md-nav__link">
+    db2graph
   </a>
   
-    <nav class="md-nav" aria-label="DB2PyG">
+    <nav class="md-nav" aria-label="db2graph">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#dbgym.db2pyg.DB2PyG.init_edge" class="md-nav__link">
+  <a href="#dbgym.db2graph.db2graph.init_edge" class="md-nav__link">
     init_edge()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#dbgym.db2pyg.DB2PyG.init_node" class="md-nav__link">
+  <a href="#dbgym.db2graph.db2graph.init_node" class="md-nav__link">
     init_node()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#dbgym.db2pyg.DB2PyG.split" class="md-nav__link">
+  <a href="#dbgym.db2graph.db2graph.split" class="md-nav__link">
     split()
   </a>
   
@@ -690,16 +690,16 @@
                   
 
 
-  <h1>dbgym.db2pyg</h1>
+  <h1>dbgym.db2graph</h1>
 
 <div class="doc doc-object doc-module">
 
 
 
-<a id="dbgym.db2pyg"></a>
+<a id="dbgym.db2graph"></a>
   <div class="doc doc-contents first">
   
-      <p>db2pyg.py
+      <p>db2graph.py
 Module to transform database into graph.</p>
 
   
@@ -718,8 +718,8 @@ Module to transform database into graph.</p>
 
 
 
-<h2 id="dbgym.db2pyg.DB2PyG" class="doc doc-heading">
-          <code>DB2PyG</code>
+<h2 id="dbgym.db2graph.db2graph" class="doc doc-heading">
+          <code>db2graph</code>
 
 
 </h2>
@@ -735,7 +735,7 @@ Module to transform database into graph.</p>
 - col: The name of target column</p>
 
             <details class="quote">
-              <summary>Source code in <code>dbgym\db2pyg.py</code></summary>
+              <summary>Source code in <code>dbgym\db2graph.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 12</span>
 <span class="normal"> 13</span>
 <span class="normal"> 14</span>
@@ -890,7 +890,7 @@ Module to transform database into graph.</p>
 <span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
-<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DB2PyG</span><span class="p">:</span>
+<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">db2graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class is used to convert DataBase in db.py to PyG graphs</span>
 
@@ -1066,7 +1066,7 @@ Module to transform database into graph.</p>
 
 
 
-<h3 id="dbgym.db2pyg.DB2PyG.init_edge" class="doc doc-heading">
+<h3 id="dbgym.db2graph.db2graph.init_edge" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">init_edge</span><span class="p">()</span></code>
 
 </h3>
@@ -1077,7 +1077,7 @@ Module to transform database into graph.</p>
       <p>Construct heterogeneous graph edges</p>
 
           <details class="quote">
-            <summary>Source code in <code>dbgym\db2pyg.py</code></summary>
+            <summary>Source code in <code>dbgym\db2graph.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
 <span class="normal"> 94</span>
 <span class="normal"> 95</span>
@@ -1187,7 +1187,7 @@ Module to transform database into graph.</p>
 
 
 
-<h3 id="dbgym.db2pyg.DB2PyG.init_node" class="doc doc-heading">
+<h3 id="dbgym.db2graph.db2graph.init_node" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">init_node</span><span class="p">()</span></code>
 
 </h3>
@@ -1198,7 +1198,7 @@ Module to transform database into graph.</p>
       <p>Construct heterogeneous graph nodes</p>
 
           <details class="quote">
-            <summary>Source code in <code>dbgym\db2pyg.py</code></summary>
+            <summary>Source code in <code>dbgym\db2graph.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span>
@@ -1318,7 +1318,7 @@ Module to transform database into graph.</p>
 
 
 
-<h3 id="dbgym.db2pyg.DB2PyG.split" class="doc doc-heading">
+<h3 id="dbgym.db2graph.db2graph.split" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">split</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
@@ -1333,7 +1333,7 @@ Module to transform database into graph.</p>
 - masks: A dictionary containing masks for hetero graph and homo graph</p>
 
           <details class="quote">
-            <summary>Source code in <code>dbgym\db2pyg.py</code></summary>
+            <summary>Source code in <code>dbgym\db2graph.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>

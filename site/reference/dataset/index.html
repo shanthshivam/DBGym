@@ -495,11 +495,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../db2pyg/" class="md-nav__link">
+      <a href="../db2graph/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    dbgym.db2pyg
+    dbgym.db2graph
   </span>
   
 
@@ -712,7 +712,7 @@ This module contains dataset function.</p>
 <p>Args:
 - cfg: The configuration</p>
 <p>Return:
-- dataset: Tabular, DB2PyG or others</p>
+- dataset: Tabular, db2graph or others</p>
 
           <details class="quote">
             <summary>Source code in <code>dbgym\dataset.py</code></summary>
@@ -764,7 +764,7 @@ This module contains dataset function.</p>
 <span class="sd">    - cfg: The configuration</span>
 
 <span class="sd">    Return:</span>
-<span class="sd">    - dataset: Tabular, DB2PyG or others</span>
+<span class="sd">    - dataset: Tabular, db2graph or others</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">data_dir</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_dir</span>
@@ -793,7 +793,7 @@ This module contains dataset function.</p>
         <span class="n">db</span> <span class="o">=</span> <span class="n">DataBase</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         <span class="n">db</span><span class="o">.</span><span class="n">prepare_encoder</span><span class="p">()</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">DB2PyG</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">column</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">db2graph</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">column</span><span class="p">)</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">output</span>
         <span class="k">return</span> <span class="n">data</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model not supported: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

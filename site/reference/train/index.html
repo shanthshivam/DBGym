@@ -438,11 +438,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../db2pyg/" class="md-nav__link">
+      <a href="../db2graph/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    dbgym.db2pyg
+    dbgym.db2graph
   </span>
   
 
@@ -787,7 +787,7 @@ The training procedure.</p>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">DB2PyG</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">db2graph</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">hetero</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Tabular</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
