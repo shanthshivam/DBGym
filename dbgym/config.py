@@ -54,14 +54,12 @@ def get_config() -> CfgNode:
     cfg.dataset.dir = "Datasets/"
     # Name of the dataset
     cfg.dataset.name = 'rdb2-bank'
-    # Target file
-    cfg.dataset.file = 'loan'
-    # Target column
-    cfg.dataset.column = 'Status'
+    # Query: target_file.target_column
+    cfg.dataset.query = 'loan.Status'
     # Dataset type: tabular or graph
     cfg.dataset.type = 'graph'
-    # Dataset format: single or join for tabular data
-    cfg.dataset.format = 'homo'
+    # Dataset join parameter
+    cfg.dataset.join = 0
 
     # ----------------------------------------------------------------------- #
     # Training options
@@ -74,9 +72,7 @@ def get_config() -> CfgNode:
     # Model options
     # ----------------------------------------------------------------------- #
     cfg.model = CfgNode()
-    # Model type: GNN, HGNN, MLP, XGBoost
-    cfg.model.type = 'GNN'
-    # Model name: GCN, GIN, GAT, Sage for GNN, HGCN, HGT for HGNN
+    # Model name: GCN, GIN, GAT, Sage, HGCN, HGT, MLP, XGBoost
     cfg.model.name = 'GCN'
     # Hidden dimension
     cfg.model.hidden_dim = 128
@@ -102,9 +98,9 @@ def get_config() -> CfgNode:
     # Scheduler: none, step, cos
     cfg.optim.scheduler = 'cos'
     # Milestones in step scheduler
-    cfg.optim.milestones = [30, 60, 90]
+    # cfg.optim.milestones = [30, 60, 90]
     # Learning rate decay
-    cfg.optim.lr_decay = 0.5
+    # cfg.optim.lr_decay = 0.5
 
     return cfg
 
@@ -130,14 +126,12 @@ def set_from_path(path: str) -> CfgNode:
     This function gets the configurations used by the experiment.
 
     Args:
-    - cfg (CfgNode): The configuration used by the experiment.
+    - path (str): The configuration file path.
 
     Returns:
     - cfg (CfgNode): The configuration used by the experiment.
     """
 
     cfg = get_config()
-    with open(path, "r", encoding="utf-8") as f:
-        config = CfgNode.load_cfg(f)
-    cfg.update(config)
+    cfg.merge_from_file(path)
     return cfg

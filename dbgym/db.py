@@ -328,11 +328,11 @@ class Tabular:
     Tabular data module for relational database
     """
 
-    def __init__(self, path: str, file: str, col: str):
+    def __init__(self, path: str, query: str):
         self.table = None
         self.path = path
-        self.file = file
-        self.col = col
+        self.file = query.split('.')[0]
+        self.col = query.split('.')[1]
         self.x_d = None
         self.x_c = None
         self.y = None
@@ -374,7 +374,7 @@ class Tabular:
             common_keys = list(cols.intersection(set(df.columns.tolist())))
             real_keys = []
             for key in common_keys:
-                if 'id' in key and len(df[key]) == len(df[key].unique()):
+                if key[0] == '_' and len(df[key]) == len(df[key].unique()):
                     real_keys.append(key)
             if real_keys:
                 main_df = main_df.merge(df, on=real_keys, how='left')

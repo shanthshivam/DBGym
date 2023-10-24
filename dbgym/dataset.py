@@ -95,11 +95,16 @@ def create_dataset(cfg: CfgNode):
         download_dataset(link, data_dir)
         print("Dataset downloaded successfully.")
 
+    if cfg.model.name in ["GCN", "GIN", "GAT", "Sage", "HGT", "HGCN"]:
+        cfg.dataset.type = 'graph'
+    elif cfg.model.name in ["MLP", "XGBoost"]:
+        cfg.dataset.type = 'tabular'
+
     if cfg.dataset.type == 'tabular':
-        tabular = Tabular(path, cfg.dataset.file, cfg.dataset.column)
-        if cfg.dataset.format == 'single':
+        tabular = Tabular(path, cfg.dataset.query)
+        if cfg.dataset.join == 0:
             tabular.load_csv()
-        if cfg.dataset.format == 'join':
+        elif cfg.dataset.join != 0:
             tabular.load_join()
         cfg.model.output_dim = tabular.output
         return tabular
@@ -108,7 +113,7 @@ def create_dataset(cfg: CfgNode):
         database = DataBase(path)
         database.load()
         database.prepare_encoder()
-        graph = DB2Graph(database, cfg.dataset.file, cfg.dataset.column)
+        graph = DB2Graph(database, cfg.dataset.query)
         cfg.model.output_dim = graph.output
         return graph
 

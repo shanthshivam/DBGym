@@ -59,10 +59,10 @@ def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_sched
         return schedulers[sdlr](cfg, optimizer)
     if sdlr == 'none':
         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=cfg.train.epoch + 1)
-    elif sdlr == 'step':
-        scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-                                                   milestones=cfg.optim.milestones,
-                                                   gamma=cfg.optim.lr_decay)
+    # elif sdlr == 'step':
+    #     scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+    #                                                milestones=cfg.optim.milestones,
+    #                                                gamma=cfg.optim.lr_decay)
     elif sdlr == 'cos':
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.train.epoch)
     else:

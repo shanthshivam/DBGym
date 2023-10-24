@@ -20,10 +20,10 @@ class DB2Graph:
     - col: The name of target column
     """
 
-    def __init__(self, db: DataBase, table: str, col: str):
+    def __init__(self, db: DataBase, query: str):
         self.db = db
-        self.table = table
-        self.col = col
+        self.table = query.split('.')[0]
+        self.col = query.split('.')[1]
 
         self.lookup_table = {}
         self.duplicate = {}

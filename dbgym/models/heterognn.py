@@ -65,7 +65,7 @@ class HeteroGNN(torch.nn.Module):
         model = cfg.model.name
         layer = cfg.model.layer
         head = cfg.model.head
-        self.file = cfg.dataset.file
+        self.file = cfg.dataset.query.split('.')[0]
 
         self.encoder = HeteroEncoder(graph, hidden_dim)
         self.convs = torch.nn.ModuleList()
@@ -109,7 +109,7 @@ class HGNN(torch.nn.Module):
         model = cfg.model.name
         layer = cfg.model.layer
         head = cfg.model.head
-        self.file = cfg.dataset.file
+        self.file = cfg.dataset.query.split('.')[0]
 
         self.lin_dict = torch.nn.ModuleDict()
         for node_type in graph.node_types:
