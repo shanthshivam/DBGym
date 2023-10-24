@@ -126,14 +126,12 @@ def set_from_path(path: str) -> CfgNode:
     This function gets the configurations used by the experiment.
 
     Args:
-    - cfg (CfgNode): The configuration used by the experiment.
+    - path (str): The configuration file path.
 
     Returns:
     - cfg (CfgNode): The configuration used by the experiment.
     """
 
     cfg = get_config()
-    with open(path, "r", encoding="utf-8") as f:
-        config = CfgNode.load_cfg(f)
-    cfg.update(config)
+    cfg.merge_from_file(path)
     return cfg
