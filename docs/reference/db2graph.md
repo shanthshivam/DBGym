@@ -1,1 +1,0 @@
-::: dbgym.db2graph
