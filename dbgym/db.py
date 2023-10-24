@@ -367,7 +367,6 @@ class Tabular:
         cols = set(main_df.columns.tolist())
         for df in dfs:
             common_keys = list(cols.intersection(set(df.columns.tolist())))
-            print(common_keys)
             real_keys = []
             for key in common_keys:
                 if key[0] == '_' and len(df[key]) == len(df[key].unique()):
@@ -383,7 +382,6 @@ class Tabular:
         """
 
         table = Table(df)
-        print(df.shape)
         table.prepare_feature()
         if self.col in table.feature_cont:
             self.y = table.feature_cont[self.col]
