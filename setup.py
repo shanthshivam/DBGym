@@ -20,14 +20,15 @@ setup(
     url="https://github.com/JiaxuanYou/DBGym",
     packages=find_packages(exclude=['docs']),
     install_requires=[
-      'numpy',
-      'pandas',
-      'scikit_learn',
-      'torch',
-      'torch_geometric',
-      'xgboost',
-      'yacs',
-      'requests'
+        'cmake',
+        'numpy',
+        'pandas',
+        'scikit_learn',
+        'torch',
+        'torch_geometric',
+        'xgboost',
+        'yacs',
+        'requests'
     ],
     license='MIT',
     classifiers=[

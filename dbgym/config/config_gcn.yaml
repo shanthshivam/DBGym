@@ -1,7 +1,7 @@
 # Example Configuration File for GCN
 
 seed: 42
-log_dir: logs
+log_dir: output
 device: auto
 
 dataset:

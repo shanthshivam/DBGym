@@ -177,7 +177,7 @@ DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods o
 # Logging
 ## Visualisation
 
-To see the visualisation of training process, go into the logs directory and run
+To see the visualisation of training process, go into the output directory and run
 
 ```bash
 tensorboard --logdir .
