@@ -65,10 +65,10 @@ class Logger:
     """
 
     def __init__(self, cfg: CfgNode):
-        log_dir = cfg.log_dir
+        log_dir = os.path.join(cfg.dataset.dir, cfg.log_dir)
         dataset = cfg.dataset.name
         t = time.strftime("%Y%m%d_%H%M%S", time.localtime())
-        task = cfg.dataset.file + '_' + cfg.dataset.column
+        task = cfg.dataset.query
         config = cfg.model.name + '_' + str(cfg.seed) + '_' + t
         self.path = os.path.join(log_dir, dataset, task + '_' + config)
         self.file = self.path + '.txt'

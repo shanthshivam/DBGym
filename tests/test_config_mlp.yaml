@@ -1,23 +1,16 @@
 # Test Configuration File for MLP CI CD
 
-# log_dir: tests/Datasets/logs # put to data dir # output
-# device: auto
-
 dataset:
   dir: tests/Datasets/
   name: 'example'
-  # file: 'loan'
-  # column: 'Status'
   query: 'loan.Status'
-  # type: 'graph'
   join: 0
 
 train:
   epoch: 200
 
 model:
-  # type: 'MLP'
-  name: 'GNN'
+  name: 'MLP'
   hidden_dim: 128
   layer: 4
 

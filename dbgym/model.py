@@ -25,18 +25,18 @@ def create_model(cfg: CfgNode, dataset):
     '''
 
     graph_models = dbgym_dict['graph_model']
-    if cfg.model.type in graph_models:
-        return graph_models[cfg.model.type](cfg, dataset.graph).to(torch.device(cfg.device))
+    if cfg.model.name in graph_models:
+        return graph_models[cfg.model.name](cfg, dataset.graph).to(torch.device(cfg.device))
     tabular_models = dbgym_dict['tabular_model']
-    if cfg.model.type in tabular_models:
-        return tabular_models[cfg.model.type](cfg, dataset).to(torch.device(cfg.device))
+    if cfg.model.name in tabular_models:
+        return tabular_models[cfg.model.name](cfg, dataset).to(torch.device(cfg.device))
 
-    if cfg.model.type == "GNN":
+    if cfg.model.name in ["GCN", "GIN", "GAT", "Sage"]:
         return GNN(cfg, dataset.graph).to(torch.device(cfg.device))
-    if cfg.model.type == "HGNN":
+    if cfg.model.name in ["HGT", "HGCN"]:
         return HeteroGNN(cfg, dataset.graph).to(torch.device(cfg.device))
-    if cfg.model.type == "MLP":
+    if cfg.model.name == "MLP":
         return MLP(cfg, dataset).to(torch.device(cfg.device))
-    if cfg.model.type == "XGBoost":
+    if cfg.model.name == "XGBoost":
         return xgb(cfg, dataset)
-    raise ValueError(f"Model not supported: {cfg.model.type}")
+    raise ValueError(f"Model not supported: {cfg.model.name}")

@@ -34,7 +34,7 @@ def run(cfg: CfgNode):
     model = create_model(cfg, dataset)
     logger.log(cfg.dump())
     tt = time.time()
-    if cfg.model.type == 'XGBoost':
+    if cfg.model.name == 'XGBoost':
         stats = train_xgboost(dataset, model, logger, cfg)
     else:
         optimizer = create_optimizer(cfg, model.parameters())

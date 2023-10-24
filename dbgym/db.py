@@ -323,11 +323,11 @@ class Tabular:
     Tabular data module for relational database
     """
 
-    def __init__(self, path: str, file: str, col: str):
+    def __init__(self, path: str, query: str):
         self.table = None
         self.path = path
-        self.file = file
-        self.col = col
+        self.file = query.split('.')[0]
+        self.col = query.split('.')[1]
         self.x_d = None
         self.x_c = None
         self.y = None
