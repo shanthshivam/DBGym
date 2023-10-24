@@ -30,10 +30,12 @@ user.csv:	_user, x1, x2, ...
 item.csv:	_item, x1, x2, ...
 trans.csv:	_trans, _user, _item, x1, x2, ...
 ```
-It is worth noticing that the name of files and columns should preferably without '.', and the column name begin with '_' indicates a key value instead of feature.
+It is worth noticing that the name of files and columns should preferably without `.`, and the column name begin with `_` indicates a key value instead of feature.
 
 
 # Quick Start
+
+With less than 5 lines of code, you can set up and carryout experiments using DBGym.
 
 ```Python
 from dbgym.run import run
@@ -43,9 +45,13 @@ config = get_config()
 stats = run(config)
 ```
 
-## Configuration
+## Customize Configuration
 
-**Code Configuration**
+For users who want to customize configuration, i.e. carry out experiment using a specific model on a specific dataset, we provide two ways to customize configuration: using code and using `yaml` file, respectively.
+
+**Code for Configuration**
+
+For example, we can set the target dataset using the following code:
 
 ```Python
 from dbgym.run import run
@@ -57,7 +63,9 @@ config.merge_from_list(['dataset.query', 'entry_examination.Cholesterol'])
 stats = run(config)
 ```
 
-**File Configuration**
+**File for Configuration**
+
+For example, we can set the model using the following code:
 
 ```Python
 from dbgym.run import run
@@ -67,7 +75,9 @@ config = get_config()
 config.merge_from_file('config_mlp.yaml')
 stats = run(config)
 ```
-config_mlp.yaml:
+
+And the yaml `config_mlp.yaml` is as follow:
+
 ```yaml
 # Example Experiment Configuration for MLP
 
@@ -85,6 +95,8 @@ optim:
 
 ## Customize Dataset
 
+For users who want to customize dataset, i.e. carry out experiment on a given dataset, we provide the following code to customize the dataset configuration.
+
 ```Python
 from dbgym.run import run
 from dbgym.config import get_config
@@ -96,7 +108,7 @@ config.merge_from_list(['dataset.query', 'your_target_file.your_target_column'])
 stats = run(config)
 ```
 
-Where the directory should be as follow:
+Where the directory of the dataset should be as follow:
 
 ```
 tree your_dataset_path
@@ -111,7 +123,9 @@ your_dataset_path
 
 ## Customize Model
 
-Customize your own model in `dbgym/contribute/your_model.py`
+For users who want to customize model, i.e. carry out experiment with a novel model on our proposed dataset, we provide the following code to customize the your own model and contribute to our reposity.
+
+Customize your own model in `dbgym/contribute/your_model.py`:
 
 ```Python
 from dbgym.register import register
@@ -126,20 +140,20 @@ register(your_model_type, 'your_model_name', YourModel)
 ```Python
 from dbgym.run import run
 from dbgym.config import get_config
-s
+
 config = get_config()
 config.merge_from_list(['model.name', 'your_model_name'])
 stats = run(config)
 ```
 
-## Highlights
+# Highlights
 
 DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods on relational databases. Please refer to our paper for more details: *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
 
 
 <div align="center">
-  <img align="center" src="docs/Overview.png" width="1000px" />
-  <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
+<img align="center" src="docs/Overview.png" width="1000px" />
+<b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
 </div>
 
 
@@ -153,36 +167,11 @@ DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods o
 - Extensive experiments with 10 baselines are carried out on these datasets.
 
 **3. Easy-to-use Interfaces with Robust Results** 
-- Highly modularized pipeline
-- Reproducible experiment configuratio
-- Scalable experiment management
-- Flexible user customization
-- Results reported are averaged over the same dataset and same task type (classification or regression)
-  
-
-### Example use cases
-- *[RDBench: ML Benchmark for Relational Databases](tbf)*, Zizhao Zhang, Yi Yang, Lutong Zou, He Wen, Tao Feng, Jiaxuan You.
-
-
-
-## What is DBGym?
-
-**1. Proposed Datasets**
-
-
-
-<div align="center">
-<img align="center" src="docs/DB2Graph.png" width="900px"/>
-<b><br>Figure 2: The procedure transforming relational databases to graphs.</b>
-</div>
-
-
-
-
-## CI CD test
-We carried out CI CD test on the DBGym, the content of the test includes data incoming, model training, etc., which can be seen in detail [`dbgym/test_mlp.py`](dbgym/test_mlp.py)
-
-
+- Highly modularized pipeline.
+- Reproducible experiment configuration.
+- Scalable experiment management.
+- Flexible user customization.
+- Results reported are averaged over the same dataset and same task type (classification or regression).
 
 
 # Logging

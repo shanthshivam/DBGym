@@ -72,6 +72,7 @@ class Logger:
         config = cfg.model.name + '_' + str(cfg.seed) + '_' + t
         self.path = os.path.join(log_dir, dataset, task + '_' + config)
         self.file = self.path + '.txt'
+        print(f'Please refer to {self.file}')
         self.writer = SummaryWriter(self.path)
         self.logs = []
 
