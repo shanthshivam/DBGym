@@ -7,9 +7,12 @@
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
 
-DBGym is a platform designed to facilitate hierarchical, robust, and reproducible ML research on
-relational databases.
-DBGym provides a user-friendly toolkit for the benchmark RDBench, which is proposed in *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
+DBGym is a platform designed to facilitate ML research and application on databases.
+With less than 5 lines of code, you can import DBGym, point to your database, and 
+The current release of DBGym focuses on multi-table databases (relational databases).
+
+
+DBGym has enabled a user-friendly toolkit for the benchmark RDBench, which is proposed in *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
 
 <div align="center">
   <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/Overview.png" width="1000px" />

@@ -9,7 +9,7 @@ import shutil
 import requests
 from tqdm import tqdm
 from dbgym.db import DataBase, Tabular
-from dbgym.db2pyg import DB2PyG
+from dbgym.db2graph import DB2Graph
 from yacs.config import CfgNode
 
 
@@ -80,7 +80,7 @@ def create_dataset(cfg: CfgNode):
     - cfg: The configuration
 
     Return:
-    - dataset: Tabular, DB2PyG or others
+    - dataset: Tabular, DB2Graph or others
     '''
 
     data_dir = cfg.dataset.dir
@@ -108,7 +108,7 @@ def create_dataset(cfg: CfgNode):
         database = DataBase(path)
         database.load()
         database.prepare_encoder()
-        graph = DB2PyG(database, cfg.dataset.file, cfg.dataset.column)
+        graph = DB2Graph(database, cfg.dataset.file, cfg.dataset.column)
         cfg.model.output_dim = graph.output
         return graph
 

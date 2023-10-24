@@ -27,7 +27,7 @@ def get_config() -> CfgNode:
     This function sets the default config value.
     1) Note that for an experiment, only part of the arguments will be used
     The remaining unused arguments won't affect anything.
-    So feel free to register any argument in graphgym.contrib.config
+    So feel free to register any argument in dbgym.contrib.config
     2) We support *at most* two levels of configs, e.g., cfg.dataset.name
 
     Returns:

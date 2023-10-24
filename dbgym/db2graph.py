@@ -1,5 +1,5 @@
 """
-db2pyg.py
+db2graph.py
 Module to transform database into graph.
 """
 
@@ -10,7 +10,7 @@ from dbgym.db import DataBase
 from torch_geometric.data import HeteroData
 
 
-class DB2PyG:
+class DB2Graph:
     """
     This class is used to convert DataBase in db.py to PyG graphs
 

@@ -12,9 +12,9 @@ with open("README.md", "r", encoding='utf-8') as fh:
 setup(
     name="dbgym",
     version="0.1.1",
-    author="Jiaxuan You",
-    author_email="jiaxuan@cs.stanford.edu",
-    description="DBGym: platform for relational database benchmark RDBench",
+    author="DBGym Team",
+    author_email="jiaxuan@illinois.edu",
+    description="DBGym: deep learning platform for databases",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/JiaxuanYou/DBGym",

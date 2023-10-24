@@ -27,7 +27,7 @@ nav:
     - dbgym.model :   reference/model.md
     - dbgym.dataset: reference/dataset.md
     - dbgym.db:    reference/db.md
-    - dbgym.db2pyg: reference/db2pyg.md
+    - dbgym.db2graph: reference/db2graph.md
     - dbgym.optimizer:  reference/optimizer.md
     - dbgym.train:   reference/train.md
     - dbgym.loss:    reference/loss.md

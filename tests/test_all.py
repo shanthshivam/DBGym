@@ -20,7 +20,7 @@ from dbgym.train import train, train_xgboost
 from dbgym.models.mlp import MLP
 from dbgym.models.gnn import GNN
 from dbgym.db import Tabular
-from dbgym.db2pyg import DB2PyG
+from dbgym.db2graph import DB2Graph
 from dbgym.run import run
 
 sys.path.append("")
@@ -47,7 +47,7 @@ class TestDataset(unittest.TestCase):
 
         # Test the dataset
         dataset = create_dataset(cfg)
-        self.assertIsInstance(dataset, DB2PyG)
+        self.assertIsInstance(dataset, DB2Graph)
 
         # Test the model, optimizer and scheduler
         model = create_model(cfg, dataset)
