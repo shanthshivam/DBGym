@@ -90,7 +90,7 @@ def create_dataset(cfg: CfgNode):
     if cfg.dataset.name != 'example' and not os.path.exists(path):
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
-        link = 'https://github.com/YiYang-github/RDBench-Dataset/archive/refs/heads/master.zip'
+        link = 'https://github.com/JiaxuanYou/RDBench/archive/refs/heads/master.zip'
         print(f"Downloading dataset from {link}...")
         download_dataset(link, data_dir)
         print("Dataset downloaded successfully.")
