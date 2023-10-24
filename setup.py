@@ -20,8 +20,6 @@ setup(
     url="https://github.com/JiaxuanYou/DBGym",
     packages=find_packages(exclude=['docs']),
     install_requires=[
-      'matplotlib',
-      'networkx',
       'numpy',
       'pandas',
       'scikit_learn',

@@ -3,12 +3,16 @@
 [linting-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml/badge.svg
 [linting-url]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml
 
+<div align="center">
+
 # DBGym
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
 
+</div>
+
 DBGym is a platform designed to facilitate ML research and application on databases.
-With less than 5 lines of code, you can point to your database, write the predictive query you want, and DBGym will output the predictions along with your database.
+With less than **5 lines of code**, you can point to your database, write the predictive query you want, and DBGym will output the predictions along with your database.
 
 In the current release, DBGym focuses on relational databases (databases with multiple tables). In practice, it simply means that you would need to prepare your data into a directory with CSV or Parquet files, each representing a table. Then, you would need to prepare the column names in each file according to a standard naming convention: 
 For example, you may have the following files in your database directory
@@ -29,7 +33,7 @@ DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods o
 
 
 <div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/Overview.png" width="1000px" />
+  <img align="center" src="docs/Overview.png" width="1000px" />
   <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
 </div>
 
@@ -63,8 +67,8 @@ DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods o
 
 
 <div align="center">
-  <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/DB2Graph.png" width="900px" />
-  <b><br>Figure 2: The procedure transforming relational databases to graphs.</b>
+<img align="center" src="docs/DB2Graph.png" width="900px"/>
+<b><br>Figure 2: The procedure transforming relational databases to graphs.</b>
 </div>
 
 
