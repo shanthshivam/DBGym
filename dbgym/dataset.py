@@ -52,7 +52,7 @@ def download_dataset(url, folder):
 
         # Get the parent folder of folder_a
         parent_folder = folder
-        folder_a = os.path.join(folder, "RDBench-Dataset-master")
+        folder_a = os.path.join(folder, "RDBench-master")
 
         # Get all subfolders within folder_a
         subfolders = [f.path for f in os.scandir(folder_a) if f.is_dir()]
@@ -65,7 +65,7 @@ def download_dataset(url, folder):
             new_location = os.path.join(parent_folder, subfolder_name)
             shutil.move(subfolder, new_location)
 
-        old_name = os.path.join(folder, "RDBench-Dataset-master")
+        old_name = os.path.join(folder, "RDBench-master")
         new_name = os.path.join(folder, "info")
         os.rename(old_name, new_name)
     else:

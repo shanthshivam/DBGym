@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # config.merge_from_list(['dataset.name', 'rdb1-ather'])
     # config.merge_from_list(['dataset.query', 'entry_examination.Cholesterol'])
     # config.merge_from_list(['dataset.query', 'death.DeathReason'])
-    config = set_from_path("tests/test_config_xgboost.yaml")
+    # config = set_from_path("tests/test_config_xgboost.yaml")
     stats = run(config)
     # config = get_config()
     # config.merge_from_list(['dataset.type', 'tabular', 'dataset.format', 'single'])
