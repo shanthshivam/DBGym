@@ -4,14 +4,12 @@ seed: 42
 log_dir: 'logs'
 
 dataset:
-  data_dir: "Datasets/"
+  dir: "Datasets/"
   name: 'rdb2-bank'
-  file: 'loan'
-  column: 'Status'
+  file: 'loan.Status'
   type: 'graph'
 
 train:
-  mode: 'standard'
   epoch: 200
 
 model:
@@ -19,15 +17,9 @@ model:
   subtype: 'GCN'
   hidden_dim: 128
   layer: 4
-  head: 4
 
 optim:
   optimizer: 'adam'
   lr: 0.001
-  weight_decay: 0
+  weight_decay: 0.0001
   scheduler: 'cos'
-  # for step scheduler
-  milestones: [9,16]
-  lr_decay: 0.1
-  # for SGD optimizer
-  momentum: 0.9

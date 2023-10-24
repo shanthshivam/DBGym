@@ -1,10 +1,10 @@
+cmake
 numpy
 pandas
+requests
 scikit_learn
+tensorboard
 torch
 torch_geometric
 xgboost
-tensorboard
-pandas
 yacs
-requests

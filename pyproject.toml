@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dbgym"
-version = "0.1.7"
+version = "0.1.8"
 authors = [
   { name="DBGym Team", email="jiaxuan@illinois.edu" },
 ]
@@ -20,16 +20,16 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    'cmake',
     'numpy',
     'pandas',
+    'requests',
     'scikit_learn',
+    'tensorboard',
     'torch',
     'torch_geometric',
     'xgboost',
-    'tensorboard',
-    'pandas',
     'yacs',
-    'requests'
 ]
 
 [project.urls]

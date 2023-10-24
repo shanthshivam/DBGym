@@ -1,0 +1,26 @@
+# Example Configuration File for XGBoost
+
+seed: 42
+log_dir: logs
+device: cpu
+
+dataset:
+  dir: ./Datasets/
+  name: rdb2-bank
+  query: loan.Status
+  type: tabular
+  join: 1
+
+train:
+  epoch: 200
+
+model:
+  name: MLP
+  hidden_dim: 128
+  layer: 4
+
+optim:
+  optimizer: adam
+  lr: 0.001
+  weight_decay: 0.0001
+  scheduler: cos

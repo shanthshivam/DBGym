@@ -11,10 +11,15 @@
 
 </div>
 
+```bash
+pip install dbgym	# Install DBGym
+```
+
 DBGym is a platform designed to facilitate ML research and application on databases.
 With less than **5 lines of code**, you can point to your database, write the predictive query you want, and DBGym will output the predictions along with your database.
 
 In the current release, DBGym focuses on relational databases (databases with multiple tables). In practice, it simply means that you would need to prepare your data into a directory with CSV or Parquet files, each representing a table. Then, you would need to prepare the column names in each file according to a standard naming convention: 
+
 For example, you may have the following files in your database directory
 ```bash
 user.csv	item.csv	trans.csv
@@ -25,7 +30,107 @@ user.csv:	_user, x1, x2, ...
 item.csv:	_item, x1, x2, ...
 trans.csv:	_trans, _user, _item, x1, x2, ...
 ```
+It is worth noticing that the name of files and columns should preferably without '.', and the column name begin with '_' indicates a key value instead of feature.
 
+
+# Quick Start
+
+```Python
+from dbgym.run import run
+from dbgym.config import get_config
+
+config = get_config()
+stats = run(config)
+```
+
+## Configuration
+
+**Code Configuration**
+
+```Python
+from dbgym.run import run
+from dbgym.config import get_config
+
+config = get_config()
+config.merge_from_list(['dataset.name', 'rdb1-ather'])
+config.merge_from_list(['dataset.query', 'entry_examination.Cholesterol'])
+stats = run(config)
+```
+
+**File Configuration**
+
+```Python
+from dbgym.run import run
+from dbgym.config import get_config
+
+config = get_config()
+config.merge_from_file('config_mlp.yaml')
+stats = run(config)
+```
+config_mlp.yaml:
+```yaml
+# Example Experiment Configuration for MLP
+
+train:
+  epoch: 200
+
+model:
+  name: 'MLP'
+  hidden_dim: 128
+  layer: 4
+
+optim:
+  lr: 0.001
+```
+
+## Customize Dataset
+
+```Python
+from dbgym.run import run
+from dbgym.config import get_config
+
+config = get_config()
+config.merge_from_list(['dataset.dir', 'your_dataset_path'])
+config.merge_from_list(['dataset.name', 'your_dataset_name'])
+config.merge_from_list(['dataset.query', 'your_target_file.your_target_column'])
+stats = run(config)
+```
+
+Where the directory should be as follow:
+
+```
+tree your_dataset_path
+your_dataset_path
+├── your_dataset_name
+│   ├── your_target_file
+│   ├── other_file
+│   └── ...
+├── other_dataset
+└── ...
+```
+
+## Customize Model
+
+Customize your own model in `dbgym/contribute/your_model.py`
+
+```Python
+from dbgym.register import register
+
+class YourModel(nn.Module):
+    ...
+
+your_model_type = 'tabular_model' or 'graph_model'
+register(your_model_type, 'your_model_name', YourModel)
+```
+
+```Python
+from dbgym.run import run
+from dbgym.config import get_config
+s
+config = get_config()
+config.merge_from_list(['model.name', 'your_model_name'])
+stats = run(config)
+```
 
 ## Highlights
 
@@ -72,14 +177,6 @@ DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods o
 </div>
 
 
-## How to use DBGym?
-
-**1. How to set the configuration?**
-- In DBGym, an experiment is fully specified by a `.yaml` file. For example, in [`config.yaml`](config.yaml), there are configurations on seed, dataset, training, model, GNN, optim, etc.
-- Unspecified configurations in the `.yaml` file will be populated by the default values in 
-[`dbgym/config.py`](dbgym/config.py).
-- Concrete description for each configuration is also described in [`dbgym/config.py`](dbgym/config.py).
-
 
 
 ## CI CD test
@@ -91,37 +188,19 @@ We carried out CI CD test on the DBGym, the content of the test includes data in
 # Logging
 ## Visualisation
 
-To see the visualisation of training process, go into the log dir and run
+To see the visualisation of training process, go into the logs directory and run
 
 ```bash
 tensorboard --logdir .
 ```
+
 Then visit `localhost:6006`, or any other port you specified.
-## Text
-To see the text document of training process, go into the log dir and run
 
-```bash
-python3 ../dbgym/logger.py
+
+# Installation
+
+DBGym is available for Python 3.10 and above.
+
 ```
-This line will generate a `log.txt` in the directory.
-
-<!--
-Lugar deleted this part for the time being, since train process is not designed according to the graph yet. 
-# Design Schema
-## Train
-
-```mermaid
-graph TB;
-	J{time &lt= epochs?}--True->A;
-	A[custom: train&validation] --results-> B[logging];
-	B--time+1->J;
-	J --False-> K[custom: test];
-	A --model to save\nnot required in every iteration->L[Save]
+pip install dbgym
 ```
--->
-
-
-
-
-
-

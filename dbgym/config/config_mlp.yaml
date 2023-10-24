@@ -1,0 +1,26 @@
+# Example Configuration File for MLP
+
+seed: 42
+log_dir: logs
+device: auto
+
+dataset:
+  dir: ./Datasets/
+  name: rdb2-bank
+  query: loan.Status
+  type: tabular
+  join: 0
+
+train:
+  epoch: 200
+
+model:
+  name: MLP
+  hidden_dim: 128
+  layer: 4
+
+optim:
+  optimizer: adam
+  lr: 0.001
+  weight_decay: 0.0001
+  scheduler: cos
