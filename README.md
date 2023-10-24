@@ -8,21 +8,34 @@
 [![Linting Status][linting-image]][linting-url]
 
 DBGym is a platform designed to facilitate ML research and application on databases.
-With less than 5 lines of code, you can import DBGym, point to your database, and 
-The current release of DBGym focuses on multi-table databases (relational databases).
+With less than 5 lines of code, you can point to your database, write the predictive query you want, and DBGym will output the predictions along with your database.
+
+In the current release, DBGym focuses on relational databases (databases with multiple tables). In practice, it simply means that you would need to prepare your data into a directory with CSV or Parquet files, each representing a table. Then, you would need to prepare the column names in each file according to a standard naming convention: 
+For example, you may have the following files in your database directory
+```bash
+user.csv	item.csv	trans.csv
+```
+Then, the column names for each file should look like
+```bash
+user.csv:	_user, x1, x2, ...
+item.csv:	_item, x1, x2, ...
+trans.csv:	_trans, _user, _item, x1, x2, ...
+```
 
 
-DBGym has enabled a user-friendly toolkit for the benchmark RDBench, which is proposed in *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
+## Highlights
+
+DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods on relational databases. Please refer to our paper for more details: *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
+
 
 <div align="center">
   <img align="center" src="https://github.com/JiaxuanYou/DBGym/blob/main/docs/Overview.png" width="1000px" />
   <b><br>Figure 1: An overview of our proposed benchmark RDBench.</b>
 </div>
 
-### Highlights
 
 **1. Unified Task Definition for Various Data Formats.**
-- To meet the requirements of diverse users, DBGym provides 3  kinds of data: tabular data, homogeneous graphs and heterogeneous graphs.
+- To meet the requirements of diverse users, DBGym provides 3 kinds of data: tabular data, homogeneous graphs and heterogeneous graphs.
 - For all these data formats, we propose a unified task definition, enabling results comparison between models for different formats of data.
 
 **2. Hierarchical Datasets with Comprehensive Experiments** 
@@ -76,14 +89,14 @@ We carried out CI CD test on the DBGym, the content of the test includes data in
 
 To see the visualisation of training process, go into the log dir and run
 
-```
+```bash
 tensorboard --logdir .
 ```
 Then visit `localhost:6006`, or any other port you specified.
 ## Text
 To see the text document of training process, go into the log dir and run
 
-```
+```bash
 python3 ../dbgym/logger.py
 ```
 This line will generate a `log.txt` in the directory.

@@ -271,6 +271,8 @@ class DataBase:
         for file in os.listdir(self.path):
             if file.endswith('.csv'):
                 self.names.append(tuple([file.split('.')[0], 'csv']))
+            if file.endswith('.parquet'):
+                self.names.append(tuple([file.split('.')[0], 'parquet']))
             elif file.endswith('.sql'):
                 self.names.append(tuple([file.split('.')[0], 'sql']))
 
@@ -278,16 +280,19 @@ class DataBase:
             fname = os.path.join(self.path, f'{name}.{typ}')
             if typ == 'csv':
                 df = pd.read_csv(fname, low_memory=False)
-                df.dropna(axis=1, how='all')
-                table = Table(df)
-                self.tables[name] = table
-                keys = table.get_keys()
-                self.table_to_key[name] = keys
-                keys = dict(zip(keys, [[name] for _ in range(len(keys))]))
-                self.key_to_table = reduce_sum_dict(self.key_to_table, keys)
+            elif typ == 'parquet':
+                df = pd.read_parquet(fname)
             elif typ == 'sql':
                 # TODO: finish sql support
                 continue
+            df.dropna(axis=1, how='all')
+            table = Table(df)
+            self.tables[name] = table
+            keys = table.get_keys()
+            self.table_to_key[name] = keys
+            keys = dict(zip(keys, [[name] for _ in range(len(keys))]))
+            self.key_to_table = reduce_sum_dict(self.key_to_table, keys)
+            
 
     def prepare_encoder(self):
         """
