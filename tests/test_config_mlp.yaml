@@ -1,33 +1,26 @@
 # Test Configuration File for MLP CI CD
 
-seed: 42
-log_dir: 'logs'
-device: 'auto'
+# log_dir: tests/Datasets/logs # put to data dir # output
+# device: auto
 
 dataset:
-  dir: 'tests/Datasets/'
+  dir: tests/Datasets/
   name: 'example'
-  file: 'loan'
-  column: 'Status'
-  type: 'tabular'
-  format: 'single'
+  # file: 'loan'
+  # column: 'Status'
+  query: 'loan.Status'
+  # type: 'graph'
+  join: 0
 
 train:
   epoch: 200
 
 model:
-  type: 'MLP'
-  name: 'MLP'
+  # type: 'MLP'
+  name: 'GNN'
   hidden_dim: 128
-  output_dim: 0
   layer: 4
-  head: 4
 
 optim:
-  optimizer: 'adam'
   lr: 0.001
   weight_decay: 0.001
-  momentum: 0.9
-  scheduler: 'cos'
-  milestones: [30, 60, 90]
-  lr_decay: 0.5
