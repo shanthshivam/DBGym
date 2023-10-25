@@ -3,7 +3,7 @@ main.py
 The entry of DBGym reposity.
 """
 
-from dbgym.config import get_config, set_from_path
+from dbgym.config import get_config
 from dbgym.run import run
 
 if __name__ == '__main__':
