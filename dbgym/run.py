@@ -12,6 +12,7 @@ from dbgym.dataset import create_dataset
 from dbgym.model import create_model
 from dbgym.optimizer import create_optimizer, create_scheduler
 from dbgym.train import train, train_xgboost
+from dbgym.register import module_dict
 
 
 def run(cfg: CfgNode):
@@ -34,7 +35,9 @@ def run(cfg: CfgNode):
     model = create_model(cfg, dataset)
     logger.log(cfg.dump())
     tt = time.time()
-    if cfg.model.name == 'XGBoost':
+    if cfg.train.name in module_dict['train']:
+        stats = module_dict['train'][cfg.train.name](dataset, model, logger, cfg)
+    elif cfg.model.name == 'XGBoost':
         stats = train_xgboost(dataset, model, logger, cfg)
     else:
         optimizer = create_optimizer(cfg, model.parameters())

@@ -99,29 +99,30 @@ With less than 5 lines of code, you can set up and carry out experiments using D
 from dbgym.run import run
 from dbgym.config import get_config
 
+# Get default DBGym config
 config = get_config()
 stats = run(config)
 ```
 
-The experiment statistics and predictions are generated in the `output` directory by default.
+The experiment statistics and predictions returned from the `run()` function and are further saved in the `output` directory by default.
 
-## 1 Customize DBGym experiments using RDBench datasets
+## 1 Run DBGym experiments on RDBench datasets
 
-For users who want to customize DBGym experiments, we provide two ways to customize configuration: using Python and/or using `YAML` config file. Refer to [`dbgym/config.py`](dbgym/config.py) for all the available configurations.
+For users who want to customize DBGym experiments, we provide two ways to customize configuration: using Python and/or using `YAML` config file. Please refer to [`dbgym/config.py`](dbgym/config.py) for all the available configurations.
 
 **Customize configs with Python**
 
-You can set the customized predictive query for a given dataset by specifying in the Python code, for example:
+You can easily set customized config values in the Python code, e.g., picking an RDBench dataset and writing your favorite predictive query. For example:
 
 ```Python
 from dbgym.run import run
 from dbgym.config import get_config
 
 config = get_config()
-# point to a dataset available in RDBench
-config.merge_from_list(['dataset.name', 'rdb1-ather'])  
+# point to an RDBench dataset. Will auto-download if not cached
+config.dataset.name = 'rdb1-ather'
 # predictive query. Format: table_name.column_name
-config.merge_from_list(['dataset.query', 'entry_examination.Cholesterol'])
+config.dataset.query = 'entry_examination.Cholesterol'
 stats = run(config)
 ```
 
@@ -160,12 +161,12 @@ optim:
 You can also easily apply DBGym to your own database datasets. To start, you can first organize your customized data as follows:
 
 ```
-your_dataset_path
-├── your_dataset_1
+dataset_path
+├── dataset_1
 │   ├── user.csv
 │   ├── item.csv
 │   └── ...
-├── your_dataset_2
+├── dataset_2
 └── ...
 ```
 
@@ -184,9 +185,13 @@ from dbgym.run import run
 from dbgym.config import get_config
 
 config = get_config()
-config.merge_from_list(['dataset.dir', 'your_dataset_path'])
-config.merge_from_list(['dataset.name', 'your_dataset_1'])
-config.merge_from_list(['dataset.query', 'target.x1'])
+
+# provide path to your dataset
+config.dataset.dir = 'dataset_path'
+config.dataset.name = 'dataset_1'
+config.dataset.query = 'target.x1'
+# (optional) set additional customized configs
+config.merge_from_file('config_gcn.yaml')
 stats = run(config)
 ```
 
@@ -195,7 +200,7 @@ Finally, DBGym will generate experiment logs and predictions in the `output` dir
 Alternatively, you can customize your output directory by adding the following line
 
 ```Python
-config.merge_from_list(['log_dir', 'your_output_path'])
+config.dataset.dir = 'output_path'
 ```
 
 
@@ -231,7 +236,7 @@ from dbgym.run import run
 from dbgym.config import get_config
 
 config = get_config()
-config.merge_from_list(['model.name', 'your_model_name'])
+config.model.name = 'your_model_name'
 stats = run(config)
 ```
 

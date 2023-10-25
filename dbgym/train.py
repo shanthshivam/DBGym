@@ -11,7 +11,7 @@ from dbgym.logger import Logger
 from dbgym.loss import compute_loss
 
 
-def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
+def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **kwargs):
     '''
     The training function
     '''
@@ -86,7 +86,7 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode):
     return s
 
 
-def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode):
+def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode, **kwargs):
     '''
     The training function for xgboost
     '''

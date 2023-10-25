@@ -6,7 +6,7 @@ This module provides optimizer and scheduler.
 from typing import Iterator
 from torch import optim, Tensor
 from yacs.config import CfgNode
-from dbgym.register import dbgym_dict
+from dbgym.register import module_dict
 
 
 def create_optimizer(cfg: CfgNode, params: Iterator[Tensor]) -> optim.Optimizer:
@@ -23,7 +23,7 @@ def create_optimizer(cfg: CfgNode, params: Iterator[Tensor]) -> optim.Optimizer:
 
     params = filter(lambda p: p.requires_grad, params)
     optimz = cfg.optim.optimizer
-    optimizers = dbgym_dict['optimizer']
+    optimizers = module_dict['optimizer']
     if optimz in optimizers:
         return optimizers[optimz](cfg, params)
     if optimz == 'adam':
@@ -54,15 +54,15 @@ def create_scheduler(cfg: CfgNode, optimizer: optim.Optimizer) -> optim.lr_sched
     """
 
     sdlr = cfg.optim.scheduler
-    schedulers = dbgym_dict['scheduler']
+    schedulers = module_dict['scheduler']
     if sdlr in schedulers:
         return schedulers[sdlr](cfg, optimizer)
     if sdlr == 'none':
         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=cfg.train.epoch + 1)
-    # elif sdlr == 'step':
-    #     scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-    #                                                milestones=cfg.optim.milestones,
-    #                                                gamma=cfg.optim.lr_decay)
+    elif sdlr == 'step':
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+                                                    milestones=cfg.optim.milestones,
+                                                    gamma=cfg.optim.lr_decay)
     elif sdlr == 'cos':
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.train.epoch)
     else:

@@ -5,6 +5,7 @@ This module contains some configuration functions.
 
 import argparse
 from yacs.config import CfgNode
+from dbgym.register import module_dict
 
 
 def get_args() -> argparse.Namespace:
@@ -65,6 +66,8 @@ def get_config() -> CfgNode:
     # Training options
     # ----------------------------------------------------------------------- #
     cfg.train = CfgNode()
+    # Name of the training function
+    cfg.train.name = 'default'
     # Training epochs
     cfg.train.epoch = 200
 
@@ -98,9 +101,14 @@ def get_config() -> CfgNode:
     # Scheduler: none, step, cos
     cfg.optim.scheduler = 'cos'
     # Milestones in step scheduler
-    # cfg.optim.milestones = [30, 60, 90]
+    cfg.optim.milestones = [30, 60, 90]
     # Learning rate decay
-    # cfg.optim.lr_decay = 0.5
+    cfg.optim.lr_decay = 0.5
+
+    # Set user customized cfgs
+    for func in module_dict['config'].values():
+        func(cfg)
+
 
     return cfg
 
