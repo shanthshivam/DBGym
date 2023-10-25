@@ -165,3 +165,5 @@ Datasets/
 # logs
 logs/
 output/
+
+.DS_Store

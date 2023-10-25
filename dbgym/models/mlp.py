@@ -5,8 +5,9 @@ Multilayer perceptron module.
 
 import torch
 from torch import nn
-from dbgym.db import Tabular
 from yacs.config import CfgNode
+
+from dbgym.db import Tabular
 
 
 class MLP(nn.Module):

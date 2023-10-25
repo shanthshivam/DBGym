@@ -3,14 +3,15 @@ resnet.py
 Residual Network module.
 """
 
-import time
 import copy
+import time
+
 import torch
-from torch import nn
-from torch import Tensor
+from torch import Tensor, nn
+from yacs.config import CfgNode
+
 from dbgym.db import Tabular
 from dbgym.loss import compute_loss
-from yacs.config import CfgNode
 from dbgym.register import register
 
 

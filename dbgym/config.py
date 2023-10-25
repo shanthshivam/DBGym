@@ -4,7 +4,9 @@ This module contains some configuration functions.
 """
 
 import argparse
+
 from yacs.config import CfgNode
+
 from dbgym.register import module_dict
 
 

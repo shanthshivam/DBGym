@@ -5,6 +5,7 @@ Create the model according to configuration.
 
 import torch
 from yacs.config import CfgNode
+
 from dbgym.models.gnn import GNN
 from dbgym.models.heterognn import HeteroGNN
 from dbgym.models.mlp import MLP

@@ -3,11 +3,13 @@ logger.py
 The logger module, log everything.
 '''
 
-import time
 import os
-from yacs.config import CfgNode
+import time
+
+from tensorboard.backend.event_processing.event_accumulator import \
+    EventAccumulator
 from torch.utils.tensorboard.writer import SummaryWriter
-from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+from yacs.config import CfgNode
 
 
 def to_text(path: str):

@@ -3,21 +3,24 @@ train.py
 The training procedure.
 '''
 
-import time
-import torch
 import copy
+import time
+
+import torch
 from yacs.config import CfgNode
+
 from dbgym.logger import Logger
 from dbgym.loss import compute_loss
 from dbgym.register import module_dict
 
 
-def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **kwargs):
+def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode,
+          **kwargs):
     '''
     The training function
     '''
     loss_func = module_dict['loss'].get(cfg.loss.name, compute_loss)
-    
+
     start = time.time()
     data = dataset.to(torch.device(cfg.device))
     y = data.y
@@ -41,14 +44,19 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **
         target = y.squeeze()
         result = {}
         losses = {}
-        loss, score = loss_func(cfg, output[mask['train']], target[mask['train']])
+        loss, score = loss_func(cfg, output[mask['train']],
+                                target[mask['train']])
         loss.backward()
-        val_loss, val_score = loss_func(cfg, output[mask['valid']], target[mask['valid']])
-        test_loss, test_score = loss_func(cfg, output[mask['test']], target[mask['test']])
+        val_loss, val_score = loss_func(cfg, output[mask['valid']],
+                                        target[mask['valid']])
+        test_loss, test_score = loss_func(cfg, output[mask['test']],
+                                          target[mask['test']])
         optimizer.step()
         scheduler.step()
 
-        logger.log(f"Epoch {epoch}/{cfg.train.epoch}: Use time {time.time() - t:.4f} s")
+        logger.log(
+            f"Epoch {epoch}/{cfg.train.epoch}: Use time {time.time() - t:.4f} s"
+        )
 
         if epoch == 0 or (val_score - s['valid']) * (f * 2 - 1) > 0:
             s['best_epoch'] = epoch
@@ -63,10 +71,13 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **
             if f:
                 s['pred'] = s['pred'].argmax(dim=1)
 
-        logger.log(f"Train {s['metric']}: " + (f"{score:.2%}" if f else f"{score:.3f}"))
+        logger.log(f"Train {s['metric']}: " +
+                   (f"{score:.2%}" if f else f"{score:.3f}"))
         logger.log(f"Train Loss: {loss.item():.4f}")
-        logger.log(f"Valid {s['metric']}: " + (f"{val_score:.2%}" if f else f"{val_score:.3f}"))
-        logger.log(f"Test {s['metric']}: " + (f"{test_score:.2%}" if f else f"{test_score:.3f}"))
+        logger.log(f"Valid {s['metric']}: " +
+                   (f"{val_score:.2%}" if f else f"{val_score:.3f}"))
+        logger.log(f"Test {s['metric']}: " +
+                   (f"{test_score:.2%}" if f else f"{test_score:.3f}"))
 
         result['Train'] = score
         losses['Train'] = loss.item()
@@ -80,9 +91,12 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **
         logger.flush()
 
     logger.log("")
-    logger.log(f"Final Train {s['metric']}: " + (f"{s['train']:.2%}" if f else f"{s['train']:.3f}"))
-    logger.log(f"Final Valid {s['metric']}: " + (f"{s['valid']:.2%}" if f else f"{s['valid']:.3f}"))
-    logger.log(f"Final Test {s['metric']}: " + (f"{s['test']:.2%}" if f else f"{s['test']:.3f}"))
+    logger.log(f"Final Train {s['metric']}: " +
+               (f"{s['train']:.2%}" if f else f"{s['train']:.3f}"))
+    logger.log(f"Final Valid {s['metric']}: " +
+               (f"{s['valid']:.2%}" if f else f"{s['valid']:.3f}"))
+    logger.log(f"Final Test {s['metric']}: " +
+               (f"{s['test']:.2%}" if f else f"{s['test']:.3f}"))
     logger.log("")
 
     return s

@@ -5,8 +5,9 @@ This module contains some seed functions.
 
 import os
 import random
-import torch
+
 import numpy as np
+import torch
 
 
 def seed_everything(seed: int) -> None:

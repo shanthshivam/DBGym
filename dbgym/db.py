@@ -4,11 +4,12 @@ DataBase module.
 """
 
 import os
-from typing import Dict, List, Any
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+from typing import Any, Dict, List
+
 import numpy as np
+import pandas as pd
 import torch
+from sklearn.preprocessing import MinMaxScaler
 
 MISSING_INT = -114514
 MISSING = '1919810'

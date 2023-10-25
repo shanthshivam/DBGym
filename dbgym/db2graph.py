@@ -3,11 +3,12 @@ db2graph.py
 Module to transform database into graph.
 """
 
-import torch
 import numpy as np
 import pandas as pd
-from dbgym.db import DataBase
+import torch
 from torch_geometric.data import HeteroData
+
+from dbgym.db import DataBase
 
 
 class DB2Graph:

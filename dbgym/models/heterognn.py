@@ -4,9 +4,9 @@ Heterogeneous graph neural network module.
 """
 
 import torch
-from yacs.config import CfgNode
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import HGTConv, Linear, HeteroConv, SAGEConv
+from torch_geometric.nn import HeteroConv, HGTConv, Linear, SAGEConv
+from yacs.config import CfgNode
 
 
 class HeteroEncoder(torch.nn.Module):

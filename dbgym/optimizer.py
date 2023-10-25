@@ -4,8 +4,10 @@ This module provides optimizer and scheduler.
 """
 
 from typing import Iterator
-from torch import optim, Tensor
+
+from torch import Tensor, optim
 from yacs.config import CfgNode
+
 from dbgym.register import module_dict
 
 

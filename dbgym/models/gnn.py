@@ -5,9 +5,9 @@ Graph neural network module.
 
 import torch
 from torch import nn
-from yacs.config import CfgNode
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import GCNConv, SAGEConv, GINConv, GATConv, Linear
+from torch_geometric.nn import GATConv, GCNConv, GINConv, Linear, SAGEConv
+from yacs.config import CfgNode
 
 
 class GNNEncoder(nn.Module):

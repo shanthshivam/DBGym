@@ -4,13 +4,15 @@ This module contains dataset function.
 """
 
 import os
-import zipfile
 import shutil
+import zipfile
+
 import requests
 from tqdm import tqdm
+from yacs.config import CfgNode
+
 from dbgym.db import DataBase, Tabular
 from dbgym.db2graph import DB2Graph
-from yacs.config import CfgNode
 
 
 def download_dataset(url, folder):

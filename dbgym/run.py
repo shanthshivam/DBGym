@@ -4,15 +4,17 @@ The entry of DBGym reposity.
 """
 
 import time
+
 from yacs.config import CfgNode
-from dbgym.utils.device import auto_select_device
-from dbgym.utils.seed import seed_everything
-from dbgym.logger import Logger
+
 from dbgym.dataset import create_dataset
+from dbgym.logger import Logger
 from dbgym.model import create_model
 from dbgym.optimizer import create_optimizer, create_scheduler
-from dbgym.train import train, train_xgboost
 from dbgym.register import module_dict
+from dbgym.train import train, train_xgboost
+from dbgym.utils.device import auto_select_device
+from dbgym.utils.seed import seed_everything
 
 
 def run(cfg: CfgNode):

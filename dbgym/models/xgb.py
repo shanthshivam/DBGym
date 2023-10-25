@@ -4,8 +4,9 @@ XGBoost module.
 """
 
 import xgboost
-from dbgym.db import Tabular
 from yacs.config import CfgNode
+
+from dbgym.db import Tabular
 
 
 def xgb(cfg: CfgNode, data: Tabular):
