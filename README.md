@@ -7,7 +7,10 @@
 
 <div align="center">
 
-# DBGym
+<div align="center">
+<img align="center" src="docs/Logo.png" width="1000px"/>
+</div>
+
 [![PyPI Version][pypi-image]][pypi-url]
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
@@ -286,6 +289,3 @@ tensorboard --logdir .
 ```
 
 Then visit `localhost:6006`, or any other port you specified.
-
-
-
