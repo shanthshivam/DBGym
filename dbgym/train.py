@@ -9,13 +9,15 @@ import copy
 from yacs.config import CfgNode
 from dbgym.logger import Logger
 from dbgym.loss import compute_loss
+from dbgym.register import module_dict
 
 
 def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **kwargs):
     '''
     The training function
     '''
-
+    if cfg.loss.name in module_dict['loss']:
+        compute_loss = module_dict['loss'][cfg.loss.name]
     start = time.time()
     data = dataset.to(torch.device(cfg.device))
     y = data.y
@@ -91,6 +93,8 @@ def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode, **kwargs):
     The training function for xgboost
     '''
 
+    if cfg.loss.name in module_dict['loss']:
+        compute_loss = module_dict['loss'][cfg.loss.name]
     x = torch.concat([dataset.x_c, dataset.x_d], dim=1)
     y = dataset.y
     mask = dataset.mask

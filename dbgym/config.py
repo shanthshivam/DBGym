@@ -105,6 +105,13 @@ def get_config() -> CfgNode:
     # Learning rate decay
     cfg.optim.lr_decay = 0.5
 
+    # ----------------------------------------------------------------------- #
+    # Loss options
+    # ----------------------------------------------------------------------- #
+    cfg.loss = CfgNode()
+    # Name of the loss function
+    cfg.loss.name = 'default'
+
     # Set user customized cfgs
     for func in module_dict['config'].values():
         func(cfg)
