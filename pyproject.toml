@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dbgym"
-version = "0.1.1"
+version = "0.1.2"
 authors = [
-  { name="DBGym Team", email="jiaxuan@illinois.edu" },
+  { name="DBGym Team", email="dbgym@googlegroups.com" },
 ]
 description = "DBGym: platform for ML research and application on databases"
 readme = "README.md"
@@ -20,7 +20,6 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    'cmake',
     'numpy',
     'pandas',
     'requests',
@@ -28,6 +27,7 @@ dependencies = [
     'tensorboard',
     'torch',
     'torch_geometric',
+    'tqdm',
     'xgboost',
     'yacs',
 ]
