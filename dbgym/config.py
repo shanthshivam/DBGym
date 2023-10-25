@@ -42,7 +42,7 @@ def get_config() -> CfgNode:
     # Experiment seed
     cfg.seed = 42
     # Log directory
-    cfg.log_dir = 'logs'
+    cfg.log_dir = 'output'
     # Experiment device
     cfg.device = 'auto'
 
@@ -73,7 +73,7 @@ def get_config() -> CfgNode:
     # ----------------------------------------------------------------------- #
     cfg.model = CfgNode()
     # Model name: GCN, GIN, GAT, Sage, HGCN, HGT, MLP, XGBoost
-    cfg.model.name = 'GCN'
+    cfg.model.name = 'MLP'
     # Hidden dimension
     cfg.model.hidden_dim = 128
     # Output dimension

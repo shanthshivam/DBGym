@@ -104,7 +104,7 @@ def create_dataset(cfg: CfgNode):
         tabular = Tabular(path, cfg.dataset.query)
         if cfg.dataset.join == 0:
             tabular.load_csv()
-        elif cfg.dataset.join != 0:
+        elif cfg.dataset.join > 0:
             tabular.load_join()
         cfg.model.output_dim = tabular.output
         return tabular

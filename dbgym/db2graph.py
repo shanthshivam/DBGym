@@ -202,4 +202,4 @@ class DB2Graph:
                 pred = pd.Series(pred.round(), dtype='int64')
             if na_indices.shape[0]:
                 df[self.col][na_indices] = pred[na_indices]
-        df.to_csv(f"{path}/{self.table}.csv", index=False)
+        df.to_csv(f"{path}/{self.table}_pred.csv", index=False)

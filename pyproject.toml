@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dbgym"
-version = "0.1.8"
+version = "0.1.1"
 authors = [
   { name="DBGym Team", email="jiaxuan@illinois.edu" },
 ]
-description = "DBGym: platform for relational database benchmark RDBench"
+description = "DBGym: platform for ML research and application on databases"
 readme = "README.md"
 license='MIT'
 classifiers = [
