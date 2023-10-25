@@ -42,7 +42,8 @@ def run(cfg: CfgNode):
     logger.log(cfg.dump())
     tt = time.time()
     if cfg.train.name in module_dict['train']:
-        stats = module_dict['train'][cfg.train.name](dataset, model, logger, cfg)
+        stats = module_dict['train'][cfg.train.name](dataset, model, logger,
+                                                     cfg)
     elif cfg.model.name == 'XGBoost':
         stats = train_xgboost(dataset, model, logger, cfg)
     else:

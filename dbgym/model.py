@@ -27,10 +27,12 @@ def create_model(cfg: CfgNode, dataset):
 
     graph_models = module_dict['graph_model']
     if cfg.model.name in graph_models:
-        return graph_models[cfg.model.name](cfg, dataset.graph).to(torch.device(cfg.device))
+        return graph_models[cfg.model.name](cfg, dataset.graph).to(
+            torch.device(cfg.device))
     tabular_models = module_dict['tabular_model']
     if cfg.model.name in tabular_models:
-        return tabular_models[cfg.model.name](cfg, dataset).to(torch.device(cfg.device))
+        return tabular_models[cfg.model.name](cfg, dataset).to(
+            torch.device(cfg.device))
 
     if cfg.model.name in ["GCN", "GIN", "GAT", "Sage"]:
         return GNN(cfg, dataset.graph).to(torch.device(cfg.device))

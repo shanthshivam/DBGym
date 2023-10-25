@@ -57,7 +57,8 @@ class DB2Graph:
                 if self.col in feat_d:
                     feat_d.remove(self.col)
                     graph.y = table.feature_disc[self.col].squeeze()
-                    self.output = torch.max(graph.y[table.valid_indices(self.col)]).item() + 1
+                    self.output = torch.max(graph.y[table.valid_indices(
+                        self.col)]).item() + 1
                 else:
                     feat_c.remove(self.col)
                     graph.y = table.feature_cont[self.col].squeeze()
@@ -65,12 +66,16 @@ class DB2Graph:
 
             # concatenate features
             if feat_d:
-                feature = torch.cat([table.feature_disc[col].view(-1, 1) for col in feat_d], dim=1)
+                feature = torch.cat(
+                    [table.feature_disc[col].view(-1, 1) for col in feat_d],
+                    dim=1)
             else:
                 feature = torch.zeros((len(table.df), 1))
             graph[name].x_d = feature.to(torch.int32)
             if feat_c:
-                feature = torch.cat([table.feature_cont[col].view(-1, 1) for col in feat_c], dim=1)
+                feature = torch.cat(
+                    [table.feature_cont[col].view(-1, 1) for col in feat_c],
+                    dim=1)
             else:
                 feature = torch.zeros((len(table.df), 1))
             graph[name].x_c = feature.to(torch.float32)
@@ -122,27 +127,33 @@ class DB2Graph:
                             edge_index[1] += lut[column[i]]
                     edge_index = torch.tensor(edge_index)
                 else:
+
                     def lookup(x):
                         return lookup_table[key].get(x, -1)
+
                     point_to = torch.tensor(np.vectorize(lookup)(column))
-                    edge_index = torch.cat([array, point_to.view(1, -1)], dim=0)
+                    edge_index = torch.cat([array, point_to.view(1, -1)],
+                                           dim=0)
                     edge_index = edge_index[:, point_to != -1]
 
                 self.create_edge(graph, edge_index, name, key)
 
-    def create_edge(self, graph: HeteroData, edge_index: torch.Tensor, name: str, key: str):
+    def create_edge(self, graph: HeteroData, edge_index: torch.Tensor,
+                    name: str, key: str):
         """
         Construct heterogeneous graph edges
         """
         if graph[name, "to", key].num_edges:
             index = graph[name, "to", key].edge_index
-            graph[name, "to", key].edge_index = torch.cat([index, edge_index], dim=1)
+            graph[name, "to", key].edge_index = torch.cat([index, edge_index],
+                                                          dim=1)
         else:
             graph[name, "to", key].edge_index = edge_index
         edge_index = edge_index[[1, 0]]
         if graph[key, "to", name].num_edges:
             index = graph[key, "to", name].edge_index
-            graph[key, "to", name].edge_index = torch.cat([index, edge_index], dim=1)
+            graph[key, "to", name].edge_index = torch.cat([index, edge_index],
+                                                          dim=1)
         else:
             graph[key, "to", name].edge_index = edge_index
 
@@ -169,7 +180,7 @@ class DB2Graph:
 
         # split the dataset into training, validation, and test sets
         for i, name in enumerate(names):
-            self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+            self.mask[name] = valid_indices[indices[sizes[i]:sizes[i + 1]]]
         self.mask['all'] = torch.arange(len(self.db.tables[self.table].df))
 
     def to(self, device):
@@ -186,11 +197,14 @@ class DB2Graph:
         df = table.df
         for col in df.columns.tolist():
             column = df[col].dropna()
-            if df[col].dtype == 'float64' and column.apply(lambda x: x.is_integer()).all():
+            if df[col].dtype == 'float64' and column.apply(
+                    lambda x: x.is_integer()).all():
                 df[col] = df[col].astype(pd.Int64Dtype())
 
-        na_indices = torch.nonzero(torch.tensor(pd.isna(df[self.col]))).flatten().numpy()
-        valid_indices = torch.nonzero(torch.tensor(pd.notna(df[self.col]))).flatten().numpy()
+        na_indices = torch.nonzero(torch.tensor(pd.isna(
+            df[self.col]))).flatten().numpy()
+        valid_indices = torch.nonzero(torch.tensor(pd.notna(
+            df[self.col]))).flatten().numpy()
         pred = pred.cpu()
         encoder = table.feat_encoder[self.col]
         if self.col in table.feature_disc:

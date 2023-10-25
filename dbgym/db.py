@@ -165,7 +165,9 @@ class Table:
                     dtype = 'int64'
             elif dtype == 'object':
                 try:
-                    pd.to_datetime(self.df[col][self.df[col].first_valid_index()], dayfirst=True)
+                    pd.to_datetime(
+                        self.df[col][self.df[col].first_valid_index()],
+                        dayfirst=True)
                     dtype = 'time'
                 except Exception:
                     dtype = 'category'
@@ -175,10 +177,10 @@ class Table:
             self.dtypes[col] = dtype
 
     def infer_ctypes(
-            self,
-            ctypes: Dict[str, str] = None,
-            int_ratio_max: float = 0.1,
-            int_abs_max: int = 1000,
+        self,
+        ctypes: Dict[str, str] = None,
+        int_ratio_max: float = 0.1,
+        int_abs_max: int = 1000,
     ):
         """
         Infer the column type of columns
@@ -227,7 +229,8 @@ class Table:
                 encoder.fit(column)
                 self.feat_encoder[col] = encoder
                 value = encoder.transform(column)
-                self.feature_cont[col] = torch.tensor(value, dtype=torch.float64)
+                self.feature_cont[col] = torch.tensor(value,
+                                                      dtype=torch.float64)
             elif dtype == 'category':
                 column = column.fillna(MISSING).astype(dtype)
                 encoder = IndexMap(column)
@@ -293,7 +296,6 @@ class DataBase:
             self.table_to_key[name] = keys
             keys = dict(zip(keys, [[name] for _ in range(len(keys))]))
             self.key_to_table = reduce_sum_dict(self.key_to_table, keys)
-            
 
     def prepare_encoder(self):
         """
@@ -395,19 +397,22 @@ class Tabular:
             del table.feature_cont[self.col]
         elif self.col in table.feature_disc:
             self.y = table.feature_disc[self.col]
-            self.output = torch.max(self.y[table.valid_indices(self.col)]).item() + 1
+            self.output = torch.max(self.y[table.valid_indices(
+                self.col)]).item() + 1
             del table.feature_disc[self.col]
         else:
             raise ValueError(f'Column {self.col} not found.')
 
         # concatenate features
         if table.feature_disc:
-            feature = torch.cat([f.view(-1, 1) for f in table.feature_disc.values()], dim=1)
+            feature = torch.cat(
+                [f.view(-1, 1) for f in table.feature_disc.values()], dim=1)
         else:
             feature = torch.zeros((len(table.df), 1))
         self.x_d = feature.to(torch.int32)
         if table.feature_cont:
-            feature = torch.cat([f.view(-1, 1) for f in table.feature_cont.values()], dim=1)
+            feature = torch.cat(
+                [f.view(-1, 1) for f in table.feature_cont.values()], dim=1)
         else:
             feature = torch.zeros((len(table.df), 1))
         self.x_c = feature.to(torch.float32)
@@ -419,7 +424,7 @@ class Tabular:
         sizes = [int(ratio * valid_indices.shape[0]) for ratio in ratios]
         indices = torch.randperm(sizes[3])
         for i, name in enumerate(names):
-            self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+            self.mask[name] = valid_indices[indices[sizes[i]:sizes[i + 1]]]
         self.mask['all'] = torch.arange(len(df))
 
     def to(self, device):
@@ -444,11 +449,14 @@ class Tabular:
 
         for col in df.columns.tolist():
             column = df[col].dropna()
-            if df[col].dtype == 'float64' and column.apply(lambda x: x.is_integer()).all():
+            if df[col].dtype == 'float64' and column.apply(
+                    lambda x: x.is_integer()).all():
                 df[col] = df[col].astype(pd.Int64Dtype())
 
-        na_indices = torch.nonzero(torch.tensor(pd.isna(df[self.col]))).flatten().numpy()
-        valid_indices = torch.nonzero(torch.tensor(pd.notna(df[self.col]))).flatten().numpy()
+        na_indices = torch.nonzero(torch.tensor(pd.isna(
+            df[self.col]))).flatten().numpy()
+        valid_indices = torch.nonzero(torch.tensor(pd.notna(
+            df[self.col]))).flatten().numpy()
         pred = pred.cpu()
         encoder = table.feat_encoder[self.col]
         if self.col in table.feature_disc:

@@ -32,7 +32,10 @@ def download_dataset(url, folder):
         zip_path = os.path.join(folder, 'dataset.zip')
 
         fmat = "{l_bar}{bar}| {n_fmt}/{total_fmt}, {elapsed}<{remaining}, {rate_fmt}{postfix}"
-        progress_bar = tqdm(total=95025233, unit="B", unit_scale=True, bar_format=fmat)
+        progress_bar = tqdm(total=95025233,
+                            unit="B",
+                            unit_scale=True,
+                            bar_format=fmat)
         downloaded_size = 0
 
         # Save the ZIP content to a local file

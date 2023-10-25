@@ -28,7 +28,7 @@ class ResNet(nn.Module):
 
         max_values = torch.max(data.x_d, dim=0).values
         self.embeddings = nn.ModuleList([
-            nn.Embedding(max_values[i]+1, hidden_dim)
+            nn.Embedding(max_values[i] + 1, hidden_dim)
             for i in range(data.x_d.size(1))
         ])
         self.linear = nn.Linear(data.x_c.shape[1], hidden_dim)
@@ -52,7 +52,9 @@ class ResNet(nn.Module):
         - out: output data
         """
 
-        x_d = [self.embeddings[j](data.x_d[:, j]) for j in range(data.x_d.size(1))]
+        x_d = [
+            self.embeddings[j](data.x_d[:, j]) for j in range(data.x_d.size(1))
+        ]
         x_d = torch.sum(torch.stack(x_d, dim=2), dim=2)
         x = x_d + self.linear(data.x_c)
 
@@ -69,7 +71,6 @@ class ResNet(nn.Module):
 
 
 register('tabular_model', 'ResNet', ResNet)
-
 
 
 def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
@@ -97,13 +98,15 @@ def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
         target = y.squeeze()
         result = {}
         losses = {}
-        loss, score = compute_loss(cfg, output[mask['train']], target[mask['train']])
+        loss, score = compute_loss(cfg, output[mask['train']],
+                                   target[mask['train']])
         loss.backward()
-        val_loss, val_score = compute_loss(cfg, output[mask['valid']], target[mask['valid']])
-        test_loss, test_score = compute_loss(cfg, output[mask['test']], target[mask['test']])
+        val_loss, val_score = compute_loss(cfg, output[mask['valid']],
+                                           target[mask['valid']])
+        test_loss, test_score = compute_loss(cfg, output[mask['test']],
+                                             target[mask['test']])
         optimizer.step()
         scheduler.step()
-
 
         if epoch == 0 or (val_score - s['valid']) * (f * 2 - 1) > 0:
             s['best_epoch'] = epoch
@@ -128,7 +131,6 @@ def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
     return s
 
 
-
 register('train', 'train_simple', train)
 
 
@@ -139,5 +141,6 @@ def add_new_config(config: CfgNode):
     config.example_group = CfgNode()
     # then argument can be specified within the group
     config.example_group.example_arg = 'example'
+
 
 register('config', 'example_config', add_new_config)

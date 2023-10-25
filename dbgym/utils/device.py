@@ -19,7 +19,8 @@ def get_gpu_memory_map():
     result = subprocess.check_output([
         'nvidia-smi', '--query-gpu=memory.used',
         '--format=csv,nounits,noheader'
-    ], encoding='utf-8')
+    ],
+                                     encoding='utf-8')
     gpu_memory = np.array([int(x) for x in result.strip().split('\n')])
     return gpu_memory
 
@@ -32,7 +33,8 @@ def get_current_gpu_usage(cfg: CfgNode):
         result = subprocess.check_output([
             'nvidia-smi', '--query-compute-apps=pid,used_memory',
             '--format=csv,nounits,noheader'
-        ], encoding='utf-8')
+        ],
+                                         encoding='utf-8')
         current_pid = os.getpid()
         used_memory = 0
         for line in result.strip().split('\n'):
@@ -43,7 +45,10 @@ def get_current_gpu_usage(cfg: CfgNode):
     return -1
 
 
-def auto_select_device(cfg: CfgNode, memory_max=8000, memory_bias=200, strategy='random'):
+def auto_select_device(cfg: CfgNode,
+                       memory_max=8000,
+                       memory_bias=200,
+                       strategy='random'):
     '''
     Auto select device for the experiment. Useful when having multiple GPUs.
 

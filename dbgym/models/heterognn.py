@@ -22,11 +22,12 @@ class HeteroEncoder(torch.nn.Module):
         for node_type in graph.node_types:
             max_values = torch.max(graph[node_type].x_d, dim=0).values
             embedding_list = torch.nn.ModuleList([
-                torch.nn.Embedding(max_values[i]+1, dimension)
+                torch.nn.Embedding(max_values[i] + 1, dimension)
                 for i in range(graph[node_type].x_d.size(1))
             ])
             self.emb_dict[node_type] = embedding_list
-            self.lin_dict[node_type] = Linear(graph[node_type].x_c.shape[1], dimension)
+            self.lin_dict[node_type] = Linear(graph[node_type].x_c.shape[1],
+                                              dimension)
 
     def forward(self, graph):
         """
@@ -73,7 +74,10 @@ class HeteroGNN(torch.nn.Module):
             if model == "HGT":
                 conv = HGTConv(hidden_dim, hidden_dim, graph.metadata(), head)
             elif model == "HGCN":
-                conv = HeteroConv({e: SAGEConv(hidden_dim, hidden_dim) for e in graph.edge_types})
+                conv = HeteroConv({
+                    e: SAGEConv(hidden_dim, hidden_dim)
+                    for e in graph.edge_types
+                })
             else:
                 raise ValueError(f"HeteroGNN model not supported: {model}")
             self.convs.append(conv)
@@ -113,7 +117,8 @@ class HGNN(torch.nn.Module):
 
         self.lin_dict = torch.nn.ModuleDict()
         for node_type in graph.node_types:
-            input_dim = graph[node_type].x_d.shape[1] + graph[node_type].x_c.shape[1]
+            input_dim = graph[node_type].x_d.shape[1] + graph[
+                node_type].x_c.shape[1]
             self.lin_dict[node_type] = Linear(input_dim, hidden_dim)
 
         self.convs = torch.nn.ModuleList()
@@ -121,7 +126,10 @@ class HGNN(torch.nn.Module):
             if model == "HGT":
                 conv = HGTConv(hidden_dim, hidden_dim, graph.metadata(), head)
             elif model == "HGCN":
-                conv = HeteroConv({e: SAGEConv(hidden_dim, hidden_dim) for e in graph.edge_types})
+                conv = HeteroConv({
+                    e: SAGEConv(hidden_dim, hidden_dim)
+                    for e in graph.edge_types
+                })
             else:
                 raise ValueError(f"Model not supported: {model}")
             self.convs.append(conv)
