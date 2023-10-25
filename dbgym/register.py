@@ -3,8 +3,8 @@ register.py
 This module save registered modules.
 """
 
-from typing import Any, Dict
 from collections import defaultdict
+from typing import Any, Dict
 
 module_dict: Dict[str, Dict] = defaultdict(dict)
 
