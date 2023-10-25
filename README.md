@@ -18,7 +18,9 @@ pip install dbgym	 # Install DBGym
 ```
 
 DBGym is a platform designed to facilitate ML research and application on databases.
-With less than **5 lines of code**, you can point to your database, write the predictive query you want, and DBGym will output the predictions along with your database.
+With less than **5 lines of code**, you can provide the path of your database, write the predictive query you want, and DBGym will output the predictions along with your database.
+
+DBGym is an ongoing research project serving the vibrant open-source community. We sincerely welcome new ideas, use cases, and pull requests to extend DBGym's capability.
 
 # Installation
 
@@ -28,7 +30,7 @@ Prebuilt DBGym can be easily installed with `pip`: (tested with Python 3.10 and 
 pip install dbgym
 ```
 
-Alternatively, you can install latest DBGym version from our code repository:
+Alternatively, you can install the latest DBGym version from our code repository:
 
 ```bash
 git clone https://github.com/JiaxuanYou/DBGym.git
@@ -44,10 +46,10 @@ In the current release, DBGym focuses on relational databases (databases with mu
 
 You may have the following CSV files in your directory `database`, each representing a table
 ```bash
-├── database
-│   ├── user.csv
-│   ├── item.csv
-│   └── trans.csv
+ database
+ ├── user.csv
+ ├── item.csv
+ └── trans.csv
 ```
 
 For example, `user.csv` may look like this:
@@ -57,17 +59,24 @@ For example, `user.csv` may look like this:
 | 0 | 0.1 | A | 2021/01/01
 | 1 | 0.8 | A | 2022/02/01
 | 2 | 0.5 | B | 2023/05/01
-| 3 | 0.5 | N/A | 2024/08/01
+| 3 | 0.5 | **N/A** | 2024/08/01
 
-Your goal is to **leverage the full database** (not just the `user.csv` table) to predict the unknown values in column `y` in `user.csv`.
+Your goal is to **leverage the full database** (not just the `user.csv` table) to predict the unknown **N/A** values in column `y` in `user.csv`.
 
-Let's pulse here - the simple task of predicting unknown column values is in fact extremely expressive. It can express classification or regression tasks; it can represent time series prediction tasks suppose the N/A values are temporally split; it can represent recommendation tasks by prediction pairs of user and item IDs; it can unify node, edge and graph-level prediction tasks on graphs by saving (heterogeneous) graphs as multiple tables... If we are creative, we can do so many things with the capability of predicting unknown column values.
+Let's pause here - the simple capability of predicting unknown column values is in fact extremely expressive. For example, 
+- It can be used for classification or regression tasks
+- It can be used for time series prediction tasks suppose the N/A values are associated with future time column values
+- It can be used for recommendation tasks by predicting with respect to pairs of user and item IDs
+- It can unify node, edge and graph-level prediction tasks on graphs by representing (heterogeneous) graphs as multiple tables
+- ... 
+
+This is a non-exhaustive list. By being creative, we can do so many things with the capability of predicting unknown column values.
 
 ## What DBGym can do for you
 
-DBGym defines a simple declarative **predictive query** to describe the prediction task above -- `user.y`. The predictive query `user.y` indicates that you want to set up an ML prediction task for column `y` in table `user`, based on the full database's information. DBGym will automatically set up the ML prediction pipeline, including splitting the train/val/test sets, training an ML model, getting evaluation metrics for train/val/test sets, and returning `user_pred.csv` where any missing N/A values will be replaced with DBGym predictions.
+DBGym defines a simple declarative **predictive query** to describe the prediction task above, by specifying `table_name.column_name` in DBGym config. In the example above, the predictive query should be `user.y`, indicating that you want to set up an ML prediction task for column `y` in table `user`, based on the full database's information. DBGym will then automatically set up the ML prediction pipeline, including splitting the train/val/test sets, training an ML model, getting evaluation metrics for train/val/test sets, and returning `user_pred.csv` where any missing N/A values will be replaced with DBGym predictions.
 
-To solve a given predictive query, DBGym provide a variety of ML models from tabular ML to graph ML communities, including: 
+To solve a given predictive query, DBGym provides a variety of ML models from tabular ML to graph ML communities, including: 
 
 | DBGym data API | Model |
 | -------- | -------- |
@@ -75,9 +84,7 @@ To solve a given predictive query, DBGym provide a variety of ML models from tab
 | Graph | GCN, GraphSAGE, GIN, GAT | 
 | Heterogeneous graph | HGCN, HGT | 
 
-You can also easily create your own models and register them to DBGym. We hope to integrate more ML models to DBGym, and we sincerely appreciate your pull requests!
-
-DBGym is an ongoing research project serving the vibrant open-source community. We sincerely welcome new ideas, use cases, and pull requests to extend DBGym's capability!
+You can also easily create your own models and register them to DBGym. We hope to integrate more ML models into DBGym, and we sincerely appreciate your pull requests!
 
 
 
@@ -96,7 +103,7 @@ config = get_config()
 stats = run(config)
 ```
 
-The expertiment stats and predictions are generated in the `output` directory by default.
+The experiment statistics and predictions are generated in the `output` directory by default.
 
 ## 1 Customize DBGym experiments using RDBench datasets
 
@@ -120,7 +127,7 @@ stats = run(config)
 
 **Customize configs with YAML file**
 
-Alternatively, you can write customized config in a YAML file, e.g., `config_gcn.yaml`, and load with DBGym:
+Alternatively, you can write a customized config in a YAML file, e.g., `config_gcn.yaml`, and load with DBGym:
 
 ```Python
 from dbgym.run import run
@@ -131,7 +138,7 @@ config.merge_from_file('config_gcn.yaml')
 stats = run(config)
 ```
 
-where the yaml `config_gcn.yaml` can be defined as follow:
+where the yaml `config_gcn.yaml` can be defined as follows:
 
 ```yaml
 # Example Experiment Configuration for GCN
@@ -170,7 +177,7 @@ item.csv:	_item, Feature1, Feature2, ...
 where the special columns begin with `_` indicate key columns, and the remaining columns (can be arbitrarily named) are regarded as feature columns. For example, `_user` is the primary key column for `user.csv`, which should save the unique ID for each user; other tables could also refer to user ID information, e.g., by adding `_user` column in `trans.csv`, in which case `_user` is the foreign key column in `trans.csv` that could have non-unique values.
 
 
-Then, you can point DBGym to the dataset diretory, specify the dataset you want, and write a simple predictive query by point to any feature column:
+Then, you can point DBGym to the dataset directory, specify the dataset you want, and write a simple predictive query by pointing to any feature column:
 
 ```Python
 from dbgym.run import run
@@ -195,8 +202,8 @@ config.merge_from_list(['log_dir', 'your_output_path'])
 
 ## 3 Include customized models to DBGym
 
-You can further easily register your customized models to DBGym and run experiment with them. This is especially helpful if you want to benchmark your proposed model with DBGym. 
-You may follow the instructions below to customize your own model and potentially contribute back to DBGym repository.
+You can further easily register your customized models to DBGym and run experiments with them. This is especially helpful if you want to benchmark your proposed model with DBGym. 
+You may follow the instructions below to customize your own model and potentially contribute back to the DBGym repository via pull requests.
 
 To start, instead of using the simple `pip install dbgym` method, you should:
 ```bash
@@ -265,9 +272,9 @@ After running DBGym, the logs and predictions are saved to an output directory n
 Logs and predictions are saved to Datasets/output/rdb2-bank/loan.Status_MLP_42_20231024_151211
 ```
 
-## Visualisation
+## Visualization with tensorboard
 
-To see the visualisation of training process, go into the output directory and run
+To see the visualization of the training process, you can go into the output directory and run
 
 ```bash
 tensorboard --logdir .
