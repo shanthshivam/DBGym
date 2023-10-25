@@ -5,6 +5,7 @@ The training procedure.
 
 import copy
 import time
+from tqdm import tqdm
 
 import torch
 from yacs.config import CfgNode
@@ -27,16 +28,14 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode,
     mask = dataset.mask
 
     logger.log(f"Device: {cfg.device}")
-    # statistics
-    s = {}
+    stats = {}
     if cfg.model.output_dim > 1:
-        s['metric'] = 'Accuracy'
+        stats['metric'] = 'Accuracy'
     elif cfg.model.output_dim == 1:
-        s['metric'] = 'Mean Squared Error'
-    # flag
-    f = cfg.model.output_dim > 1
+        stats['metric'] = 'Mean Squared Error'
+    flag = cfg.model.output_dim > 1
 
-    for epoch in range(cfg.train.epoch):
+    for epoch in tqdm(range(cfg.train.epoch), unit="epoch"):
         t = time.time()
         model.train()
         optimizer.zero_grad()
@@ -58,26 +57,26 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode,
             f"Epoch {epoch}/{cfg.train.epoch}: Use time {time.time() - t:.4f} s"
         )
 
-        if epoch == 0 or (val_score - s['valid']) * (f * 2 - 1) > 0:
-            s['best_epoch'] = epoch
-            s['train_loss'] = loss.item()
-            s['train'] = score
-            s['valid_loss'] = val_loss.item()
-            s['valid'] = val_score
-            s['test_loss'] = test_loss.item()
-            s['test'] = test_score
-            s['model'] = copy.deepcopy(model)
-            s['pred'] = output[mask['all']].detach()
-            if f:
-                s['pred'] = s['pred'].argmax(dim=1)
+        if epoch == 0 or (val_score - stats['valid']) * (flag * 2 - 1) > 0:
+            stats['best_epoch'] = epoch
+            stats['train_loss'] = loss.item()
+            stats['train'] = score
+            stats['valid_loss'] = val_loss.item()
+            stats['valid'] = val_score
+            stats['test_loss'] = test_loss.item()
+            stats['test'] = test_score
+            stats['model'] = copy.deepcopy(model)
+            stats['pred'] = output[mask['all']].detach()
+            if flag:
+                stats['pred'] = stats['pred'].argmax(dim=1)
 
-        logger.log(f"Train {s['metric']}: " +
-                   (f"{score:.2%}" if f else f"{score:.3f}"))
+        logger.log(f"Train {stats['metric']}: " +
+                   (f"{score:.2%}" if flag else f"{score:.3f}"))
         logger.log(f"Train Loss: {loss.item():.4f}")
-        logger.log(f"Valid {s['metric']}: " +
-                   (f"{val_score:.2%}" if f else f"{val_score:.3f}"))
-        logger.log(f"Test {s['metric']}: " +
-                   (f"{test_score:.2%}" if f else f"{test_score:.3f}"))
+        logger.log(f"Valid {stats['metric']}: " +
+                   (f"{val_score:.2%}" if flag else f"{val_score:.3f}"))
+        logger.log(f"Test {stats['metric']}: " +
+                   (f"{test_score:.2%}" if flag else f"{test_score:.3f}"))
 
         result['Train'] = score
         losses['Train'] = loss.item()
@@ -85,21 +84,21 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode,
         losses['Valid'] = val_loss.item()
         result['Test'] = test_score
         losses['Test'] = test_loss.item()
-        logger.log_scalars(s['metric'], result, epoch)
+        logger.log_scalars(stats['metric'], result, epoch)
         logger.log_scalars("Loss", losses, epoch)
         logger.log_scalar("Time used", time.time() - start, epoch)
         logger.flush()
 
     logger.log("")
-    logger.log(f"Final Train {s['metric']}: " +
-               (f"{s['train']:.2%}" if f else f"{s['train']:.3f}"))
-    logger.log(f"Final Valid {s['metric']}: " +
-               (f"{s['valid']:.2%}" if f else f"{s['valid']:.3f}"))
-    logger.log(f"Final Test {s['metric']}: " +
-               (f"{s['test']:.2%}" if f else f"{s['test']:.3f}"))
+    logger.log(f"Final Train {stats['metric']}: " +
+               (f"{stats['train']:.2%}" if flag else f"{stats['train']:.3f}"))
+    logger.log(f"Final Valid {stats['metric']}: " +
+               (f"{stats['valid']:.2%}" if flag else f"{stats['valid']:.3f}"))
+    logger.log(f"Final Test {stats['metric']}: " +
+               (f"{stats['test']:.2%}" if flag else f"{stats['test']:.3f}"))
     logger.log("")
 
-    return s
+    return stats
 
 
 def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode, **kwargs):

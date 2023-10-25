@@ -19,7 +19,6 @@ class ResNet(nn.Module):
     """
     Residual Network module.
     """
-
     def __init__(self, cfg: CfgNode, data: Tabular):
         super().__init__()
         hidden_dim = cfg.model.hidden_dim
@@ -82,14 +81,12 @@ def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
     y = data.y
     mask = dataset.mask
 
-    # statistics
-    s = {}
+    stats = {}
     if cfg.model.output_dim > 1:
-        s['metric'] = 'Accuracy'
+        stats['metric'] = 'Accuracy'
     elif cfg.model.output_dim == 1:
-        s['metric'] = 'Mean Squared Error'
-    # flag
-    f = cfg.model.output_dim > 1
+        stats['metric'] = 'Mean Squared Error'
+    flag = cfg.model.output_dim > 1
 
     for epoch in range(cfg.train.epoch):
         model.train()
@@ -108,18 +105,18 @@ def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
         optimizer.step()
         scheduler.step()
 
-        if epoch == 0 or (val_score - s['valid']) * (f * 2 - 1) > 0:
-            s['best_epoch'] = epoch
-            s['train_loss'] = loss.item()
-            s['train'] = score
-            s['valid_loss'] = val_loss.item()
-            s['valid'] = val_score
-            s['test_loss'] = test_loss.item()
-            s['test'] = test_score
-            s['model'] = copy.deepcopy(model)
-            s['pred'] = output[mask['all']].detach()
-            if f:
-                s['pred'] = s['pred'].argmax(dim=1)
+        if epoch == 0 or (val_score - stats['valid']) * (flag * 2 - 1) > 0:
+            stats['best_epoch'] = epoch
+            stats['train_loss'] = loss.item()
+            stats['train'] = score
+            stats['valid_loss'] = val_loss.item()
+            stats['valid'] = val_score
+            stats['test_loss'] = test_loss.item()
+            stats['test'] = test_score
+            stats['model'] = copy.deepcopy(model)
+            stats['pred'] = output[mask['all']].detach()
+            if flag:
+                stats['pred'] = stats['pred'].argmax(dim=1)
 
         result['Train'] = score
         losses['Train'] = loss.item()
@@ -128,7 +125,7 @@ def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
         result['Test'] = test_score
         losses['Test'] = test_loss.item()
 
-    return s
+    return stats
 
 
 register('train', 'train_simple', train)

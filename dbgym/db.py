@@ -33,22 +33,21 @@ class IndexMap(dict):
     """
     Map any array to index from 0 - N-1
     """
-
-    def __init__(self, inpt, is_unique: bool = False):
+    def __init__(self, input_data, is_unique: bool = False):
         if not is_unique:
-            inpt = np.unique(inpt)
+            input_data = np.unique(input_data)
         else:
-            inpt = inpt.squeeze(1)
+            input_data = input_data.squeeze(1)
         # create a map from input to 0 - N-1
-        inpt = list(inpt)
-        if MISSING in inpt:
-            inpt.remove(MISSING)
-            inpt.append(MISSING)
-        if MISSING_INT in inpt:
-            inpt.remove(MISSING_INT)
-            inpt.append(MISSING_INT)
-        self.n = len(inpt)
-        super().__init__(zip(inpt, range(self.n)))
+        input_data = list(input_data)
+        if MISSING in input_data:
+            input_data.remove(MISSING)
+            input_data.append(MISSING)
+        if MISSING_INT in input_data:
+            input_data.remove(MISSING_INT)
+            input_data.append(MISSING_INT)
+        self.n = len(input_data)
+        super().__init__(zip(input_data, range(self.n)))
         self.inverse = {}
         for key, value in self.items():
             self.inverse[value] = key
@@ -62,12 +61,12 @@ class IndexMap(dict):
             del self.inverse[self[key]]
         super().__delitem__(key)
 
-    def update(self, inpt, is_unique: bool = False):
+    def update(self, input_data, is_unique: bool = False):
         if not is_unique:
-            inpt = np.unique(inpt)
+            input_data = np.unique(input_data)
         else:
-            inpt = inpt.squeeze(1)
-        for val in inpt:
+            input_data = input_data.squeeze(1)
+        for val in input_data:
             if val not in self.keys():
                 self[val] = self.n
                 self.n += 1
@@ -99,7 +98,6 @@ class Table:
     """
     Table module for single table
     """
-
     def __init__(self, df: pd.DataFrame):
         self.df = df
         # column types: key, feature
@@ -167,7 +165,7 @@ class Table:
                 try:
                     pd.to_datetime(
                         self.df[col][self.df[col].first_valid_index()],
-                        dayfirst=True)
+                        infer_datetime_format=True)
                     dtype = 'time'
                 except Exception:
                     dtype = 'category'
@@ -258,7 +256,6 @@ class DataBase:
     """
     DataBase module for relational database
     """
-
     def __init__(self, path: str):
         self.path = path
         self.names = []
@@ -330,7 +327,6 @@ class Tabular:
     """
     Tabular data module for relational database
     """
-
     def __init__(self, path: str, query: str):
         self.table = None
         self.path = path

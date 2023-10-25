@@ -81,7 +81,7 @@ def get_config() -> CfgNode:
     # ----------------------------------------------------------------------- #
     cfg.model = CfgNode()
     # Model name: GCN, GIN, GAT, Sage, HGCN, HGT, MLP, XGBoost
-    cfg.model.name = 'MLP'
+    cfg.model.name = 'GCN'
     # Hidden dimension
     cfg.model.hidden_dim = 128
     # Output dimension

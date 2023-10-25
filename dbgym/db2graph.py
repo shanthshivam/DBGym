@@ -20,7 +20,6 @@ class DB2Graph:
     - table: The name of target table
     - col: The name of target column
     """
-
     def __init__(self, db: DataBase, query: str):
         self.db = db
         self.table = query.split('.')[0]

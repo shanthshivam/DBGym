@@ -30,7 +30,6 @@ class TestDataset(unittest.TestCase):
     """
     Unit test module.
     """
-
     def test_gnn(self):
         """
         GNN test function.

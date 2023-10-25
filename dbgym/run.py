@@ -35,12 +35,11 @@ def run(cfg: CfgNode):
     dt = time.time()
     dataset = create_dataset(cfg)
     dt = time.time() - dt
-    print('-------------------- IMPORTANT --------------------')
     print(f'Logs and predictions are saved to {logger.path}')
-    print('-------------------- IMPORTANT --------------------')
     model = create_model(cfg, dataset)
     logger.log(cfg.dump())
     tt = time.time()
+    print('Training ...')
     if cfg.train.name in module_dict['train']:
         stats = module_dict['train'][cfg.train.name](dataset, model, logger,
                                                      cfg)
@@ -54,7 +53,7 @@ def run(cfg: CfgNode):
     logger.log(f"End time: {end}\n")
     logger.log(f"Dataset Use time: {dt:.4f} s")
     logger.log(f"Training Use time: {time.time() - tt:.4f} s")
-    logger.log(f"Use time: {time.time() - t:.4f} s")
+    logger.log(f"Total Use time: {time.time() - t:.4f} s")
     logger.close()
     dataset.fill_na(stats['pred'], logger.path)
     return stats

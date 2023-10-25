@@ -14,7 +14,6 @@ class GNNEncoder(nn.Module):
     """
     Graph neural network encoder
     """
-
     def __init__(self, graph, dimension):
         super().__init__()
 
@@ -58,7 +57,6 @@ class GNN(nn.Module):
     """
     Graph neural network module
     """
-
     def __init__(self, cfg: CfgNode, graph: HeteroData):
         super().__init__()
         output_dim = cfg.model.output_dim

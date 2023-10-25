@@ -1,3 +1,5 @@
+[pypi-image]: https://badge.fury.io/py/dbgym.svg
+[pypi-url]: https://pypi.python.org/pypi/dbgym
 [testing-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml/badge.svg
 [testing-url]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml
 [linting-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml/badge.svg
@@ -6,16 +8,13 @@
 <div align="center">
 
 # DBGym
+[![PyPI Version][pypi-image]][pypi-url]
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
 
 </div>
 
 # Overview
-
-```bash
-pip install dbgym	 # Install DBGym
-```
 
 DBGym is a platform designed to facilitate ML research and application on databases.
 With less than **5 lines of code**, you can provide the path of your database, write the predictive query you want, and DBGym will output the predictions along with your database.
@@ -24,7 +23,7 @@ DBGym is an ongoing research project serving the vibrant open-source community. 
 
 # Installation
 
-Prebuilt DBGym can be easily installed with `pip`: (tested with Python 3.10 and above)
+Prebuilt DBGym can be easily installed with `pip` (tested with Python 3.10 and above): 
 
 ```bash
 pip install dbgym
@@ -34,6 +33,7 @@ Alternatively, you can install the latest DBGym version from our code repository
 
 ```bash
 git clone https://github.com/JiaxuanYou/DBGym.git
+cd DBGym
 pip install -e . 
 ```
 
@@ -195,12 +195,12 @@ config.merge_from_file('config_gcn.yaml')
 stats = run(config)
 ```
 
-Finally, DBGym will generate experiment logs and predictions in the `output` directory by default. The predictions for column `x1` of `target.csv` will be saved as `target_pred.csv`.
+Finally, DBGym will generate experiment logs and predictions in the `output` directory in `dataset_path` folder by default. The predictions for column `x1` of `target.csv` will be saved as `target_pred.csv`.
 
-Alternatively, you can customize your output directory by adding the following line
+Alternatively, you can customize your output directory name by adding the following line
 
 ```Python
-config.dataset.dir = 'output_path'
+config.log_dir = 'output_path'
 ```
 
 
@@ -274,7 +274,7 @@ DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods o
 After running DBGym, the logs and predictions are saved to an output directory named as `output` by default. Moreover, the command line output will also indicate the path where logs and predictions are saved. For example
 
 ```
-Logs and predictions are saved to Datasets/output/rdb2-bank/loan.Status_MLP_42_20231024_151211
+Logs and predictions are saved to Datasets/output/rdb2-bank/loan.Status_MLP_42_20231024_123456
 ```
 
 ## Visualization with tensorboard

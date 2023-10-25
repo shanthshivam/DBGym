@@ -13,7 +13,6 @@ class HeteroEncoder(torch.nn.Module):
     """
     Heterogeneous graph neural network encoder
     """
-
     def __init__(self, graph, dimension):
         super().__init__()
 
@@ -57,7 +56,6 @@ class HeteroGNN(torch.nn.Module):
     """
     Heterogeneous graph neural network module
     """
-
     def __init__(self, cfg: CfgNode, graph: HeteroData):
         super().__init__()
 
@@ -104,7 +102,6 @@ class HGNN(torch.nn.Module):
     """
     Heterogeneous graph neural network module
     """
-
     def __init__(self, cfg: CfgNode, graph: HeteroData):
         super().__init__()
 

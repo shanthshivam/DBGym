@@ -14,7 +14,6 @@ class MLP(nn.Module):
     """
     Multilayer perceptron module
     """
-
     def __init__(self, cfg: CfgNode, data: Tabular):
         super().__init__()
         hidden_dim = cfg.model.hidden_dim
