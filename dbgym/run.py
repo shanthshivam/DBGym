@@ -29,9 +29,13 @@ def run(cfg: CfgNode):
     logger = Logger(cfg)
     start = time.strftime("%Y.%m.%d %H:%M:%S", time.localtime())
     logger.log(f"Start time: {start}")
+    print(f'Loading datasets: {cfg.dataset.name}')
     dt = time.time()
     dataset = create_dataset(cfg)
     dt = time.time() - dt
+    print('-------------------- IMPORTANT --------------------')
+    print(f'Logs and predictions are saved to {logger.path}')
+    print('-------------------- IMPORTANT --------------------')
     model = create_model(cfg, dataset)
     logger.log(cfg.dump())
     tt = time.time()
