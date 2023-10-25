@@ -16,8 +16,8 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **
     '''
     The training function
     '''
-    if cfg.loss.name in module_dict['loss']:
-        compute_loss = module_dict['loss'][cfg.loss.name]
+    loss_func = module_dict['loss'].get(cfg.loss.name, compute_loss)
+    
     start = time.time()
     data = dataset.to(torch.device(cfg.device))
     y = data.y
@@ -41,10 +41,10 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode, **
         target = y.squeeze()
         result = {}
         losses = {}
-        loss, score = compute_loss(cfg, output[mask['train']], target[mask['train']])
+        loss, score = loss_func(cfg, output[mask['train']], target[mask['train']])
         loss.backward()
-        val_loss, val_score = compute_loss(cfg, output[mask['valid']], target[mask['valid']])
-        test_loss, test_score = compute_loss(cfg, output[mask['test']], target[mask['test']])
+        val_loss, val_score = loss_func(cfg, output[mask['valid']], target[mask['valid']])
+        test_loss, test_score = loss_func(cfg, output[mask['test']], target[mask['test']])
         optimizer.step()
         scheduler.step()
 
@@ -93,8 +93,8 @@ def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode, **kwargs):
     The training function for xgboost
     '''
 
-    if cfg.loss.name in module_dict['loss']:
-        compute_loss = module_dict['loss'][cfg.loss.name]
+    loss_func = module_dict['loss'].get(cfg.loss.name, compute_loss)
+
     x = torch.concat([dataset.x_c, dataset.x_d], dim=1)
     y = dataset.y
     mask = dataset.mask
@@ -103,7 +103,7 @@ def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode, **kwargs):
     for split in ['train', 'valid', 'test']:
         y_pred = torch.tensor(model.predict(x[mask[split]]))
         y_true = y[mask[split]]
-        score = compute_loss(cfg, y_pred, y_true)
+        score = loss_func(cfg, y_pred, y_true)
         if cfg.model.output_dim > 1:
             logger.log(f"{split.capitalize()} Accuracy: {score:.2%}")
         elif cfg.model.output_dim == 1:
