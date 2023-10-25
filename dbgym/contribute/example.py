@@ -3,10 +3,13 @@ resnet.py
 Residual Network module.
 """
 
+import time
+import copy
 import torch
 from torch import nn
 from torch import Tensor
 from dbgym.db import Tabular
+from dbgym.loss import compute_loss
 from yacs.config import CfgNode
 from dbgym.register import register
 
@@ -68,7 +71,7 @@ register('tabular_model', 'ResNet', ResNet)
 
 
 
-def train(dataset, model, optimizer, scheduler, cfg: CfgNode, **kwargs):
+def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
     '''
     The training function
     '''
@@ -87,7 +90,6 @@ def train(dataset, model, optimizer, scheduler, cfg: CfgNode, **kwargs):
     f = cfg.model.output_dim > 1
 
     for epoch in range(cfg.train.epoch):
-        t = time.time()
         model.train()
         optimizer.zero_grad()
         output = model(data)
