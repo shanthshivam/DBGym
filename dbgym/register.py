@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 module_dict: Dict[str, Dict] = defaultdict(dict)
 
+
 def register(module_type: str, name: str, module: Any):
     """
     Base function for registering a module in DBGym.

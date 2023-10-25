@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Run YAPF (Python code formatter)
-yapf --in-place $(git diff --cached --name-only)
 isort .
+yapf --in-place $(git diff --cached --name-only)
 
 # Set pre-commit check
 # chmod +x pre-commit.sh
