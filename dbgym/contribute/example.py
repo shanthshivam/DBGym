@@ -73,9 +73,9 @@ register('tabular_model', 'ResNet', ResNet)
 
 
 def train(dataset, model, optimizer, scheduler, cfg: CfgNode):
-    '''
+    """
     The training function
-    '''
+    """
 
     data = dataset.to(torch.device(cfg.device))
     y = data.y

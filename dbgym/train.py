@@ -1,7 +1,7 @@
-'''
+"""
 train.py
 The training procedure.
-'''
+"""
 
 import copy
 import time
@@ -17,9 +17,9 @@ from dbgym.register import module_dict
 
 def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode,
           **kwargs):
-    '''
+    """
     The training function
-    '''
+    """
     loss_func = module_dict['loss'].get(cfg.loss.name, compute_loss)
 
     start = time.time()
@@ -102,9 +102,9 @@ def train(dataset, model, optimizer, scheduler, logger: Logger, cfg: CfgNode,
 
 
 def train_xgboost(dataset, model, logger: Logger, cfg: CfgNode, **kwargs):
-    '''
+    """
     The training function for xgboost
-    '''
+    """
 
     loss_func = module_dict['loss'].get(cfg.loss.name, compute_loss)
 

@@ -78,7 +78,7 @@ def download_dataset(url, folder):
 
 
 def create_dataset(cfg: CfgNode):
-    '''
+    """
     The dataset function, get dataset
 
     Args:
@@ -86,7 +86,7 @@ def create_dataset(cfg: CfgNode):
 
     Return:
     - dataset: Tabular, DB2Graph or others
-    '''
+    """
 
     data_dir = cfg.dataset.dir
     path = os.path.join(data_dir, cfg.dataset.name)

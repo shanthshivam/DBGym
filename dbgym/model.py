@@ -1,7 +1,7 @@
-'''
+"""
 model.py
 Create the model according to configuration.
-'''
+"""
 
 import torch
 from yacs.config import CfgNode
@@ -14,7 +14,7 @@ from dbgym.register import module_dict
 
 
 def create_model(cfg: CfgNode, dataset):
-    '''
+    """
     Create the model according to configuration
 
     Args:
@@ -23,7 +23,7 @@ def create_model(cfg: CfgNode, dataset):
 
     Output:
     - model: The model
-    '''
+    """
 
     graph_models = module_dict['graph_model']
     if cfg.model.name in graph_models:

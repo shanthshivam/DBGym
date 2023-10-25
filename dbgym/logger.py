@@ -1,7 +1,7 @@
-'''
+"""
 logger.py
 The logger module, log everything.
-'''
+"""
 
 import os
 import time
