@@ -2,7 +2,7 @@
 
 # Run YAPF (Python code formatter)
 isort .
-yapf --in-place $(git diff --cached --name-only)
+yapf --in-place $(git diff --cached --name-only -- '*.py')
 
 # Set pre-commit check
 # chmod +x pre-commit.sh
