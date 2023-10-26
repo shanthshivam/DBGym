@@ -27,6 +27,8 @@
 
 </div>
 
+https://github.com/JiaxuanYou/DBGym/assets/49870769/cc4437eb-bdb6-4285-914b-892062d7d84e
+
 # Overview
 
 DBGym is a platform designed to facilitate ML research and application on databases.
