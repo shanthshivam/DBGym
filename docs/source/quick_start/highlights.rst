@@ -1,7 +1,7 @@
 
 .. image:: figures/Overview.png
-   :width: 551
-   :height: 134
+   :width: 606
+   :height: 148
    :alt: Alternative text
 
 DBGym Feature Highlights
@@ -30,7 +30,8 @@ Logs and Predictions
 
 After running DBGym, the logs and predictions are saved to an output directory named as `output` by default. Moreover, the command line output will also indicate the path where logs and predictions are saved. For example
 
-.. code-block:: none
+.. code-block:: bash
+
     Logs and predictions are saved to Datasets/output/rdb2-bank/loan.Status_MLP_42_20231024_151211
 
 
@@ -39,5 +40,6 @@ Visualization with Tensorboard
 
 To see the visualization of the training process, you can go into the output directory and run
 
-.. code-block:: none
+.. code-block:: bash
+    
     tensorboard --logdir .

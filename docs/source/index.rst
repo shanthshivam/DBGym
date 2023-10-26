@@ -4,11 +4,12 @@
 DBGym Documentation 
 ===================
 
+.. image:: quick_start/figures/logo.png
+   :width: 600
+   :height: 150
+   :alt: Alternative text
 
-`DBGym <https://github.com/JiaxuanYou/DBGym>`__ is a platform designed to facilitate ML research and application on databases. With less than 5 lines of code, you can provide the path of your database, write the predictive query you want, and DBGym will output the predictions along with your database.
-
-.. add paper link and dataset link
-.. DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods on relational databases. Please refer to our paper for more details: *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
+`DBGym <https://github.com/JiaxuanYou/DBGym>`__ is a platform designed to facilitate ML research and application on databases. With less than 5 lines of code, you can provide the path of your database, write the predictive query you want, and DBGym will output the predictions along with your database. For more details, please refer to `paper <https://arxiv.org/abs/2310.16837>`__ and `dataset <https://github.com/JiaxuanYou/RDBench>`__  .
 
 
 
