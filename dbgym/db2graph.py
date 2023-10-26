@@ -209,11 +209,11 @@ class DB2Graph:
         if self.col in table.feature_disc:
             pred = np.vectorize(encoder.inverse.get)(pred)
             if na_indices.shape[0]:
-                df[self.col][na_indices] = pred[na_indices]
+                df.loc[na_indices, self.col] = pred[na_indices]
         elif self.col in table.feature_cont:
             pred = encoder.inverse_transform(pred).squeeze()
             if df[self.col][valid_indices].dtype == 'Int64':
                 pred = pd.Series(pred.round(), dtype='int64')
             if na_indices.shape[0]:
-                df[self.col][na_indices] = pred[na_indices]
+                df.loc[na_indices, self.col] = pred[na_indices]
         df.to_csv(f"{path}/{self.table}_pred.csv", index=False)

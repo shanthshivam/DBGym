@@ -95,9 +95,15 @@ def create_dataset(cfg: CfgNode):
     if cfg.dataset.name != 'example' and not os.path.exists(path):
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
-        link = 'https://github.com/JiaxuanYou/RDBench/archive/refs/heads/master.zip'
-        print(f"Downloading dataset from {link}...")
-        download_dataset(link, data_dir)
+        try:
+            link = 'https://github.com/JiaxuanYou/RDBench/archive/refs/heads/master.zip'
+            print(f"Downloading dataset from {link}...")
+            download_dataset(link, data_dir)
+        except Exception:
+            print("Dataset downloaded failed, trying another link.")
+            link = 'https://cloud.tsinghua.edu.cn/f/f68ae981b1c34b749954/?dl=1'
+            print(f"Downloading dataset from {link}...")
+            download_dataset(link, data_dir)
         print("Dataset downloaded successfully.")
 
     if cfg.model.name in ["GCN", "GIN", "GAT", "Sage", "HGT", "HGCN"]:
