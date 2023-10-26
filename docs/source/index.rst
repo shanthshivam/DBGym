@@ -4,7 +4,7 @@
 DBGym Documentation 
 ===================
 
-.. image:: quick_start/figures/logo.png
+.. image:: quick_start/figures/Logo.png
    :width: 600
    :height: 150
    :alt: Alternative text
