@@ -101,7 +101,7 @@ def create_dataset(cfg: CfgNode):
             download_dataset(link, data_dir)
         except Exception:
             print("Dataset downloaded failed, trying another link.")
-            link = 'https://cloud.tsinghua.edu.cn/f/f68ae981b1c34b749954/?dl=1'
+            link = 'https://cloud.tsinghua.edu.cn/f/b1b1736a3dd14528920d/?dl=1'
             print(f"Downloading dataset from {link}...")
             download_dataset(link, data_dir)
         print("Dataset downloaded successfully.")
