@@ -301,7 +301,7 @@ tensorboard --logdir .
 Then visit `localhost:6006`, or any other port you specified.
 
 ## Citation
-If you find RDBench useful or relevant to your research, please kindly cite our paper:
+If you find DBGym useful or relevant to your research, please kindly cite our paper:
 
 ```bibtex
 @article{zhang2023rdbench,
