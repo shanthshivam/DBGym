@@ -15,7 +15,7 @@
 [license-url]: https://github.com/JiaxuanYou/DBGym/blob/main/LICENSE
 <div align="center">
 
-<a href="http://dbgym.readthedocs.io"><img align="center" src="docs/Logo.png" width="1000px"/>
+<a href="http://dbgym.readthedocs.io"><img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/Logo.png" width="1000px"/>
 
 [![PyPI Version][pypi-image]][pypi-url]
 [![Downloads][download-image]][download-url]
@@ -100,8 +100,6 @@ To solve a given predictive query, DBGym provides a variety of ML models from ta
 | Heterogeneous graph | HGCN, HGT | 
 
 You can also easily create your own models and register them to DBGym. We hope to integrate more ML models into DBGym, and we sincerely appreciate your pull requests!
-
-
 
 
 # DBGym Quick Start
@@ -258,7 +256,7 @@ stats = run(config)
 # DBGym Feature Highlights
 
 <div align="center">
-<img align="center" src="docs/Overview.png" width="1000px" />
+<img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/Overview.png" width="1000px" />
 <b><br>Figure 1: An overview of DBGym design principle.</b>
 </div>
 
@@ -279,7 +277,7 @@ stats = run(config)
 - Flexible user customization.
 - Results reported are averaged over the same dataset and same task type (classification or regression).
 
-DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods on relational databases. Please refer to our paper for more details: *[RDBench: ML Benchmark for Relational Databases](tbf)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
+DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods on relational databases. Please refer to our paper for more details: *[RDBench: ML Benchmark for Relational Databases](https://arxiv.org/abs/2310.16837)*, arXiv, Zizhao Zhang*, Yi Yang*, Lutong Zou*, He Wen*, Tao Feng, Jiaxuan You.
 
 
 # Logging
