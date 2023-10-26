@@ -154,3 +154,11 @@ def set_from_path(path: str) -> CfgNode:
     cfg = get_config()
     cfg.merge_from_file(path)
     return cfg
+
+
+if __name__ == '__main__':
+    module_dict = {}
+    module_dict['config'] = {}
+    cfg = get_config()
+    with open("./output.yaml", "w") as f:
+        f.write(cfg.dump())
