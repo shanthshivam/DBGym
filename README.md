@@ -38,7 +38,7 @@ DBGym is an ongoing research project serving the vibrant open-source community. 
 
 # Installation
 
-Prebuilt DBGym can be easily installed with `pip` (tested with Python 3.10 and above): 
+Prebuilt DBGym can be easily installed with `pip` (tested with Python 3.8 and above): 
 
 ```bash
 pip install dbgym
