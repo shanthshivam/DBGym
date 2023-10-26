@@ -1,3 +1,5 @@
+[pypi-image]: https://badge.fury.io/py/dbgym.svg
+[pypi-url]: https://pypi.python.org/pypi/dbgym
 [testing-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml/badge.svg
 [testing-url]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml
 [linting-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml/badge.svg
@@ -5,17 +7,17 @@
 
 <div align="center">
 
-# DBGym
+<div align="center">
+<img align="center" src="docs/Logo.png" width="1000px"/>
+</div>
+
+[![PyPI Version][pypi-image]][pypi-url]
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
 
 </div>
 
 # Overview
-
-```bash
-pip install dbgym	 # Install DBGym
-```
 
 DBGym is a platform designed to facilitate ML research and application on databases.
 With less than **5 lines of code**, you can provide the path of your database, write the predictive query you want, and DBGym will output the predictions along with your database.
@@ -24,7 +26,7 @@ DBGym is an ongoing research project serving the vibrant open-source community. 
 
 # Installation
 
-Prebuilt DBGym can be easily installed with `pip`: (tested with Python 3.10 and above)
+Prebuilt DBGym can be easily installed with `pip` (tested with Python 3.10 and above): 
 
 ```bash
 pip install dbgym
@@ -34,6 +36,7 @@ Alternatively, you can install the latest DBGym version from our code repository
 
 ```bash
 git clone https://github.com/JiaxuanYou/DBGym.git
+cd DBGym
 pip install -e . 
 ```
 
@@ -99,29 +102,30 @@ With less than 5 lines of code, you can set up and carry out experiments using D
 from dbgym.run import run
 from dbgym.config import get_config
 
+# Get default DBGym config
 config = get_config()
 stats = run(config)
 ```
 
-The experiment statistics and predictions are generated in the `output` directory by default.
+The experiment statistics and predictions returned from the `run()` function and are further saved in the `output` directory by default.
 
-## 1 Customize DBGym experiments using RDBench datasets
+## 1 Run DBGym experiments on RDBench datasets
 
-For users who want to customize DBGym experiments, we provide two ways to customize configuration: using Python and/or using `YAML` config file. Refer to [`dbgym/config.py`](dbgym/config.py) for all the available configurations.
+For users who want to customize DBGym experiments, we provide two ways to customize configuration: using Python and/or using `YAML` config file. Please refer to [`dbgym/config.py`](dbgym/config.py) for all the available configurations.
 
 **Customize configs with Python**
 
-You can set the customized predictive query for a given dataset by specifying in the Python code, for example:
+You can easily set customized config values in the Python code, e.g., picking an RDBench dataset and writing your favorite predictive query. For example:
 
 ```Python
 from dbgym.run import run
 from dbgym.config import get_config
 
 config = get_config()
-# point to a dataset available in RDBench
-config.merge_from_list(['dataset.name', 'rdb1-ather'])  
+# point to an RDBench dataset. Will auto-download if not cached
+config.dataset.name = 'rdb1-ather'
 # predictive query. Format: table_name.column_name
-config.merge_from_list(['dataset.query', 'entry_examination.Cholesterol'])
+config.dataset.query = 'entry_examination.Cholesterol'
 stats = run(config)
 ```
 
@@ -160,12 +164,12 @@ optim:
 You can also easily apply DBGym to your own database datasets. To start, you can first organize your customized data as follows:
 
 ```
-your_dataset_path
-├── your_dataset_1
+dataset_path
+├── dataset_1
 │   ├── user.csv
 │   ├── item.csv
 │   └── ...
-├── your_dataset_2
+├── dataset_2
 └── ...
 ```
 
@@ -184,18 +188,22 @@ from dbgym.run import run
 from dbgym.config import get_config
 
 config = get_config()
-config.merge_from_list(['dataset.dir', 'your_dataset_path'])
-config.merge_from_list(['dataset.name', 'your_dataset_1'])
-config.merge_from_list(['dataset.query', 'target.x1'])
+
+# provide path to your dataset
+config.dataset.dir = 'dataset_path'
+config.dataset.name = 'dataset_1'
+config.dataset.query = 'target.x1'
+# (optional) set additional customized configs
+config.merge_from_file('config_gcn.yaml')
 stats = run(config)
 ```
 
-Finally, DBGym will generate experiment logs and predictions in the `output` directory by default. The predictions for column `x1` of `target.csv` will be saved as `target_pred.csv`.
+Finally, DBGym will generate experiment logs and predictions in the `output` directory in `dataset_path` folder by default. The predictions for column `x1` of `target.csv` will be saved as `target_pred.csv`.
 
-Alternatively, you can customize your output directory by adding the following line
+Alternatively, you can customize your output directory name by adding the following line
 
 ```Python
-config.merge_from_list(['log_dir', 'your_output_path'])
+config.log_dir = 'output_path'
 ```
 
 
@@ -231,7 +239,7 @@ from dbgym.run import run
 from dbgym.config import get_config
 
 config = get_config()
-config.merge_from_list(['model.name', 'your_model_name'])
+config.model.name = 'your_model_name'
 stats = run(config)
 ```
 
@@ -269,7 +277,7 @@ DBGym has enabled RDBench, a user-friendly toolkit for benchmarking ML methods o
 After running DBGym, the logs and predictions are saved to an output directory named as `output` by default. Moreover, the command line output will also indicate the path where logs and predictions are saved. For example
 
 ```
-Logs and predictions are saved to Datasets/output/rdb2-bank/loan.Status_MLP_42_20231024_151211
+Logs and predictions are saved to Datasets/output/rdb2-bank/loan.Status_MLP_42_20231024_123456
 ```
 
 ## Visualization with tensorboard
@@ -281,6 +289,3 @@ tensorboard --logdir .
 ```
 
 Then visit `localhost:6006`, or any other port you specified.
-
-
-

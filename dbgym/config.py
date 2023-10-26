@@ -4,7 +4,10 @@ This module contains some configuration functions.
 """
 
 import argparse
+
 from yacs.config import CfgNode
+
+from dbgym.register import module_dict
 
 
 def get_args() -> argparse.Namespace:
@@ -16,7 +19,10 @@ def get_args() -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', type=str, default='config.yaml', help='configuration path')
+    parser.add_argument('--cfg',
+                        type=str,
+                        default='config.yaml',
+                        help='configuration path')
     args = parser.parse_args()
 
     return args
@@ -65,6 +71,8 @@ def get_config() -> CfgNode:
     # Training options
     # ----------------------------------------------------------------------- #
     cfg.train = CfgNode()
+    # Name of the training function
+    cfg.train.name = 'default'
     # Training epochs
     cfg.train.epoch = 200
 
@@ -73,7 +81,7 @@ def get_config() -> CfgNode:
     # ----------------------------------------------------------------------- #
     cfg.model = CfgNode()
     # Model name: GCN, GIN, GAT, Sage, HGCN, HGT, MLP, XGBoost
-    cfg.model.name = 'MLP'
+    cfg.model.name = 'GCN'
     # Hidden dimension
     cfg.model.hidden_dim = 128
     # Output dimension
@@ -98,9 +106,20 @@ def get_config() -> CfgNode:
     # Scheduler: none, step, cos
     cfg.optim.scheduler = 'cos'
     # Milestones in step scheduler
-    # cfg.optim.milestones = [30, 60, 90]
+    cfg.optim.milestones = [30, 60, 90]
     # Learning rate decay
-    # cfg.optim.lr_decay = 0.5
+    cfg.optim.lr_decay = 0.5
+
+    # ----------------------------------------------------------------------- #
+    # Loss options
+    # ----------------------------------------------------------------------- #
+    cfg.loss = CfgNode()
+    # Name of the loss function
+    cfg.loss.name = 'default'
+
+    # Set user customized cfgs
+    for func in module_dict['config'].values():
+        func(cfg)
 
     return cfg
 

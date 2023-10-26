@@ -5,15 +5,15 @@ Multilayer perceptron module.
 
 import torch
 from torch import nn
-from dbgym.db import Tabular
 from yacs.config import CfgNode
+
+from dbgym.db import Tabular
 
 
 class MLP(nn.Module):
     """
     Multilayer perceptron module
     """
-
     def __init__(self, cfg: CfgNode, data: Tabular):
         super().__init__()
         hidden_dim = cfg.model.hidden_dim
@@ -22,7 +22,7 @@ class MLP(nn.Module):
 
         max_values = torch.max(data.x_d, dim=0).values
         self.embeddings = nn.ModuleList([
-            nn.Embedding(max_values[i]+1, hidden_dim)
+            nn.Embedding(max_values[i] + 1, hidden_dim)
             for i in range(data.x_d.size(1))
         ])
         self.linear = nn.Linear(data.x_c.shape[1], hidden_dim)
@@ -43,7 +43,9 @@ class MLP(nn.Module):
         - out: output data
         """
 
-        x_d = [self.embeddings[j](data.x_d[:, j]) for j in range(data.x_d.size(1))]
+        x_d = [
+            self.embeddings[j](data.x_d[:, j]) for j in range(data.x_d.size(1))
+        ]
         x_d = torch.sum(torch.stack(x_d, dim=2), dim=2)
         x = x_d + self.linear(data.x_c)
 

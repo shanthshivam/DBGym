@@ -1,13 +1,15 @@
-'''
+"""
 logger.py
 The logger module, log everything.
-'''
+"""
 
-import time
 import os
-from yacs.config import CfgNode
+import time
+
+from tensorboard.backend.event_processing.event_accumulator import \
+    EventAccumulator
 from torch.utils.tensorboard.writer import SummaryWriter
-from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+from yacs.config import CfgNode
 
 
 def to_text(path: str):
@@ -63,7 +65,6 @@ class Logger:
     """
     The logger module, log everything.
     """
-
     def __init__(self, cfg: CfgNode):
         log_dir = os.path.join(cfg.dataset.dir, cfg.log_dir)
         dataset = cfg.dataset.name
@@ -71,8 +72,7 @@ class Logger:
         task = cfg.dataset.query
         config = cfg.model.name + '_' + str(cfg.seed) + '_' + t
         self.path = os.path.join(log_dir, dataset, task + '_' + config)
-        self.file = self.path + '.txt'
-        print(f'Logs and predictions are saved to {self.path}')
+        self.file = self.path + '/output.txt'
         self.writer = SummaryWriter(self.path)
         self.logs = []
 
@@ -101,4 +101,4 @@ class Logger:
         self.writer.flush()
         self.writer.close()
         self.flush()
-        to_text(self.path)
+        # to_text(self.path)

@@ -4,11 +4,12 @@ DataBase module.
 """
 
 import os
-from typing import Dict, List, Any
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+from typing import Any, Dict, List
+
 import numpy as np
+import pandas as pd
 import torch
+from sklearn.preprocessing import MinMaxScaler
 
 MISSING_INT = -114514
 MISSING = '1919810'
@@ -32,22 +33,21 @@ class IndexMap(dict):
     """
     Map any array to index from 0 - N-1
     """
-
-    def __init__(self, inpt, is_unique: bool = False):
+    def __init__(self, input_data, is_unique: bool = False):
         if not is_unique:
-            inpt = np.unique(inpt)
+            input_data = np.unique(input_data)
         else:
-            inpt = inpt.squeeze(1)
+            input_data = input_data.squeeze(1)
         # create a map from input to 0 - N-1
-        inpt = list(inpt)
-        if MISSING in inpt:
-            inpt.remove(MISSING)
-            inpt.append(MISSING)
-        if MISSING_INT in inpt:
-            inpt.remove(MISSING_INT)
-            inpt.append(MISSING_INT)
-        self.n = len(inpt)
-        super().__init__(zip(inpt, range(self.n)))
+        input_data = list(input_data)
+        if MISSING in input_data:
+            input_data.remove(MISSING)
+            input_data.append(MISSING)
+        if MISSING_INT in input_data:
+            input_data.remove(MISSING_INT)
+            input_data.append(MISSING_INT)
+        self.n = len(input_data)
+        super().__init__(zip(input_data, range(self.n)))
         self.inverse = {}
         for key, value in self.items():
             self.inverse[value] = key
@@ -61,12 +61,12 @@ class IndexMap(dict):
             del self.inverse[self[key]]
         super().__delitem__(key)
 
-    def update(self, inpt, is_unique: bool = False):
+    def update(self, input_data, is_unique: bool = False):
         if not is_unique:
-            inpt = np.unique(inpt)
+            input_data = np.unique(input_data)
         else:
-            inpt = inpt.squeeze(1)
-        for val in inpt:
+            input_data = input_data.squeeze(1)
+        for val in input_data:
             if val not in self.keys():
                 self[val] = self.n
                 self.n += 1
@@ -98,7 +98,6 @@ class Table:
     """
     Table module for single table
     """
-
     def __init__(self, df: pd.DataFrame):
         self.df = df
         # column types: key, feature
@@ -164,7 +163,9 @@ class Table:
                     dtype = 'int64'
             elif dtype == 'object':
                 try:
-                    pd.to_datetime(self.df[col][self.df[col].first_valid_index()], dayfirst=True)
+                    pd.to_datetime(
+                        self.df[col][self.df[col].first_valid_index()],
+                        infer_datetime_format=True)
                     dtype = 'time'
                 except Exception:
                     dtype = 'category'
@@ -174,10 +175,10 @@ class Table:
             self.dtypes[col] = dtype
 
     def infer_ctypes(
-            self,
-            ctypes: Dict[str, str] = None,
-            int_ratio_max: float = 0.1,
-            int_abs_max: int = 1000,
+        self,
+        ctypes: Dict[str, str] = None,
+        int_ratio_max: float = 0.1,
+        int_abs_max: int = 1000,
     ):
         """
         Infer the column type of columns
@@ -226,7 +227,8 @@ class Table:
                 encoder.fit(column)
                 self.feat_encoder[col] = encoder
                 value = encoder.transform(column)
-                self.feature_cont[col] = torch.tensor(value, dtype=torch.float64)
+                self.feature_cont[col] = torch.tensor(value,
+                                                      dtype=torch.float64)
             elif dtype == 'category':
                 column = column.fillna(MISSING).astype(dtype)
                 encoder = IndexMap(column)
@@ -254,7 +256,6 @@ class DataBase:
     """
     DataBase module for relational database
     """
-
     def __init__(self, path: str):
         self.path = path
         self.names = []
@@ -292,7 +293,6 @@ class DataBase:
             self.table_to_key[name] = keys
             keys = dict(zip(keys, [[name] for _ in range(len(keys))]))
             self.key_to_table = reduce_sum_dict(self.key_to_table, keys)
-            
 
     def prepare_encoder(self):
         """
@@ -327,7 +327,6 @@ class Tabular:
     """
     Tabular data module for relational database
     """
-
     def __init__(self, path: str, query: str):
         self.table = None
         self.path = path
@@ -394,19 +393,22 @@ class Tabular:
             del table.feature_cont[self.col]
         elif self.col in table.feature_disc:
             self.y = table.feature_disc[self.col]
-            self.output = torch.max(self.y[table.valid_indices(self.col)]).item() + 1
+            self.output = torch.max(self.y[table.valid_indices(
+                self.col)]).item() + 1
             del table.feature_disc[self.col]
         else:
             raise ValueError(f'Column {self.col} not found.')
 
         # concatenate features
         if table.feature_disc:
-            feature = torch.cat([f.view(-1, 1) for f in table.feature_disc.values()], dim=1)
+            feature = torch.cat(
+                [f.view(-1, 1) for f in table.feature_disc.values()], dim=1)
         else:
             feature = torch.zeros((len(table.df), 1))
         self.x_d = feature.to(torch.int32)
         if table.feature_cont:
-            feature = torch.cat([f.view(-1, 1) for f in table.feature_cont.values()], dim=1)
+            feature = torch.cat(
+                [f.view(-1, 1) for f in table.feature_cont.values()], dim=1)
         else:
             feature = torch.zeros((len(table.df), 1))
         self.x_c = feature.to(torch.float32)
@@ -418,7 +420,7 @@ class Tabular:
         sizes = [int(ratio * valid_indices.shape[0]) for ratio in ratios]
         indices = torch.randperm(sizes[3])
         for i, name in enumerate(names):
-            self.mask[name] = valid_indices[indices[sizes[i]: sizes[i + 1]]]
+            self.mask[name] = valid_indices[indices[sizes[i]:sizes[i + 1]]]
         self.mask['all'] = torch.arange(len(df))
 
     def to(self, device):
@@ -443,11 +445,14 @@ class Tabular:
 
         for col in df.columns.tolist():
             column = df[col].dropna()
-            if df[col].dtype == 'float64' and column.apply(lambda x: x.is_integer()).all():
+            if df[col].dtype == 'float64' and column.apply(
+                    lambda x: x.is_integer()).all():
                 df[col] = df[col].astype(pd.Int64Dtype())
 
-        na_indices = torch.nonzero(torch.tensor(pd.isna(df[self.col]))).flatten().numpy()
-        valid_indices = torch.nonzero(torch.tensor(pd.notna(df[self.col]))).flatten().numpy()
+        na_indices = torch.nonzero(torch.tensor(pd.isna(
+            df[self.col]))).flatten().numpy()
+        valid_indices = torch.nonzero(torch.tensor(pd.notna(
+            df[self.col]))).flatten().numpy()
         pred = pred.cpu()
         encoder = table.feat_encoder[self.col]
         if self.col in table.feature_disc:

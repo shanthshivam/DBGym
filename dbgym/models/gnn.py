@@ -5,16 +5,15 @@ Graph neural network module.
 
 import torch
 from torch import nn
-from yacs.config import CfgNode
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import GCNConv, SAGEConv, GINConv, GATConv, Linear
+from torch_geometric.nn import GATConv, GCNConv, GINConv, Linear, SAGEConv
+from yacs.config import CfgNode
 
 
 class GNNEncoder(nn.Module):
     """
     Graph neural network encoder
     """
-
     def __init__(self, graph, dimension):
         super().__init__()
 
@@ -23,11 +22,12 @@ class GNNEncoder(nn.Module):
         for node_type in graph.node_types:
             max_values = torch.max(graph[node_type].x_d, dim=0).values
             embedding_list = nn.ModuleList([
-                nn.Embedding(max_values[i]+1, dimension)
+                nn.Embedding(max_values[i] + 1, dimension)
                 for i in range(graph[node_type].x_d.size(1))
             ])
             self.emb_dict[node_type] = embedding_list
-            self.lin_dict[node_type] = Linear(graph[node_type].x_c.shape[1], dimension)
+            self.lin_dict[node_type] = Linear(graph[node_type].x_c.shape[1],
+                                              dimension)
 
     def forward(self, graph):
         """
@@ -57,7 +57,6 @@ class GNN(nn.Module):
     """
     Graph neural network module
     """
-
     def __init__(self, cfg: CfgNode, graph: HeteroData):
         super().__init__()
         output_dim = cfg.model.output_dim
@@ -86,8 +85,9 @@ class GNN(nn.Module):
         if self.model == "GCN":
             return GCNConv(input_dim, output_dim)
         if self.model == "GIN":
-            return GINConv(nn=nn.Sequential(nn.Linear(input_dim, output_dim),
-                                            nn.ReLU(), nn.Linear(output_dim, output_dim)))
+            return GINConv(
+                nn=nn.Sequential(nn.Linear(input_dim, output_dim), nn.ReLU(),
+                                 nn.Linear(output_dim, output_dim)))
         if self.model == "GAT":
             return GATConv(input_dim, output_dim, self.head, concat=False)
         if self.model == "Sage":

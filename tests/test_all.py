@@ -3,25 +3,25 @@ test.py
 Unit test module.
 """
 
-import unittest
 import sys
-
 import time
+import unittest
+
 from torch import optim
 
 from dbgym.config import get_config, set_from_path
-from dbgym.utils.device import auto_select_device
-from dbgym.utils.seed import seed_everything
-from dbgym.logger import Logger
 from dbgym.dataset import create_dataset
-from dbgym.model import create_model
-from dbgym.optimizer import create_optimizer, create_scheduler
-from dbgym.train import train, train_xgboost
-from dbgym.models.mlp import MLP
-from dbgym.models.gnn import GNN
 from dbgym.db import Tabular
 from dbgym.db2graph import DB2Graph
+from dbgym.logger import Logger
+from dbgym.model import create_model
+from dbgym.models.gnn import GNN
+from dbgym.models.mlp import MLP
+from dbgym.optimizer import create_optimizer, create_scheduler
 from dbgym.run import run
+from dbgym.train import train, train_xgboost
+from dbgym.utils.device import auto_select_device
+from dbgym.utils.seed import seed_everything
 
 sys.path.append("")
 
@@ -30,7 +30,6 @@ class TestDataset(unittest.TestCase):
     """
     Unit test module.
     """
-
     def test_gnn(self):
         """
         GNN test function.
