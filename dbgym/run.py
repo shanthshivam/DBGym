@@ -54,5 +54,5 @@ def run(cfg: CfgNode):
     logger.log(f"Training Use time: {time.time() - train_time:.4f} s")
     logger.log(f"Total Use time: {time.time() - run_time:.4f} s")
     logger.close()
-    # dataset.fill_na(stats['pred'], logger.path)
+    dataset.fill_na(stats['pred'], logger.path)
     return stats

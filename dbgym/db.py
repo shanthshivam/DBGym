@@ -267,7 +267,6 @@ class DataBase:
         """
         Load tables
         """
-        print(self.path)
         for file in os.listdir(self.path):
             if file.endswith('.csv'):
                 self.names.append(tuple([file.split('.')[0], 'csv']))

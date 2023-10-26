@@ -160,5 +160,5 @@ if __name__ == '__main__':
     module_dict = {}
     module_dict['config'] = {}
     cfg = get_config()
-    with open("./output.yaml", "w") as f:
+    with open("./output.yaml", "w", encoding='utf-8') as f:
         f.write(cfg.dump())
