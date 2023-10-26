@@ -116,6 +116,8 @@ class DB2Graph:
             for key in keys[1:]:
                 column = table.df[key]
                 key = key[1:]
+                if '.' in key:
+                    key = key.split('.')[0]
 
                 if duplicate[key]:
                     edge_index = [[], []]
