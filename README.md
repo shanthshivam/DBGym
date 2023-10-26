@@ -15,7 +15,7 @@
 [license-url]: https://github.com/JiaxuanYou/DBGym/blob/main/LICENSE
 <div align="center">
 
-<a href="http://dbgym.readthedocs.io"><img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/Logo.png" width="1000px"/>
+<a href="http://dbgym.readthedocs.io"><img align="center" src="docs/Logo.png" width="1000px"/>
 
 [![PyPI Version][pypi-image]][pypi-url]
 [![Downloads][download-image]][download-url]
