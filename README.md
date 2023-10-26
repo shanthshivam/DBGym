@@ -1,19 +1,29 @@
 [pypi-image]: https://badge.fury.io/py/dbgym.svg
+<!-- [pypi-image]: https://img.shields.io/pypi/v/dbgym -->
 [pypi-url]: https://pypi.python.org/pypi/dbgym
+[download-image]: https://static.pepy.tech/personalized-badge/dbgym?period=total&left_color=grey&left_text=PyPI%20Download
+[download-url]: https://pepy.tech/project/dbgym
+[arxiv-image]: https://img.shields.io/badge/arXiv-2310.16837-b31b1b.svg
+[arxiv-url]: https://arxiv.org/abs/2310.16837
 [testing-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml/badge.svg
 [testing-url]: https://github.com/JiaxuanYou/DBGym/actions/workflows/testing.yml
 [linting-image]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml/badge.svg
 [linting-url]: https://github.com/JiaxuanYou/DBGym/actions/workflows/linting.yml
-
+[docs-image]: https://readthedocs.org/projects/dbgym/badge/?version=latest
+[docs-url]: https://dbgym.readthedocs.io/en/latest
+[license-image]: https://img.shields.io/github/license/JiaxuanYou/DBGym
+[license-url]: https://github.com/JiaxuanYou/DBGym/blob/main/LICENSE
 <div align="center">
 
-<div align="center">
-<img align="center" src="docs/Logo.png" width="1000px"/>
-</div>
+<a href="http://dbgym.readthedocs.io"><img align="center" src="docs/Logo.png" width="1000px"/>
 
 [![PyPI Version][pypi-image]][pypi-url]
+[![Downloads][download-image]][download-url]
+[![arXiv][arxiv-image]][arxiv-url]
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
+[![Docs Status][docs-image]][docs-url]
+[![GitHub license][license-image]][license-url]
 
 </div>
 
@@ -289,3 +299,15 @@ tensorboard --logdir .
 ```
 
 Then visit `localhost:6006`, or any other port you specified.
+
+## Citation
+If you find DBGym useful or relevant to your research, please kindly cite our paper:
+
+```bibtex
+@article{zhang2023rdbench,
+  title={RDBench: ML Benchmark for Relational Databases}, 
+  author={Zizhao, Zhang and Yi, Yang and Lutong, Zou and He, Wen and Tao, Feng and Jiaxuan, You},
+  journal={arXiv preprint arXiv:2310.16837},
+  year={2023}
+}
+```
