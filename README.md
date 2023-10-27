@@ -32,7 +32,7 @@ https://github.com/JiaxuanYou/DBGym/assets/49870769/cc4437eb-bdb6-4285-914b-8920
 # Overview
 
 DBGym is a platform designed to facilitate ML research and application on databases.
-With less than **5 lines of code**, you can provide the path of your database, write the predictive query you want, and DBGym will output the predictions along with your database.
+With less than **5 lines of code**, you can provide the path of your database, and write the predictive query you want, and DBGym will output the predictions along with your database.
 
 DBGym is an ongoing research project serving the vibrant open-source community. We sincerely welcome new ideas, use cases, and pull requests to extend DBGym's capability.
 
@@ -76,13 +76,13 @@ For example, `user.csv` may look like this:
 | 2 | 0.5 | B | 2023/05/01
 | 3 | 0.5 | **N/A** | 2024/08/01
 
-Your goal is to **leverage the full database** (not just the `user.csv` table) to predict the unknown **N/A** values in column `y` in `user.csv`.
+Your goal is to **leverage the entire database** (not just the `user.csv` table) to predict the unknown **N/A** values in column `y` in `user.csv`.
 
 Let's pause here - the simple capability of predicting unknown column values is in fact extremely expressive. For example, 
 - It can be used for classification or regression tasks
 - It can be used for time series prediction tasks suppose the N/A values are associated with future time column values
 - It can be used for recommendation tasks by predicting with respect to pairs of user and item IDs
-- It can unify node, edge and graph-level prediction tasks on graphs by representing (heterogeneous) graphs as multiple tables
+- It can unify node, edge, and graph-level prediction tasks on graphs by representing (heterogeneous) graphs as multiple tables
 - ... 
 
 This is a non-exhaustive list. By being creative, we can do so many things with the capability of predicting unknown column values.
@@ -117,11 +117,11 @@ config = get_config()
 stats = run(config)
 ```
 
-The experiment statistics and predictions returned from the `run()` function and are further saved in the `output` directory by default.
+The experiment statistics and predictions are returned from the `run()` function and are further saved in the `output` directory by default.
 
 ## 1 Run DBGym experiments on RDBench datasets
 
-For users who want to customize DBGym experiments, we provide two ways to customize configuration: using Python and/or using `YAML` config file. Please refer to [`dbgym/config.py`](dbgym/config.py) for all the available configurations.
+For users who want to customize DBGym experiments, we provide two ways to customize configuration: using Python and/or using the `YAML` config file. Please refer to [`dbgym/config.py`](dbgym/config.py) for all the available configurations.
 
 **Customize configs with Python**
 
@@ -141,7 +141,7 @@ stats = run(config)
 
 **Customize configs with YAML file**
 
-Alternatively, you can write a customized config in a YAML file, e.g., `config_gcn.yaml`, and load with DBGym:
+Alternatively, you can write a customized config in a YAML file, e.g., `config_gcn.yaml`, and load it with DBGym:
 
 ```Python
 from dbgym.run import run
@@ -256,13 +256,13 @@ stats = run(config)
 # DBGym Feature Highlights
 
 <div align="center">
-<img align="center" src="https://github.com/JiaxuanYou/DBGym/tree/main/docs/Overview.png" width="1000px" />
+<img align="center" src="docs/Overview.png" width="1000px" />
 <b><br>Figure 1: An overview of DBGym design principle.</b>
 </div>
 
 
 **1. Unified Task Definition for Various Data Formats.**
-- To meet the requirements of diverse users, DBGym provides 3 kinds of APIs: tabular data, homogeneous graphs and heterogeneous graphs.
+- To meet the requirements of diverse users, DBGym provides 3 kinds of APIs: tabular data, homogeneous graphs, and heterogeneous graphs.
 - For all these data formats, we propose a unified task definition, enabling results comparison between models for different formats of data.
 
 **2. Hierarchical Datasets with Comprehensive Experiments** 
