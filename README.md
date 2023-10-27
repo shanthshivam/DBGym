@@ -17,8 +17,8 @@
 
 <a href="http://dbgym.readthedocs.io"><img align="center" src="docs/Logo.png" width="1000px"/>
 
-[![PyPI Version][pypi-image]][pypi-url]
-[![Downloads][download-image]][download-url]
+<!-- [![PyPI Version][pypi-image]][pypi-url]
+[![Downloads][download-image]][download-url] -->
 [![arXiv][arxiv-image]][arxiv-url]
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
